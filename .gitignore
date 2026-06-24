@@ -1,0 +1,25 @@
+# Environment variables (never commit secrets)
+.env
+.env.*
+!.env.example
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+.ipynb_checkpoints/
+venv/
+.venv/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
+
+# Large model / experiment artifacts (uncomment if you don't want to track them in git)
+# mdls/*.pt
+# mdls/*.pkl
+# figures/*.png
