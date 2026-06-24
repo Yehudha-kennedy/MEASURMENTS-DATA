@@ -15,6 +15,7 @@ MEASUREMENTS-DATA/
 ├── src/          # Source code
 ├── mdls/         # Trained models and model artifacts
 ├── figures/      # Generated plots and visualizations
+├── outputs/      # General outputs and logs
 ├── .gitignore    # Files ignored by git
 └── README.md     # Project documentation
 ```
@@ -28,6 +29,7 @@ Configuration example:
 DATA_PATH=./data/raw
 MODEL_OUTPUT_DIR=./mdls
 FIGURES_OUTPUT_DIR=./figures
+OUTPUTS_DIR=./outputs
 RANDOM_SEED=42
 ```
 
