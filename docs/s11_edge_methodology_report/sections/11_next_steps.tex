@@ -1,0 +1,298 @@
+% ------------------------------------------------------------------
+% FILE: sections/11_next_steps.tex
+% Practical next steps for implementation and manuscript transition.
+% \input{} into main.tex — do NOT wrap in \documentclass or \begin{document}.
+% ------------------------------------------------------------------
+
+\section{Next Steps}\label{sec:nextsteps}
+
+This final section translates the methodological framework established
+in the preceding sections into a concrete implementation plan.  It
+specifies the software stack, hardware profiling protocol, compression
+strategy, reproducibility safeguards, and a phased timeline leading to
+manuscript preparation.
+
+
+% ------------------------------------------------------------------
+\subsection{Implementation Stack}
+\label{subsec:impl_stack}
+% ------------------------------------------------------------------
+
+All experimental code will be developed in \textbf{Python~3.10+},
+using the following library ecosystem:
+
+\paragraph{Classical models.}
+Logistic Regression, Linear~SVM, RBF~SVM, Random Forest, Gradient
+Boosted Trees (via XGBoost), K-Means, and a baseline MLP will be
+implemented using
+\textbf{scikit-learn}~\cite{sklearn_docs}.  Scikit-learn provides a
+uniform \texttt{fit}/\texttt{predict}/\texttt{score} API, built-in
+cross-validation utilities, and deterministic seeding via
+\texttt{random\_state}, which simplifies reproducibility.
+
+\paragraph{Neural models.}
+The 1D~CNN (\Cref{subsec:cnn1d}), ResNet-1D (\Cref{subsec:resnet1d}),
+and Kolmogorov--Arnold Network (\Cref{subsec:kan}) will be implemented
+in \textbf{PyTorch}, which offers fine-grained control over custom
+architectures, training loops, and gradient manipulation.  The MLP
+(\Cref{subsec:mlp}) may also be implemented in PyTorch if the
+scikit-learn version proves insufficient for architectural
+experimentation (e.g., custom regularisation schedules).
+
+\paragraph{Keras clarification.}
+\textbf{Keras is a high-level API for defining and training neural
+network architectures.}  It is not an algorithm and therefore does not
+appear in the ten-model comparison (\Cref{sec:algorithms}).  Keras
+(now integrated into TensorFlow as \texttt{tf.keras} and also
+available as a standalone multi-backend library) can be used to
+implement any of the neural architectures discussed in this report ---
+MLP, 1D~CNN, or ResNet-1D --- but the choice of Keras vs.\ raw
+PyTorch is an engineering decision, not a methodological one.  If
+Keras is used for any model, this will be noted in the implementation
+log, and the resulting model must still satisfy all evaluation criteria
+from \Cref{sec:eval} identically to its PyTorch counterpart.
+
+\paragraph{Supporting libraries.}
+\begin{itemize}
+  \item \textbf{NumPy / SciPy}: array operations, signal processing
+        (unwrapping, derivatives).
+  \item \textbf{Pandas}: metadata management and result aggregation.
+  \item \textbf{Matplotlib / Seaborn}: all visualisations (spectra,
+        confusion matrices, degradation curves, calibration diagrams).
+  \item \textbf{SHAP}: post-hoc feature attribution for tree ensembles
+        and neural models.
+  \item \textbf{Optuna} or \textbf{scikit-optimize}: Bayesian
+        hyperparameter optimisation with nested cross-validation.
+\end{itemize}
+
+
+% ------------------------------------------------------------------
+\subsection{Edge Deployment Frameworks}
+\label{subsec:edge_frameworks}
+% ------------------------------------------------------------------
+
+Trained models must be converted to edge-compatible inference formats.
+Three frameworks are considered:
+
+\begin{enumerate}
+  \item \textbf{TensorFlow Lite}~\cite{tensorflow_lite}: the primary
+        target for TensorFlow/Keras-trained models.  Supports INT8
+        post-training quantisation, delegate-based hardware
+        acceleration (GPU, DSP, NPU), and deployment on ARM Cortex-M
+        and Cortex-A targets via the TFLite Micro interpreter.
+  \item \textbf{ONNX Runtime}~\cite{onnx_runtime}: the primary target
+        for PyTorch-trained models.  ONNX (Open Neural Network
+        Exchange) provides a framework-agnostic intermediate
+        representation.  ONNX Runtime supports quantisation,
+        graph optimisation, and execution providers for ARM, x86,
+        and RISC-V targets.
+  \item \textbf{PyTorch Mobile}: an alternative for PyTorch models
+        that avoids the ONNX conversion step.  Supports selective
+        operator loading to reduce binary size, and \texttt{torch.jit}
+        scripting for ahead-of-time compilation.
+\end{enumerate}
+
+For scikit-learn tree ensembles, the inference engine is simpler: the
+trained model can be exported as a set of if--else rules (e.g., via
+\texttt{sklearn-porter} or manual code generation) and compiled
+directly into C or C++ for bare-metal execution.  No deep-learning
+runtime is required.
+
+
+% ------------------------------------------------------------------
+\subsection{The Edge Inference Pipeline}
+\label{subsec:inference_pipeline}
+% ------------------------------------------------------------------
+
+While previous sections focus on model training and selection, it is critical to define how the final chosen model will actually execute inference in a production edge environment. The inference pipeline consists of four sequential steps executed directly on the microcontroller or edge device:
+
+\begin{enumerate}
+  \item \textbf{Data Acquisition and Parsing:} The edge device receives a raw frequency sweep from the connected sensor hardware. It extracts the $4001$ magnitude (and optionally phase) values, discarding malformed readings exactly as defined in the validity preprocessing stage (\Cref{sec:preproc}).
+  \item \textbf{Frozen Normalisation:} The device applies the exact normalisation constants (e.g., $\mu_{\text{train}}$ and $\sigma_{\text{train}}$) that were computed during the training phase (\Cref{sec:norm}). These constants are hardcoded into the edge firmware to prevent data leakage or drift.
+  \item \textbf{Forward Pass Execution:} The normalised vector is passed into the compressed model. Because the model has been converted to an edge-compatible format (e.g., INT8 via TensorFlow Lite Micro), the mathematical operations---whether they are dot products for Logistic Regression, tree traversals for Random Forests, or convolutions for a 1D CNN---are executed using highly efficient integer arithmetic. This respects the strict SRAM and Flash limits of the hardware.
+  \item \textbf{Decision and Abstention:} The final output layer produces a confidence score for the three classes (\texttt{dry}, \texttt{wet}, \texttt{ice}). If the highest score exceeds a predefined threshold, a classification is made. If the model is uncertain, it triggers an abstention protocol rather than guessing blindly (\Cref{sec:eval}).
+\end{enumerate}
+
+\paragraph{Why this makes the edge model a viable option.}
+The core reason the shortlisted models are viable for this task is that their inference requirements (the ``forward pass'') can be decoupled from their training requirements. While training requires significant compute and memory, the inference pipeline outlined above is extremely lightweight. By processing the $S_{11}$ data locally without cloud dependency, the system achieves real-time latency, preserves bandwidth, and maintains offline reliability.
+
+% ------------------------------------------------------------------
+\subsection{Hardware Profiling Protocol}
+\label{subsec:hw_profiling}
+% ------------------------------------------------------------------
+
+Edge deployment claims must be validated on representative hardware.
+The profiling protocol specifies:
+
+\begin{enumerate}
+  \item \textbf{Desktop baseline:} all models profiled on an x86-64
+        CPU (single-threaded, no GPU) to establish a normalised
+        comparison.
+  \item \textbf{ARM Cortex-A target:} models profiled on a
+        Cortex-A class board (e.g., Raspberry Pi~4, Coral Dev Board)
+        to represent single-board-computer deployments.
+  \item \textbf{ARM Cortex-M target (if available):} a subset of
+        the smallest models profiled on a Cortex-M class
+        microcontroller (e.g., STM32H7, nRF5340) to test
+        bare-metal feasibility.
+  \item \textbf{RISC-V target (optional):} if a RISC-V development
+        board is available, profiling one or two models validates
+        architecture portability.
+\end{enumerate}
+
+For each hardware target, the following measurements will be recorded:
+%
+\begin{itemize}
+  \item Inference latency: mean and standard deviation over
+        $\geq$\,\num{100} runs.
+  \item Peak RAM usage during inference.
+  \item Flash/storage footprint of the compiled model binary.
+  \item Power consumption per inference (if instrumentation is
+        available).
+\end{itemize}
+
+
+% ------------------------------------------------------------------
+\subsection{Quantisation Strategy}
+\label{subsec:quantisation}
+% ------------------------------------------------------------------
+
+Model compression via quantisation follows a two-stage protocol:
+
+\paragraph{Stage 1: INT8 post-training quantisation (PTQ).}
+The trained float32 model is quantised to INT8 using a representative
+calibration dataset (a subset of the training data, disjoint from
+the test set).  Macro~$F_1$ is re-evaluated on the test set.  If the
+$F_1$ drop is $\leq 0.02$ (absolute), PTQ is accepted.
+
+\paragraph{Stage 2: Quantisation-aware training (QAT).}
+If PTQ causes an unacceptable $F_1$ drop ($> 0.02$), the model is
+retrained with quantisation-aware training, which simulates
+quantisation noise during forward passes.  QAT typically recovers
+most of the accuracy lost by PTQ at the cost of additional training
+time.
+
+For tree-based models, quantisation is less relevant because
+inference involves integer comparisons against thresholds rather
+than floating-point arithmetic.  The primary compression lever for
+trees is ensemble pruning (removing low-contribution trees or
+limiting depth).
+
+
+% ------------------------------------------------------------------
+\subsection{Manuscript Transition Plan}
+\label{subsec:manuscript_plan}
+% ------------------------------------------------------------------
+
+This report establishes the methodology; the manuscript will report
+the results.  The transition follows this structure:
+
+\begin{enumerate}
+  \item \textbf{Introduction:} motivate the RF/microwave sensing
+        application, state the classification problem, and summarise
+        the methodological framework.
+  \item \textbf{Methods:} compress the content of
+        \Cref{sec:dataset,sec:repr,sec:preproc,sec:norm,sec:overfit,%
+        sec:augment,sec:algorithms,sec:eval} into a concise methods
+        section, citing this report as a supplementary technical
+        reference where detail is needed.
+  \item \textbf{Results:} present the filled evaluation tables
+        (\Cref{tab:macro_f1_results,tab:perclass_recall,%
+        tab:model_complexity}), confusion matrices, degradation
+        curves, and ablation findings.
+  \item \textbf{Discussion:} interpret results, compare the
+        shortlisted models, discuss failure cases, and address
+        limitations (small sample size, single sensor geometry,
+        laboratory-only data).
+  \item \textbf{Conclusion:} recommend the primary model for
+        deployment and identify directions for future work
+        (multi-sensor fusion, online adaptation, expanded
+        environmental conditions).
+\end{enumerate}
+
+
+% ------------------------------------------------------------------
+\subsection{Data Versioning and Reproducibility}
+\label{subsec:reproducibility}
+% ------------------------------------------------------------------
+
+\paragraph{Dataset snapshot.}
+Before any training begins, the dataset will be frozen and versioned:
+%
+\begin{itemize}
+  \item Compute SHA-256 checksums for every \texttt{.s1p} file.
+  \item Record the total file count per class
+        ($601 + 501 + 501 = 1603$).
+  \item Store the checksum manifest alongside the code repository.
+  \item Any additions, removals, or modifications to the dataset
+        after the snapshot constitute a new dataset version and
+        require re-running the full pipeline.
+\end{itemize}
+
+\paragraph{Reproducibility safeguards.}
+\begin{itemize}
+  \item \textbf{Random seeds:} all stochastic operations (train--test
+        splits, weight initialisation, dropout masks, data shuffling)
+        will use a fixed global seed (e.g., \texttt{seed=42}) and
+        per-component seeds where supported.
+  \item \textbf{Deterministic operations:} PyTorch deterministic mode
+        (\texttt{torch.use\_deterministic\_algorithms(True)}) will be
+        enabled where feasible.  Known non-deterministic operations
+        (e.g., certain CUDA atomics) will be documented.
+  \item \textbf{Hyperparameter logging:} every training run will log
+        the full hyperparameter configuration, library versions
+        (via \texttt{pip freeze}), hardware identifier, and wall-clock
+        training time.
+  \item \textbf{Result archiving:} trained model weights, evaluation
+        metrics, and generated figures will be archived with
+        timestamped identifiers.
+\end{itemize}
+
+
+% ------------------------------------------------------------------
+\subsection{Timeline Estimate}
+\label{subsec:timeline}
+% ------------------------------------------------------------------
+
+The experimental phase is organised into five sequential stages:
+
+\begin{enumerate}
+  \item \textbf{Data validation} (1~week): parse all \num{1603} files,
+        verify frequency-grid consistency, compute checksums, perform
+        exploratory visualisation, and run K-Means structure probe.
+  \item \textbf{Baseline models} (1--2~weeks): train and evaluate the
+        five classical models (Logistic Regression, Linear~SVM,
+        RBF~SVM, Random Forest, Gradient Boosted Trees) across all
+        Route~A encodings.
+  \item \textbf{Neural models} (2--3~weeks): implement, train, and
+        evaluate MLP, 1D~CNN, ResNet-1D, and KAN.  Includes
+        architecture search, regularisation tuning, and augmentation
+        experiments.
+  \item \textbf{Edge profiling} (1~week): convert shortlisted models
+        to TFLite/ONNX, apply quantisation, and benchmark on target
+        hardware.
+  \item \textbf{Manuscript preparation} (2--3~weeks): compile results,
+        generate publication-quality figures, write and revise the
+        manuscript.
+\end{enumerate}
+
+\noindent
+\textbf{Estimated total:} 7--10~weeks from the start of the
+experimental phase.  Stages may overlap where dependencies permit
+(e.g., manuscript writing can begin during edge profiling).
+
+
+% ------------------------------------------------------------------
+\subsection{Closing Statement}
+\label{subsec:closing}
+% ------------------------------------------------------------------
+
+\begin{quote}
+\itshape
+This report defines the methodological contract that all subsequent
+experimental work will follow.  Every preprocessing step, normalisation
+choice, splitting protocol, evaluation metric, and decision gate
+described herein constitutes a binding commitment.  Deviations from
+this pipeline must be documented, justified, and disclosed in the
+experimental log and the final manuscript.
+\end{quote}

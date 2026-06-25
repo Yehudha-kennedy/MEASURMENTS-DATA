@@ -1,0 +1,237 @@
+% tables/algorithm_comparison.tex — Master algorithm comparison table
+% Included via \input{tables/algorithm_comparison} from a section file.
+% Designed for landscape orientation; wrap the \input{} call inside
+% a \begin{landscape}...\end{landscape} environment (from pdflscape) or
+% place it on a standalone landscape page.
+
+\begin{footnotesize}
+\setlength{\LTcapwidth}{\linewidth}
+\setlength{\tabcolsep}{3.5pt}
+\renewcommand{\arraystretch}{1.25}
+
+\begin{longtable}{%
+  >{\raggedright\arraybackslash}p{2.1cm}   % Algorithm
+  >{\raggedright\arraybackslash}p{1.5cm}   % Family
+  >{\raggedright\arraybackslash}p{1.8cm}   % Input Shape
+  >{\centering\arraybackslash}p{1.0cm}     % Route
+  >{\raggedright\arraybackslash}p{1.6cm}   % Normalization
+  >{\raggedright\arraybackslash}p{1.7cm}   % Augmentation
+  >{\centering\arraybackslash}p{1.1cm}     % Overfit Risk
+  >{\centering\arraybackslash}p{1.1cm}     % Interpretability
+  >{\centering\arraybackslash}p{1.0cm}     % Edge Suit.
+  >{\centering\arraybackslash}p{1.0cm}     % Noise Rob.
+  >{\raggedright\arraybackslash}p{2.8cm}   % Key Failure Mode
+}
+\caption{Qualitative comparison of candidate algorithms for three-class $S_{11}$
+         classification (\texttt{dry}/\texttt{wet}/\texttt{ice}).
+         Assessments reflect expected behaviour given the dataset size
+         ($N=1603$) and are \emph{not} derived from experimental results.}
+\label{tab:algorithm_comparison} \\
+
+\toprule
+\textbf{Algorithm} &
+\textbf{Family} &
+\textbf{Input Shape} &
+\textbf{Route} &
+\textbf{Preferred Norm.} &
+\textbf{Augment.\ Compat.} &
+\textbf{Overfit Risk} &
+\textbf{Interp.} &
+\textbf{Edge Suit.} &
+\textbf{Noise Rob.} &
+\textbf{Key Failure Mode} \\
+\midrule
+\endfirsthead
+
+% ── continuation header ──
+\multicolumn{11}{l}{\small\itshape (continued from previous page)} \\[2pt]
+\toprule
+\textbf{Algorithm} &
+\textbf{Family} &
+\textbf{Input Shape} &
+\textbf{Route} &
+\textbf{Preferred Norm.} &
+\textbf{Augment.\ Compat.} &
+\textbf{Overfit Risk} &
+\textbf{Interp.} &
+\textbf{Edge Suit.} &
+\textbf{Noise Rob.} &
+\textbf{Key Failure Mode} \\
+\midrule
+\endhead
+
+% ── footer ──
+\midrule
+\multicolumn{11}{r}{\small\itshape (continued on next page)} \\
+\endfoot
+
+% ── last footer ──
+\bottomrule
+\endlastfoot
+
+% ═══════════════════════════════════════════════════════════════
+%  ROW 1 — Logistic Regression
+% ═══════════════════════════════════════════════════════════════
+Logistic Regression
+  & Linear
+  & $(D,)$ flat vector
+  & A
+  & StandardScaler (zero-mean, unit-var)
+  & Limited; noise injection only
+  & Low
+  & High
+  & High
+  & Low
+  & Under-fits if class boundaries are non-linear in spectral space \\
+
+% ═══════════════════════════════════════════════════════════════
+%  ROW 2 — Linear SVM
+% ═══════════════════════════════════════════════════════════════
+Linear SVM
+  & Linear
+  & $(D,)$ flat vector
+  & A
+  & StandardScaler
+  & Limited; noise injection only
+  & Low
+  & High
+  & High
+  & Low--Med
+  & Same linear limitation; sensitive to outlier support vectors \\
+
+% ═══════════════════════════════════════════════════════════════
+%  ROW 3 — RBF SVM
+% ═══════════════════════════════════════════════════════════════
+RBF SVM
+  & Kernel
+  & $(D,)$ flat vector
+  & A
+  & StandardScaler (critical)
+  & Limited; noise injection, SMOTE
+  & Medium
+  & Low
+  & Medium
+  & Medium
+  & $\gamma$--$C$ grid search costly; kernel matrix scales $O(N^2)$ \\
+
+% ═══════════════════════════════════════════════════════════════
+%  ROW 4 — Random Forest
+% ═══════════════════════════════════════════════════════════════
+Random Forest
+  & Ensemble (bagging)
+  & $(D,)$ flat vector
+  & A
+  & Not required (tree-based)
+  & SMOTE, noise injection
+  & Low--Med
+  & Medium
+  & High
+  & High
+  & Can memorise noisy features if trees are too deep; feature importance may
+    mislead with correlated spectral bins \\
+
+% ═══════════════════════════════════════════════════════════════
+%  ROW 5 — Gradient Boosted Trees (XGBoost)
+% ═══════════════════════════════════════════════════════════════
+Gradient Boosted Trees (XGBoost)
+  & Ensemble (boosting)
+  & $(D,)$ flat vector
+  & A
+  & Not required (tree-based)
+  & SMOTE, noise injection
+  & Medium
+  & Medium
+  & High
+  & High
+  & Prone to over-fitting with many boosting rounds on small $N$;
+    requires careful early stopping \\
+
+% ═══════════════════════════════════════════════════════════════
+%  ROW 6 — Multilayer Perceptron
+% ═══════════════════════════════════════════════════════════════
+Multilayer Perceptron
+  & Neural network (feedforward)
+  & $(D,)$ flat vector
+  & A
+  & StandardScaler or MinMax
+  & Noise injection, mixup, dropout
+  & High
+  & Low
+  & Medium
+  & Medium
+  & Over-parameterised for small $N$; sensitive to learning rate and
+    architecture choices \\
+
+% ═══════════════════════════════════════════════════════════════
+%  ROW 7 — 1D CNN
+% ═══════════════════════════════════════════════════════════════
+1D CNN
+  & Neural network (convolutional)
+  & $(L, C)$ sequence
+  & A
+  & Per-channel StandardScaler or BatchNorm
+  & Noise injection, frequency masking, mixup
+  & High
+  & Low
+  & Medium
+  & Med--High
+  & Needs sufficient depth for receptive field; over-fits quickly on 1603
+    samples without strong regularisation \\
+
+% ═══════════════════════════════════════════════════════════════
+%  ROW 8 — ResNet-1D
+% ═══════════════════════════════════════════════════════════════
+ResNet-1D
+  & Neural network (residual)
+  & $(L, C)$ sequence
+  & A
+  & BatchNorm (built-in)
+  & Noise injection, frequency masking, mixup
+  & High
+  & Low
+  & Low--Med
+  & Med--High
+  & Highest parameter count; extremely prone to over-fitting at $N=1603$;
+    large model footprint challenges edge deployment \\
+
+% ═══════════════════════════════════════════════════════════════
+%  ROW 9 — KAN
+% ═══════════════════════════════════════════════════════════════
+Kolmogorov--Arnold Network (KAN)
+  & Neural network (spline-based)
+  & $(D,)$ flat vector
+  & A
+  & StandardScaler
+  & Noise injection, mixup
+  & Med--High
+  & Medium
+  & Medium
+  & Medium
+  & Immature tooling; spline knot count acts as hidden capacity control;
+    limited edge-runtime support \\
+
+% ═══════════════════════════════════════════════════════════════
+%  ROW 10 — K-Means (unsupervised)
+% ═══════════════════════════════════════════════════════════════
+K-Means\textsuperscript{\dag}
+  & Unsupervised (centroid)
+  & $(D,)$ flat vector
+  & A
+  & MinMaxScaler or StandardScaler
+  & N/A (unsupervised)
+  & Low
+  & Medium
+  & High
+  & Low
+  & Assumes spherical clusters; label assignment is post-hoc; cannot capture
+    non-convex class boundaries \\
+
+\end{longtable}
+
+\vspace{0.3em}
+\noindent\textsuperscript{\dag}\,K-Means is included as an \emph{unsupervised probe}
+to assess natural cluster separability in the feature space, not as a
+direct classification algorithm.  Cluster-to-class mapping is evaluated
+via majority voting and the adjusted Rand index.
+
+\end{footnotesize}

@@ -1,0 +1,66 @@
+% sections/00_executive_summary.tex  —  Executive Summary (unnumbered)
+% \input{} into main.tex; do NOT wrap in \begin{document}.
+
+\section*{Executive Summary}
+\addcontentsline{toc}{section}{Executive Summary}
+
+This report presents a \emph{methodological plan} for classifying
+single-port $S_{11}$ reflection-coefficient measurements acquired from an
+RF sensor operating in the \SIrange{8}{12}{\giga\hertz} band.  The sensor
+is exposed to three distinct surface states—\texttt{dry},
+\texttt{wet}, and \texttt{ice}—each of which alters the dielectric
+environment and therefore produces a characteristic frequency-dependent
+signature in the reflected signal.  The ultimate objective is to deploy
+the trained classifier on resource-constrained edge hardware, where both
+memory and inference latency are critical constraints.
+
+\paragraph{Dataset.}
+The available corpus comprises \num{1603} traces distributed across three
+class states: \texttt{dry} (\num{601} traces), \texttt{wet} (\num{501} traces),
+and \texttt{ice} (\num{501} traces). Each trace records \num{4001} uniformly spaced
+frequency points spanning approximately \SIrange{8.0}{12.0}{\giga\hertz}.
+Crucially, the dataset uses a \textbf{Cartesian representation} mapping each
+point to its \textbf{Real} and \textbf{Imaginary} components
+($\text{Re}[S_{11}]$, $\text{Im}[S_{11}]$). This choice explicitly avoids the
+``phase wrapping'' discontinuities inherent to polar representations
+(Magnitude/Phase), significantly improving numerical stability for
+gradient-based learning.
+
+\paragraph{Dual-route representation strategy.}
+Two complementary data representations are proposed and systematically
+compared throughout this report:
+\begin{description}
+    \item[Route~A — 1D Spectral:]  The Cartesian frequency-domain vectors are
+        retained as one-dimensional feature sequences. The primary encoding is a
+        dual-channel $\mathbb{R}^{4001 \times 2}$ vector containing the Real and
+        Imaginary components. This route preserves full numerical fidelity and is
+        compatible with both classical tabular models and 1D neural architectures.
+    \item[Route~B — 2D Image-Like:]  The spectral curves are rasterised
+        into fixed-resolution images, enabling the use of established
+        convolutional architectures designed for image classification.
+        This route trades information fidelity for access to
+        transfer-learning ecosystems but introduces rendering artefacts
+        that are not present in the measurement physics.
+\end{description}
+
+\paragraph{Tiered Candidate Selection.}
+Rather than declaring a single architecture outright, this methodology proposes a
+\textbf{tiered selection strategy} traversing from minimal-parameter models to
+deep architectures. Models are evaluated progressively, deploying the simplest
+model that meets accuracy requirements:
+
+\begin{description}
+    \item[Level 0 (Unsupervised Probe):] \textbf{K-Means} validates intrinsic
+        data separability before supervised training.
+    \item[Level 1 (Linear Baselines):] \textbf{Logistic Regression} and
+        \textbf{Linear SVM}. These are highly interpretable models whose forward
+        pass requires mere dot products. They establish the performance floor.
+    \item[Level 2 (Tabular Powerhouses):] \textbf{Gradient Boosted Trees (GBT)},
+        \textbf{Random Forest}, and \textbf{RBF SVM}. GBT is a standout champion
+        here due to its consistent dominance on tabular data and invariant scaling,
+        making it highly edge-viable without floating-point matrix arithmetic.
+    \item[Level 3 (Deep Architectures):] \textbf{1D CNN}, \textbf{MLP},
+        \textbf{ResNet-1D}, and \textbf{KAN}. The \textbf{1D CNN} is the primary
+        champion of this tier due to its perfect inductive alignment with local
+        spectral resonances and extremely efficient parameter-sharing footprint.
+\end{description}

@@ -1,0 +1,163 @@
+% ------------------------------------------------------------------
+% FILE: sections/10_decision_workflow.tex
+% Decision workflow for narrowing the algorithm shortlist.
+% \input{} into main.tex — do NOT wrap in \documentclass or \begin{document}.
+% ------------------------------------------------------------------
+
+\section{Decision Workflow}\label{sec:workflow}
+
+The tiered algorithm strategy (\Cref{sec:algorithms}) replaces the flat 
+`funnel'' approach with a \textbf{progressive complexity escalation} workflow. 
+Rather than evaluating all candidate models simultaneously to find a single winner, 
+the workflow advances through the complexity levels sequentially (Level 0 to Level 3), 
+stopping as soon as a tier meets the classification, memory, and latency requirements 
+for the target edge hardware.
+
+\paragraph{Design intent.}
+This workflow prioritizes the \emph{simplest viable model}. If strong physical separability 
+exists, a Level 1 model (Linear SVM) will succeed and offer maximum interpretability 
+and minimum deployment cost. Only if non-linear tabular patterns dominate do we escalate 
+to Level 2 (Gradient Boosted Trees), and only if complex local spectral correlations 
+are necessary do we escalate to Level 3 (1D CNN).
+
+% ------------------------------------------------------------------
+\subsection{Workflow Flowchart}
+\label{subsec:flowchart}
+% ------------------------------------------------------------------
+
+\Cref{fig:decision_workflow} presents the tiered decision workflow as a flowchart.
+Process nodes (blue) represent model training and evaluation; decision nodes (orange) 
+represent threshold gates; termination/deployment nodes (green) represent success at 
+the current tier; and escalation edges (red) represent progression to a higher complexity tier.
+
+\begin{figure}[htbp]
+\centering
+\begin{tikzpicture}[
+  % --- node styles ---
+  process/.style={
+    rectangle, rounded corners=4pt,
+    draw=blue!70!black, fill=blue!8,
+    text width=6.5cm, minimum height=1.0cm,
+    align=center, font=\small
+  },
+  decision/.style={
+    diamond, aspect=2.0,
+    draw=orange!80!black, fill=orange!8,
+    text width=3.5cm, minimum height=1.0cm,
+    align=center, font=\small
+  },
+  eliminate/.style={
+    rectangle, rounded corners=4pt,
+    draw=red!70!black, fill=red!8,
+    text width=4.0cm, minimum height=0.8cm,
+    align=center, font=\small
+  },
+  advance/.style={
+    rectangle, rounded corners=4pt,
+    draw=green!60!black, fill=green!8,
+    text width=4.5cm, minimum height=0.8cm,
+    align=center, font=\small
+  },
+  % --- arrow styles ---
+  arr/.style={-Stealth, thick},
+  yes/.style={arr, green!60!black},
+  no/.style={arr, red!70!black},
+  plain/.style={arr, blue!70!black},
+  node distance=0.8cm and 1.2cm,
+]
+
+% --- Nodes ---
+\node[process] (l0)
+  {\textbf{Level 0: Unsupervised Probe}\\K-Means (=3$) analysis};
+
+\node[decision, below=of l0] (d0)
+  {Clusters match\\labels?};
+
+\node[eliminate, right=of d0] (revisit)
+  {Revisit Feature\\Representation};
+
+\node[process, below=of d0] (l1)
+  {\textbf{Level 1: Linear Baselines}\\Train LR / Linear SVM};
+
+\node[decision, below=of l1] (d1)
+  {Meets $, latency,\\\& size limits?};
+
+\node[advance, left=of d1] (deploy1)
+  {\textbf{Deploy Level 1}\\Max Interpretability};
+
+\node[process, below=of d1] (l2)
+  {\textbf{Level 2: Tabular Ensembles}\\Train Gradient Boosted Trees};
+
+\node[decision, below=of l2] (d2)
+  {Meets $, latency,\\\& size limits?};
+
+\node[advance, left=of d2] (deploy2)
+  {\textbf{Deploy Level 2}\\Tabular Dominance};
+
+\node[process, below=of d2] (l3)
+  {\textbf{Level 3: Deep Spectral}\\Train 1D CNN};
+
+\node[decision, below=of l3] (d3)
+  {Meets edge size\\\& latency limits?};
+
+\node[advance, left=of d3] (deploy3)
+  {\textbf{Deploy Level 3}\\Spectral Alignment};
+
+\node[eliminate, right=of d3] (fail)
+  {Hardware constraints\\exceeded. Abort.};
+
+% --- Edges ---
+\draw[plain] (l0) -- (d0);
+\draw[no]  (d0.east) -- node[above, font=\footnotesize]{No}  (revisit.west);
+\draw[yes] (d0.south) -- node[right, font=\footnotesize]{Yes} (l1.north);
+
+\draw[plain] (l1) -- (d1);
+\draw[yes] (d1.west) -- node[above, font=\footnotesize]{Yes} (deploy1.east);
+\draw[no]  (d1.south) -- node[right, font=\footnotesize]{No (Escalate)} (l2.north);
+
+\draw[plain] (l2) -- (d2);
+\draw[yes] (d2.west) -- node[above, font=\footnotesize]{Yes} (deploy2.east);
+\draw[no]  (d2.south) -- node[right, font=\footnotesize]{No (Escalate)} (l3.north);
+
+\draw[plain] (l3) -- (d3);
+\draw[yes] (d3.west) -- node[above, font=\footnotesize]{Yes} (deploy3.east);
+\draw[no]  (d3.east) -- node[above, font=\footnotesize]{No} (fail.west);
+
+\end{tikzpicture}
+\caption{Tiered decision workflow for escalating model complexity. 
+         Evaluation halts as soon as a tier meets the quantitative requirements 
+         for deployment, avoiding unnecessary complexity.}
+\label{fig:decision_workflow}
+\end{figure}
+
+% ------------------------------------------------------------------
+\subsection{Escalation Gates}
+\label{subsec:gate_rationale}
+% ------------------------------------------------------------------
+
+\subsubsection*{Level 0 Gate: Fundamental Separability}
+The workflow begins with K-Means clustering. If the unlabelled feature space does not 
+exhibit structure corresponding to the \texttt{dry}, \texttt{wet}, and \texttt{ice} states, 
+no supervised model should be trained. The representation itself must be revisited 
+(e.g., investigating different frequency windows or normalization schemes).
+
+\subsubsection*{Level 1 Gate: Linear Sufficiency}
+If Linear SVM or Logistic Regression achieve the target macro $ score (e.g., $\geq 0.85$) 
+while satisfying edge memory and latency constraints, the workflow terminates. A linear 
+model provides absolute transparency regarding which frequency bins drive the decision and 
+runs in microseconds on basic microcontrollers. Escalation is only justified if linear 
+decision boundaries prove inadequate.
+
+\subsubsection*{Level 2 Gate: Non-Linear Tabular Threshold}
+If linear methods fail, Gradient Boosted Trees (GBT) are evaluated. GBTs construct 
+non-linear decision boundaries through recursive partitioning and are immune to scaling 
+issues. If the GBT ensemble achieves the necessary performance within the hardware budget, 
+it is deployed. Escalation to deep learning is reserved for cases where GBTs fail to 
+capture correlated spatial/spectral patterns.
+
+\subsubsection*{Level 3 Gate: Spectral Deep Learning}
+The 1D CNN is the final tier. It brings the strongest inductive bias (local spectral 
+feature correlation) but demands the highest computational cost. If the 1D CNN provides 
+the only path to the required $ score, its architecture must be carefully pruned 
+and quantised (INT8) to fit within the edge target constraints. If it still exceeds 
+the hardware limits, the deployment is aborted.

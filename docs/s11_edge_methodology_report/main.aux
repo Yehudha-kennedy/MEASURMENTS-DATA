@@ -1,0 +1,365 @@
+\relax 
+\providecommand\hyper@newdestlabel[2]{}
+\providecommand\HyField@AuxAddToFields[1]{}
+\providecommand\HyField@AuxAddToCoFields[2]{}
+\citation{pozar2011microwave}
+\@writefile{toc}{\contentsline {section}{Executive Summary}{1}{Doc-Start}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Dataset.}{1}{Doc-Start}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Dual-route representation strategy.}{1}{Doc-Start}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Tiered Candidate Selection.}{1}{Doc-Start}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {1}Problem Framing}{2}{section.1}\protected@file@percent }
+\newlabel{sec:problem}{{1}{2}{Problem Framing}{section.1}{}}
+\newlabel{sec:problem@cref}{{[section][1][]1}{[1][1][]2}{}{}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {1.1}The $S_{11}$ Reflection Coefficient}{2}{subsection.1.1}\protected@file@percent }
+\newlabel{sec:problem:s11}{{1.1}{2}{The $S_{11}$ Reflection Coefficient}{subsection.1.1}{}}
+\newlabel{sec:problem:s11@cref}{{[subsection][1][1]1.1}{[1][1][]2}{}{}{}}
+\newlabel{eq:s11_def}{{1}{2}{The $S_{11}$ Reflection Coefficient}{equation.1}{}}
+\newlabel{eq:s11_def@cref}{{[equation][1][]1}{[1][2][]2}{}{}{}}
+\newlabel{eq:s11_cartesian}{{2}{2}{The $S_{11}$ Reflection Coefficient}{equation.2}{}}
+\newlabel{eq:s11_cartesian@cref}{{[equation][2][]2}{[1][2][]2}{}{}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {1.2}Physical Origin of Class Separability}{2}{subsection.1.2}\protected@file@percent }
+\newlabel{sec:problem:physics}{{1.2}{2}{Physical Origin of Class Separability}{subsection.1.2}{}}
+\newlabel{sec:problem:physics@cref}{{[subsection][2][1]1.2}{[1][2][]2}{}{}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {1.3}Classification Goal}{2}{subsection.1.3}\protected@file@percent }
+\newlabel{sec:problem:goal}{{1.3}{2}{Classification Goal}{subsection.1.3}{}}
+\newlabel{sec:problem:goal@cref}{{[subsection][3][1]1.3}{[1][2][]2}{}{}{}}
+\newlabel{eq:classifier}{{3}{2}{Classification Goal}{equation.3}{}}
+\newlabel{eq:classifier@cref}{{[equation][3][]3}{[1][2][]2}{}{}{}}
+\citation{tensorflow_lite}
+\citation{onnx_runtime}
+\@writefile{toc}{\contentsline {subsection}{\numberline {1.4}Edge Deployment Context}{3}{subsection.1.4}\protected@file@percent }
+\newlabel{sec:problem:edge}{{1.4}{3}{Edge Deployment Context}{subsection.1.4}{}}
+\newlabel{sec:problem:edge@cref}{{[subsection][4][1]1.4}{[1][3][]3}{}{}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {1.5}Scope and Boundaries}{3}{subsection.1.5}\protected@file@percent }
+\newlabel{sec:problem:scope}{{1.5}{3}{Scope and Boundaries}{subsection.1.5}{}}
+\newlabel{sec:problem:scope@cref}{{[subsection][5][1]1.5}{[1][3][]3}{}{}{}}
+\citation{touchstone_spec,keysight_s2p_format}
+\@writefile{toc}{\contentsline {section}{\numberline {2}Dataset Abstraction}{4}{section.2}\protected@file@percent }
+\newlabel{sec:dataset}{{2}{4}{Dataset Abstraction}{section.2}{}}
+\newlabel{sec:dataset@cref}{{[section][2][]2}{[1][3][]4}{}{}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {2.1}File Format: Touchstone \texttt  {.s1p}}{4}{subsection.2.1}\protected@file@percent }
+\newlabel{sec:dataset:format}{{2.1}{4}{File Format: Touchstone \texttt {.s1p}}{subsection.2.1}{}}
+\newlabel{sec:dataset:format@cref}{{[subsection][1][2]2.1}{[1][4][]4}{}{}{}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {2.1.1}Observed Deviation from the Standard}{4}{subsubsection.2.1.1}\protected@file@percent }
+\newlabel{sec:dataset:format:deviation}{{2.1.1}{4}{Observed Deviation from the Standard}{subsubsection.2.1.1}{}}
+\newlabel{sec:dataset:format:deviation@cref}{{[subsubsection][1][2,1]2.1.1}{[1][4][]4}{}{}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {2.2}Column Interpretation}{4}{subsection.2.2}\protected@file@percent }
+\newlabel{sec:dataset:columns}{{2.2}{4}{Column Interpretation}{subsection.2.2}{}}
+\newlabel{sec:dataset:columns@cref}{{[subsection][2][2]2.2}{[1][4][]4}{}{}{}}
+\@writefile{lot}{\contentsline {table}{\numberline {1}{\ignorespaces First five and last three rows of \texttt  {Trc0.s1p} (\texttt  {dry} class) assuming RI format. Frequency is in~\si {\hertz }, followed by Real and Imaginary linear components.}}{5}{table.caption.1}\protected@file@percent }
+\providecommand*\caption@xref[2]{\@setref\relax\@undefined{#1}}
+\newlabel{tab:sample_trace}{{1}{5}{First five and last three rows of \texttt {Trc0.s1p} (\texttt {dry} class) assuming RI format. Frequency is in~\si {\hertz }, followed by Real and Imaginary linear components}{table.caption.1}{}}
+\newlabel{tab:sample_trace@cref}{{[table][1][]1}{[1][4][]5}{}{}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {2.3}Sample Trace Inspection}{5}{subsection.2.3}\protected@file@percent }
+\newlabel{sec:dataset:sample}{{2.3}{5}{Sample Trace Inspection}{subsection.2.3}{}}
+\newlabel{sec:dataset:sample@cref}{{[subsection][3][2]2.3}{[1][4][]5}{}{}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {2.4}Frequency Grid Validation}{5}{subsection.2.4}\protected@file@percent }
+\newlabel{sec:dataset:freqgrid}{{2.4}{5}{Frequency Grid Validation}{subsection.2.4}{}}
+\newlabel{sec:dataset:freqgrid@cref}{{[subsection][4][2]2.4}{[1][5][]5}{}{}{}}
+\newlabel{eq:freq_grid}{{4}{5}{Frequency Grid Validation}{equation.4}{}}
+\newlabel{eq:freq_grid@cref}{{[equation][4][]4}{[1][5][]5}{}{}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {2.5}Class Distribution}{5}{subsection.2.5}\protected@file@percent }
+\newlabel{sec:dataset:classes}{{2.5}{5}{Class Distribution}{subsection.2.5}{}}
+\newlabel{sec:dataset:classes@cref}{{[subsection][5][2]2.5}{[1][5][]5}{}{}{}}
+\@writefile{lot}{\contentsline {table}{\numberline {2}{\ignorespaces Class distribution across the three surface-state categories. The imbalance ratio is computed relative to the minority classes.}}{6}{table.caption.2}\protected@file@percent }
+\newlabel{tab:class_dist}{{2}{6}{Class distribution across the three surface-state categories. The imbalance ratio is computed relative to the minority classes}{table.caption.2}{}}
+\newlabel{tab:class_dist@cref}{{[table][2][]2}{[1][5][]6}{}{}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {2.6}Trace Numbering and Missing Acquisitions}{6}{subsection.2.6}\protected@file@percent }
+\newlabel{sec:dataset:gaps}{{2.6}{6}{Trace Numbering and Missing Acquisitions}{subsection.2.6}{}}
+\newlabel{sec:dataset:gaps@cref}{{[subsection][6][2]2.6}{[1][5][]6}{}{}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {2.7}Folder-to-Label Mapping}{6}{subsection.2.7}\protected@file@percent }
+\newlabel{sec:dataset:labels}{{2.7}{6}{Folder-to-Label Mapping}{subsection.2.7}{}}
+\newlabel{sec:dataset:labels@cref}{{[subsection][7][2]2.7}{[1][6][]6}{}{}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {2.8}Deterministic Indexing Scheme}{6}{subsection.2.8}\protected@file@percent }
+\newlabel{sec:dataset:indexing}{{2.8}{6}{Deterministic Indexing Scheme}{subsection.2.8}{}}
+\newlabel{sec:dataset:indexing@cref}{{[subsection][8][2]2.8}{[1][6][]6}{}{}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {2.9}Metadata Logging Requirements}{7}{subsection.2.9}\protected@file@percent }
+\newlabel{sec:dataset:metadata}{{2.9}{7}{Metadata Logging Requirements}{subsection.2.9}{}}
+\newlabel{sec:dataset:metadata@cref}{{[subsection][9][2]2.9}{[1][7][]7}{}{}{}}
+\@writefile{toc}{\contentsline {section}{\numberline {3}Representation Routes}{7}{section.3}\protected@file@percent }
+\newlabel{sec:repr}{{3}{7}{Representation Routes}{section.3}{}}
+\newlabel{sec:repr@cref}{{[section][3][]3}{[1][7][]7}{}{}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {3.1}Route A: 1D Spectral Representations}{8}{subsection.3.1}\protected@file@percent }
+\newlabel{sec:repr:routeA}{{3.1}{8}{Route A: 1D Spectral Representations}{subsection.3.1}{}}
+\newlabel{sec:repr:routeA@cref}{{[subsection][1][3]3.1}{[1][7][]8}{}{}{}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {3.1.1}A1: Dual-Channel Cartesian Vector}{8}{subsubsection.3.1.1}\protected@file@percent }
+\newlabel{sec:repr:routeA:dual}{{3.1.1}{8}{A1: Dual-Channel Cartesian Vector}{subsubsection.3.1.1}{}}
+\newlabel{sec:repr:routeA:dual@cref}{{[subsubsection][1][3,1]3.1.1}{[1][8][]8}{}{}{}}
+\newlabel{eq:dual_channel}{{5}{8}{A1: Dual-Channel Cartesian Vector}{equation.5}{}}
+\newlabel{eq:dual_channel@cref}{{[equation][5][]5}{[1][8][]8}{}{}{}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {3.1.2}A2: Flattened Cartesian Vector}{8}{subsubsection.3.1.2}\protected@file@percent }
+\newlabel{sec:repr:routeA:flat}{{3.1.2}{8}{A2: Flattened Cartesian Vector}{subsubsection.3.1.2}{}}
+\newlabel{sec:repr:routeA:flat@cref}{{[subsubsection][2][3,1]3.1.2}{[1][8][]8}{}{}{}}
+\newlabel{eq:flat_vector}{{6}{8}{A2: Flattened Cartesian Vector}{equation.6}{}}
+\newlabel{eq:flat_vector@cref}{{[equation][6][]6}{[1][8][]8}{}{}{}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {3.1.3}A3: Derivative Augmented Cartesian Vector}{8}{subsubsection.3.1.3}\protected@file@percent }
+\newlabel{sec:repr:routeA:deriv}{{3.1.3}{8}{A3: Derivative Augmented Cartesian Vector}{subsubsection.3.1.3}{}}
+\newlabel{sec:repr:routeA:deriv@cref}{{[subsubsection][3][3,1]3.1.3}{[1][8][]8}{}{}{}}
+\newlabel{eq:first_diff_re}{{7}{8}{A3: Derivative Augmented Cartesian Vector}{equation.7}{}}
+\newlabel{eq:first_diff_re@cref}{{[equation][7][]7}{[1][8][]8}{}{}{}}
+\newlabel{eq:first_diff_im}{{8}{8}{A3: Derivative Augmented Cartesian Vector}{equation.8}{}}
+\newlabel{eq:first_diff_im@cref}{{[equation][8][]8}{[1][8][]8}{}{}{}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {3.1.4}Route A Encoding Summary}{8}{subsubsection.3.1.4}\protected@file@percent }
+\newlabel{sec:repr:routeA:summary}{{3.1.4}{8}{Route A Encoding Summary}{subsubsection.3.1.4}{}}
+\newlabel{sec:repr:routeA:summary@cref}{{[subsubsection][4][3,1]3.1.4}{[1][8][]8}{}{}{}}
+\@writefile{lot}{\contentsline {table}{\numberline {3}{\ignorespaces Comparison of Route~A (1D spectral) Cartesian encoding variants.}}{9}{table.caption.3}\protected@file@percent }
+\newlabel{tab:routeA_summary}{{3}{9}{Comparison of Route~A (1D spectral) Cartesian encoding variants}{table.caption.3}{}}
+\newlabel{tab:routeA_summary@cref}{{[table][3][]3}{[1][8][]9}{}{}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {3.2}Route B: 2D Image-Like Representations}{9}{subsection.3.2}\protected@file@percent }
+\newlabel{sec:repr:routeB}{{3.2}{9}{Route B: 2D Image-Like Representations}{subsection.3.2}{}}
+\newlabel{sec:repr:routeB@cref}{{[subsection][2][3]3.2}{[1][8][]9}{}{}{}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {3.2.1}B1: Grayscale Curve Images}{9}{subsubsection.3.2.1}\protected@file@percent }
+\newlabel{sec:repr:routeB:grayscale}{{3.2.1}{9}{B1: Grayscale Curve Images}{subsubsection.3.2.1}{}}
+\newlabel{sec:repr:routeB:grayscale@cref}{{[subsubsection][1][3,2]3.2.1}{[1][9][]9}{}{}{}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {3.2.2}B2: Dual-Channel Rasterised Maps}{9}{subsubsection.3.2.2}\protected@file@percent }
+\newlabel{sec:repr:routeB:dualchannel}{{3.2.2}{9}{B2: Dual-Channel Rasterised Maps}{subsubsection.3.2.2}{}}
+\newlabel{sec:repr:routeB:dualchannel@cref}{{[subsubsection][2][3,2]3.2.2}{[1][9][]9}{}{}{}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {3.2.3}B3: Spectrogram-Like and Heatmap Constructions}{10}{subsubsection.3.2.3}\protected@file@percent }
+\newlabel{sec:repr:routeB:heatmap}{{3.2.3}{10}{B3: Spectrogram-Like and Heatmap Constructions}{subsubsection.3.2.3}{}}
+\newlabel{sec:repr:routeB:heatmap@cref}{{[subsubsection][3][3,2]3.2.3}{[1][9][]10}{}{}{}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {3.2.4}Rendering Artefact Warning}{10}{subsubsection.3.2.4}\protected@file@percent }
+\newlabel{sec:repr:routeB:warning}{{3.2.4}{10}{Rendering Artefact Warning}{subsubsection.3.2.4}{}}
+\newlabel{sec:repr:routeB:warning@cref}{{[subsubsection][4][3,2]3.2.4}{[1][10][]10}{}{}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {3.3}Route A vs.\ Route B: Comparative Summary}{10}{subsection.3.3}\protected@file@percent }
+\newlabel{sec:repr:comparison}{{3.3}{10}{Route A vs.\ Route B: Comparative Summary}{subsection.3.3}{}}
+\newlabel{sec:repr:comparison@cref}{{[subsection][3][3]3.3}{[1][10][]10}{}{}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {3.4}Representation Selection Strategy}{10}{subsection.3.4}\protected@file@percent }
+\newlabel{sec:repr:strategy}{{3.4}{10}{Representation Selection Strategy}{subsection.3.4}{}}
+\newlabel{sec:repr:strategy@cref}{{[subsection][4][3]3.4}{[1][10][]10}{}{}{}}
+\@writefile{lot}{\contentsline {table}{\numberline {4}{\ignorespaces Comparison of Route~A (1D spectral) and Route~B (2D image-like) representation families.}}{11}{table.caption.4}\protected@file@percent }
+\newlabel{tab:route_comparison}{{4}{11}{Comparison of Route~A (1D spectral) and Route~B (2D image-like) representation families}{table.caption.4}{}}
+\newlabel{tab:route_comparison@cref}{{[table][4][]4}{[1][10][]11}{}{}{}}
+\@writefile{toc}{\contentsline {section}{\numberline {4}Preprocessing Pipeline}{12}{section.4}\protected@file@percent }
+\newlabel{sec:preproc}{{4}{12}{Preprocessing Pipeline}{section.4}{}}
+\newlabel{sec:preproc@cref}{{[section][4][]4}{[1][12][]12}{}{}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {4.1}Three-Stage Pipeline Overview}{12}{subsection.4.1}\protected@file@percent }
+\newlabel{sec:preproc:stages}{{4.1}{12}{Three-Stage Pipeline Overview}{subsection.4.1}{}}
+\newlabel{sec:preproc:stages@cref}{{[subsection][1][4]4.1}{[1][12][]12}{}{}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {1}{\ignorespaces Three-stage data-conditioning pipeline. Stages~2 and~3 are covered in \Cref  {sec:norm,sec:augment}, respectively.}}{12}{figure.caption.5}\protected@file@percent }
+\newlabel{fig:pipeline_stages}{{1}{12}{Three-stage data-conditioning pipeline. Stages~2 and~3 are covered in \Cref {sec:norm,sec:augment}, respectively}{figure.caption.5}{}}
+\newlabel{fig:pipeline_stages@cref}{{[figure][1][]1}{[1][12][]12}{}{}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {4.2}Touchstone File Parsing}{12}{subsection.4.2}\protected@file@percent }
+\newlabel{sec:preproc:parsing}{{4.2}{12}{Touchstone File Parsing}{subsection.4.2}{}}
+\newlabel{sec:preproc:parsing@cref}{{[subsection][2][4]4.2}{[1][12][]12}{}{}{}}
+\citation{touchstone_spec}
+\@writefile{toc}{\contentsline {paragraph}{Parsing assumptions.}{13}{subsection.4.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Column interpretation.}{13}{subsection.4.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {4.3}Frequency-Grid Validation}{13}{subsection.4.3}\protected@file@percent }
+\newlabel{sec:preproc:freqgrid}{{4.3}{13}{Frequency-Grid Validation}{subsection.4.3}{}}
+\newlabel{sec:preproc:freqgrid@cref}{{[subsection][3][4]4.3}{[1][13][]13}{}{}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {4.4}Missing-Value and Malformed-File Handling}{13}{subsection.4.4}\protected@file@percent }
+\newlabel{sec:preproc:missing}{{4.4}{13}{Missing-Value and Malformed-File Handling}{subsection.4.4}{}}
+\newlabel{sec:preproc:missing@cref}{{[subsection][4][4]4.4}{[1][13][]13}{}{}{}}
+\@writefile{toc}{\contentsline {paragraph}{Missing and non-finite values.}{13}{subsection.4.4}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Malformed files.}{14}{subsection.4.4}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {4.5}Outlier Inspection}{14}{subsection.4.5}\protected@file@percent }
+\newlabel{sec:preproc:outliers}{{4.5}{14}{Outlier Inspection}{subsection.4.5}{}}
+\newlabel{sec:preproc:outliers@cref}{{[subsection][5][4]4.5}{[1][14][]14}{}{}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {4.6}Class-Label Mapping}{14}{subsection.4.6}\protected@file@percent }
+\newlabel{sec:preproc:labels}{{4.6}{14}{Class-Label Mapping}{subsection.4.6}{}}
+\newlabel{sec:preproc:labels@cref}{{[subsection][6][4]4.6}{[1][14][]14}{}{}{}}
+\@writefile{toc}{\contentsline {paragraph}{Trace-numbering gaps.}{14}{subsection.4.6}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {4.7}Deterministic Sample Indexing}{15}{subsection.4.7}\protected@file@percent }
+\newlabel{sec:preproc:indexing}{{4.7}{15}{Deterministic Sample Indexing}{subsection.4.7}{}}
+\newlabel{sec:preproc:indexing@cref}{{[subsection][7][4]4.7}{[1][14][]15}{}{}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {4.8}Stage~1 Summary}{15}{subsection.4.8}\protected@file@percent }
+\newlabel{sec:preproc:summary}{{4.8}{15}{Stage~1 Summary}{subsection.4.8}{}}
+\newlabel{sec:preproc:summary@cref}{{[subsection][8][4]4.8}{[1][15][]15}{}{}{}}
+\@writefile{lot}{\contentsline {table}{\numberline {5}{\ignorespaces Stage~1 validity-preprocessing checklist.}}{15}{table.caption.6}\protected@file@percent }
+\newlabel{tab:preproc_checklist}{{5}{15}{Stage~1 validity-preprocessing checklist}{table.caption.6}{}}
+\newlabel{tab:preproc_checklist@cref}{{[table][5][]5}{[1][15][]15}{}{}{}}
+\@writefile{toc}{\contentsline {section}{\numberline {5}Normalization}{15}{section.5}\protected@file@percent }
+\newlabel{sec:norm}{{5}{15}{Normalization}{section.5}{}}
+\newlabel{sec:norm@cref}{{[section][5][]5}{[1][15][]15}{}{}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {5.1}Anti-Leakage Principle}{15}{subsection.5.1}\protected@file@percent }
+\newlabel{sec:norm:leakage}{{5.1}{15}{Anti-Leakage Principle}{subsection.5.1}{}}
+\newlabel{sec:norm:leakage@cref}{{[subsection][1][5]5.1}{[1][15][]15}{}{}{}}
+\citation{hosmer2013logistic}
+\citation{vapnik1995svm,cortes1995svm}
+\citation{haykin2009nn,goodfellow2016deep}
+\@writefile{toc}{\contentsline {subsection}{\numberline {5.2}Per-Feature Z-Score Normalization}{16}{subsection.5.2}\protected@file@percent }
+\newlabel{sec:norm:zscore}{{5.2}{16}{Per-Feature Z-Score Normalization}{subsection.5.2}{}}
+\newlabel{sec:norm:zscore@cref}{{[subsection][2][5]5.2}{[1][16][]16}{}{}{}}
+\newlabel{eq:zscore}{{9}{16}{Per-Feature Z-Score Normalization}{equation.9}{}}
+\newlabel{eq:zscore@cref}{{[equation][9][]9}{[1][16][]16}{}{}{}}
+\@writefile{toc}{\contentsline {paragraph}{When to prefer z-score.}{16}{equation.9}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Sensitivity to outliers.}{16}{equation.9}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {5.3}Min-Max Scaling}{16}{subsection.5.3}\protected@file@percent }
+\newlabel{sec:norm:minmax}{{5.3}{16}{Min-Max Scaling}{subsection.5.3}{}}
+\newlabel{sec:norm:minmax@cref}{{[subsection][3][5]5.3}{[1][16][]16}{}{}{}}
+\newlabel{eq:minmax}{{10}{16}{Min-Max Scaling}{equation.10}{}}
+\newlabel{eq:minmax@cref}{{[equation][10][]10}{[1][16][]16}{}{}{}}
+\@writefile{toc}{\contentsline {paragraph}{When to prefer min-max.}{16}{equation.10}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Out-of-range values at test time.}{16}{equation.10}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {5.4}Robust Scaling}{16}{subsection.5.4}\protected@file@percent }
+\newlabel{sec:norm:robust}{{5.4}{16}{Robust Scaling}{subsection.5.4}{}}
+\newlabel{sec:norm:robust@cref}{{[subsection][4][5]5.4}{[1][16][]16}{}{}{}}
+\newlabel{eq:robust}{{11}{16}{Robust Scaling}{equation.11}{}}
+\newlabel{eq:robust@cref}{{[equation][11][]11}{[1][16][]16}{}{}{}}
+\citation{goodfellow2016deep}
+\citation{ioffe2015batchnorm}
+\citation{ioffe2015batchnorm}
+\citation{sklearn_docs}
+\@writefile{toc}{\contentsline {subsection}{\numberline {5.5}Channel-Wise Normalization for Route~A}{17}{subsection.5.5}\protected@file@percent }
+\newlabel{sec:norm:channelwise}{{5.5}{17}{Channel-Wise Normalization for Route~A}{subsection.5.5}{}}
+\newlabel{sec:norm:channelwise@cref}{{[subsection][5][5]5.5}{[1][16][]17}{}{}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {5.6}Image Normalization for Route~B}{17}{subsection.5.6}\protected@file@percent }
+\newlabel{sec:norm:image}{{5.6}{17}{Image Normalization for Route~B}{subsection.5.6}{}}
+\newlabel{sec:norm:image@cref}{{[subsection][6][5]5.6}{[1][17][]17}{}{}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {5.7}Comparison of Normalization Strategies}{17}{subsection.5.7}\protected@file@percent }
+\newlabel{sec:norm:comparison}{{5.7}{17}{Comparison of Normalization Strategies}{subsection.5.7}{}}
+\newlabel{sec:norm:comparison@cref}{{[subsection][7][5]5.7}{[1][17][]17}{}{}{}}
+\@writefile{lot}{\contentsline {table}{\numberline {6}{\ignorespaces Comparison of normalization strategies.}}{17}{table.caption.7}\protected@file@percent }
+\newlabel{tab:norm_comparison}{{6}{17}{Comparison of normalization strategies}{table.caption.7}{}}
+\newlabel{tab:norm_comparison@cref}{{[table][6][]6}{[1][17][]17}{}{}{}}
+\citation{onnx_runtime}
+\citation{vapnik1995svm}
+\@writefile{toc}{\contentsline {subsection}{\numberline {5.8}Practical Recommendations}{18}{subsection.5.8}\protected@file@percent }
+\newlabel{sec:norm:recommendations}{{5.8}{18}{Practical Recommendations}{subsection.5.8}{}}
+\newlabel{sec:norm:recommendations@cref}{{[subsection][8][5]5.8}{[1][17][]18}{}{}{}}
+\@writefile{toc}{\contentsline {section}{\numberline {6}Overfitting Control and Evaluation Integrity}{18}{section.6}\protected@file@percent }
+\newlabel{sec:overfit}{{6}{18}{Overfitting Control and Evaluation Integrity}{section.6}{}}
+\newlabel{sec:overfit@cref}{{[section][6][]6}{[1][18][]18}{}{}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {6.1}Context: Small-Sample Deep Learning}{18}{subsection.6.1}\protected@file@percent }
+\newlabel{sec:overfit:context}{{6.1}{18}{Context: Small-Sample Deep Learning}{subsection.6.1}{}}
+\newlabel{sec:overfit:context@cref}{{[subsection][1][6]6.1}{[1][18][]18}{}{}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {6.2}Stratified Train / Validation / Test Split}{18}{subsection.6.2}\protected@file@percent }
+\newlabel{sec:overfit:split}{{6.2}{18}{Stratified Train / Validation / Test Split}{subsection.6.2}{}}
+\newlabel{sec:overfit:split@cref}{{[subsection][2][6]6.2}{[1][18][]18}{}{}{}}
+\citation{kohavi1995cv}
+\citation{varma2006nested_cv,cawley2010overfitting}
+\citation{cawley2010overfitting}
+\@writefile{toc}{\contentsline {subsection}{\numberline {6.3}Repeated Stratified $k$-Fold Cross-Validation}{19}{subsection.6.3}\protected@file@percent }
+\newlabel{sec:overfit:cv}{{6.3}{19}{Repeated Stratified $k$-Fold Cross-Validation}{subsection.6.3}{}}
+\newlabel{sec:overfit:cv@cref}{{[subsection][3][6]6.3}{[1][19][]19}{}{}{}}
+\@writefile{toc}{\contentsline {paragraph}{Critical implementation detail.}{19}{subsection.6.3}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {6.4}Nested Cross-Validation for Hyper-Parameter Tuning}{19}{subsection.6.4}\protected@file@percent }
+\newlabel{sec:overfit:nested}{{6.4}{19}{Nested Cross-Validation for Hyper-Parameter Tuning}{subsection.6.4}{}}
+\newlabel{sec:overfit:nested@cref}{{[subsection][4][6]6.4}{[1][19][]19}{}{}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {6.5}Near-Duplicate and Temporal-Correlation Awareness}{19}{subsection.6.5}\protected@file@percent }
+\newlabel{sec:overfit:duplicates}{{6.5}{19}{Near-Duplicate and Temporal-Correlation Awareness}{subsection.6.5}{}}
+\newlabel{sec:overfit:duplicates@cref}{{[subsection][5][6]6.5}{[1][19][]19}{}{}{}}
+\citation{sklearn_docs}
+\@writefile{toc}{\contentsline {paragraph}{Detection protocol.}{20}{subsection.6.5}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {6.6}Capacity--Dataset Size Mismatch}{20}{subsection.6.6}\protected@file@percent }
+\newlabel{sec:overfit:capacity}{{6.6}{20}{Capacity--Dataset Size Mismatch}{subsection.6.6}{}}
+\newlabel{sec:overfit:capacity@cref}{{[subsection][6][6]6.6}{[1][20][]20}{}{}{}}
+\@writefile{lot}{\contentsline {table}{\numberline {7}{\ignorespaces Indicative parameter counts and overfitting risk relative to $N=1603$ samples.}}{20}{table.caption.8}\protected@file@percent }
+\newlabel{tab:model_capacity}{{7}{20}{Indicative parameter counts and overfitting risk relative to $N=1603$ samples}{table.caption.8}{}}
+\newlabel{tab:model_capacity@cref}{{[table][7][]7}{[1][20][]20}{}{}{}}
+\@writefile{toc}{\contentsline {paragraph}{Recommendation.}{20}{table.caption.8}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {6.7}Regularization Toolkit}{20}{subsection.6.7}\protected@file@percent }
+\newlabel{sec:overfit:reg}{{6.7}{20}{Regularization Toolkit}{subsection.6.7}{}}
+\newlabel{sec:overfit:reg@cref}{{[subsection][7][6]6.7}{[1][20][]20}{}{}{}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {6.7.1}Early Stopping}{20}{subsubsection.6.7.1}\protected@file@percent }
+\newlabel{sec:overfit:reg:es}{{6.7.1}{20}{Early Stopping}{subsubsection.6.7.1}{}}
+\newlabel{sec:overfit:reg:es@cref}{{[subsubsection][1][6,7]6.7.1}{[1][20][]20}{}{}{}}
+\citation{loshchilov2017decoupled}
+\citation{srivastava2014dropout}
+\citation{guo2017calibration}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {6.7.2}Weight Decay / L2 Regularization}{21}{subsubsection.6.7.2}\protected@file@percent }
+\newlabel{sec:overfit:reg:wd}{{6.7.2}{21}{Weight Decay / L2 Regularization}{subsubsection.6.7.2}{}}
+\newlabel{sec:overfit:reg:wd@cref}{{[subsubsection][2][6,7]6.7.2}{[1][20][]21}{}{}{}}
+\newlabel{eq:weight_decay}{{12}{21}{Weight Decay / L2 Regularization}{equation.12}{}}
+\newlabel{eq:weight_decay@cref}{{[equation][12][]12}{[1][20][]21}{}{}{}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {6.7.3}Dropout}{21}{subsubsection.6.7.3}\protected@file@percent }
+\newlabel{sec:overfit:reg:dropout}{{6.7.3}{21}{Dropout}{subsubsection.6.7.3}{}}
+\newlabel{sec:overfit:reg:dropout@cref}{{[subsubsection][3][6,7]6.7.3}{[1][21][]21}{}{}{}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {6.7.4}Label Smoothing}{21}{subsubsection.6.7.4}\protected@file@percent }
+\newlabel{sec:overfit:reg:ls}{{6.7.4}{21}{Label Smoothing}{subsubsection.6.7.4}{}}
+\newlabel{sec:overfit:reg:ls@cref}{{[subsubsection][4][6,7]6.7.4}{[1][21][]21}{}{}{}}
+\newlabel{eq:label_smooth}{{13}{21}{Label Smoothing}{equation.13}{}}
+\newlabel{eq:label_smooth@cref}{{[equation][13][]13}{[1][21][]21}{}{}{}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {6.7.5}Pruning}{21}{subsubsection.6.7.5}\protected@file@percent }
+\newlabel{sec:overfit:reg:pruning}{{6.7.5}{21}{Pruning}{subsubsection.6.7.5}{}}
+\newlabel{sec:overfit:reg:pruning@cref}{{[subsubsection][5][6,7]6.7.5}{[1][21][]21}{}{}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {6.8}Confidence Calibration as a Diagnostic}{21}{subsection.6.8}\protected@file@percent }
+\newlabel{sec:overfit:calibration}{{6.8}{21}{Confidence Calibration as a Diagnostic}{subsection.6.8}{}}
+\newlabel{sec:overfit:calibration@cref}{{[subsection][8][6]6.8}{[1][21][]21}{}{}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {6.9}Summary of Safeguards}{22}{subsection.6.9}\protected@file@percent }
+\newlabel{sec:overfit:summary}{{6.9}{22}{Summary of Safeguards}{subsection.6.9}{}}
+\newlabel{sec:overfit:summary@cref}{{[subsection][9][6]6.9}{[1][21][]22}{}{}{}}
+\@writefile{toc}{\contentsline {section}{\numberline {7}Data Augmentation}{22}{section.7}\protected@file@percent }
+\newlabel{sec:augment}{{7}{22}{Data Augmentation}{section.7}{}}
+\newlabel{sec:augment@cref}{{[section][7][]7}{[1][22][]22}{}{}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {7.1}Additive Gaussian Noise}{22}{subsection.7.1}\protected@file@percent }
+\newlabel{sec:augment:noise}{{7.1}{22}{Additive Gaussian Noise}{subsection.7.1}{}}
+\newlabel{sec:augment:noise@cref}{{[subsection][1][7]7.1}{[1][22][]22}{}{}{}}
+\@writefile{toc}{\contentsline {paragraph}{Physical justification.}{22}{subsection.7.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Implementation.}{22}{subsection.7.1}\protected@file@percent }
+\newlabel{eq:gauss_noise}{{14}{22}{Implementation}{equation.14}{}}
+\newlabel{eq:gauss_noise@cref}{{[equation][14][]14}{[1][22][]22}{}{}{}}
+\@writefile{toc}{\contentsline {paragraph}{Risk level: \textbf  {Low}.}{23}{equation.14}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {7.2}Frequency-Local Smooth Perturbation}{23}{subsection.7.2}\protected@file@percent }
+\newlabel{sec:augment:jitter}{{7.2}{23}{Frequency-Local Smooth Perturbation}{subsection.7.2}{}}
+\newlabel{sec:augment:jitter@cref}{{[subsection][2][7]7.2}{[1][23][]23}{}{}{}}
+\@writefile{toc}{\contentsline {paragraph}{Physical justification.}{23}{subsection.7.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Implementation.}{23}{subsection.7.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Risk level: \textbf  {Low--Medium}.}{23}{subsection.7.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {7.3}Magnitude Scaling}{23}{subsection.7.3}\protected@file@percent }
+\newlabel{sec:augment:magscale}{{7.3}{23}{Magnitude Scaling}{subsection.7.3}{}}
+\newlabel{sec:augment:magscale@cref}{{[subsection][3][7]7.3}{[1][23][]23}{}{}{}}
+\@writefile{toc}{\contentsline {paragraph}{Physical justification.}{23}{subsection.7.3}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Implementation.}{23}{subsection.7.3}\protected@file@percent }
+\newlabel{eq:mag_scale}{{15}{23}{Implementation}{equation.15}{}}
+\newlabel{eq:mag_scale@cref}{{[equation][15][]15}{[1][23][]23}{}{}{}}
+\@writefile{toc}{\contentsline {paragraph}{Risk level: \textbf  {Low}.}{23}{equation.15}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {7.4}Phase Perturbation}{23}{subsection.7.4}\protected@file@percent }
+\newlabel{sec:augment:phase}{{7.4}{23}{Phase Perturbation}{subsection.7.4}{}}
+\newlabel{sec:augment:phase@cref}{{[subsection][4][7]7.4}{[1][23][]23}{}{}{}}
+\@writefile{toc}{\contentsline {paragraph}{Physical justification.}{23}{subsection.7.4}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Implementation.}{23}{subsection.7.4}\protected@file@percent }
+\newlabel{eq:phase_perturb}{{16}{23}{Implementation}{equation.16}{}}
+\newlabel{eq:phase_perturb@cref}{{[equation][16][]16}{[1][23][]23}{}{}{}}
+\citation{zhang2018mixup}
+\@writefile{toc}{\contentsline {paragraph}{Risk level: \textbf  {Medium}.}{24}{equation.16}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {7.5}Frequency-Axis Shift}{24}{subsection.7.5}\protected@file@percent }
+\newlabel{sec:augment:freqshift}{{7.5}{24}{Frequency-Axis Shift}{subsection.7.5}{}}
+\newlabel{sec:augment:freqshift@cref}{{[subsection][5][7]7.5}{[1][23][]24}{}{}{}}
+\@writefile{toc}{\contentsline {paragraph}{Physical justification.}{24}{subsection.7.5}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Implementation (conditional).}{24}{subsection.7.5}\protected@file@percent }
+\newlabel{eq:freq_shift}{{17}{24}{Implementation (conditional)}{equation.17}{}}
+\newlabel{eq:freq_shift@cref}{{[equation][17][]17}{[1][24][]24}{}{}{}}
+\@writefile{toc}{\contentsline {paragraph}{Risk level: \textbf  {Medium--High}.}{24}{equation.17}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {7.6}Mixup Augmentation}{24}{subsection.7.6}\protected@file@percent }
+\newlabel{sec:augment:mixup}{{7.6}{24}{Mixup Augmentation}{subsection.7.6}{}}
+\newlabel{sec:augment:mixup@cref}{{[subsection][6][7]7.6}{[1][24][]24}{}{}{}}
+\newlabel{eq:mixup}{{18}{24}{Mixup Augmentation}{equation.18}{}}
+\newlabel{eq:mixup@cref}{{[equation][18][]18}{[1][24][]24}{}{}{}}
+\@writefile{toc}{\contentsline {paragraph}{Risk assessment: \textbf  {High}.}{24}{equation.18}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Recommendation.}{24}{equation.18}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {7.7}Image-Domain Augmentations for Route~B}{24}{subsection.7.7}\protected@file@percent }
+\newlabel{sec:augment:image}{{7.7}{24}{Image-Domain Augmentations for Route~B}{subsection.7.7}{}}
+\newlabel{sec:augment:image@cref}{{[subsection][7][7]7.7}{[1][24][]24}{}{}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {7.8}Augmentation Summary Table}{25}{subsection.7.8}\protected@file@percent }
+\newlabel{sec:augment:table}{{7.8}{25}{Augmentation Summary Table}{subsection.7.8}{}}
+\newlabel{sec:augment:table@cref}{{[subsection][8][7]7.8}{[1][25][]25}{}{}{}}
+\@writefile{lot}{\contentsline {table}{\numberline {8}{\ignorespaces Summary of augmentation techniques for $S_{11}$ trace data.}}{25}{table.caption.9}\protected@file@percent }
+\newlabel{tab:augment_summary}{{8}{25}{Summary of augmentation techniques for $S_{11}$ trace data}{table.caption.9}{}}
+\newlabel{tab:augment_summary@cref}{{[table][8][]8}{[1][25][]25}{}{}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {7.9}Augmentation Budget and Ablation}{25}{subsection.7.9}\protected@file@percent }
+\newlabel{sec:augment:ablation}{{7.9}{25}{Augmentation Budget and Ablation}{subsection.7.9}{}}
+\newlabel{sec:augment:ablation@cref}{{[subsection][9][7]7.9}{[1][25][]25}{}{}{}}
+\@writefile{toc}{\contentsline {paragraph}{Ablation protocol.}{26}{subsection.7.9}\protected@file@percent }
+\bibstyle{plainnat}
+\bibdata{references}
+\bibcite{cawley2010overfitting}{{1}{2010}{{Cawley and Talbot}}{{}}}
+\bibcite{cortes1995svm}{{2}{1995}{{Cortes and Vapnik}}{{}}}
+\bibcite{goodfellow2016deep}{{3}{2016}{{Goodfellow et~al.}}{{Goodfellow, Bengio, and Courville}}}
+\bibcite{tensorflow_lite}{{4}{2023}{{Google}}{{}}}
+\bibcite{guo2017calibration}{{5}{2017}{{Guo et~al.}}{{Guo, Pleiss, Sun, and Weinberger}}}
+\bibcite{haykin2009nn}{{6}{2009}{{Haykin}}{{}}}
+\bibcite{hosmer2013logistic}{{7}{2013}{{Hosmer et~al.}}{{Hosmer, Lemeshow, and Sturdivant}}}
+\bibcite{touchstone_spec}{{8}{2009}{{IBIS Open Forum}}{{}}}
+\bibcite{ioffe2015batchnorm}{{9}{2015}{{Ioffe and Szegedy}}{{}}}
+\bibcite{keysight_s2p_format}{{10}{2017}{{Keysight Technologies}}{{}}}
+\bibcite{kohavi1995cv}{{11}{1995}{{Kohavi}}{{}}}
+\bibcite{loshchilov2017decoupled}{{12}{2019}{{Loshchilov and Hutter}}{{}}}
+\bibcite{onnx_runtime}{{13}{2023}{{Microsoft}}{{}}}
+\bibcite{sklearn_docs}{{14}{2011}{{Pedregosa et~al.}}{{Pedregosa, Varoquaux, Gramfort, Michel, Thirion, Grisel, Blondel, Prettenhofer, Weiss, Dubourg, Vanderplas, Passos, Cournapeau, Brucher, Perrot, and Duchesnay}}}
+\bibcite{pozar2011microwave}{{15}{2011}{{Pozar}}{{}}}
+\bibcite{srivastava2014dropout}{{16}{2014}{{Srivastava et~al.}}{{Srivastava, Hinton, Krizhevsky, Sutskever, and Salakhutdinov}}}
+\bibcite{vapnik1995svm}{{17}{1995}{{Vapnik}}{{}}}
+\bibcite{varma2006nested_cv}{{18}{2006}{{Varma and Simon}}{{}}}
+\bibcite{zhang2018mixup}{{19}{2018}{{Zhang et~al.}}{{Zhang, Cisse, Dauphin, and Lopez-Paz}}}
+\gdef \@abspage@last{32}

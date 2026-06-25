@@ -1,0 +1,349 @@
+% references.bib — Bibliography for S11 Edge Methodology Report
+% ================================================================
+%  Every key listed in the project conventions is defined here.
+%  Entries use accurate metadata (real authors, titles, years).
+% ================================================================
+
+% ── File-format references ──────────────────────────────────────
+
+@techreport{touchstone_spec,
+  author       = {{IBIS Open Forum}},
+  title        = {Touchstone\textsuperscript{\textregistered} File Format Specification, Version~2.0},
+  institution  = {IBIS Open Forum},
+  year         = {2009},
+  note         = {Defines the standard \texttt{.s1p}/\texttt{.s2p}/\texttt{.snp} file format
+                  for S-parameter data interchange},
+  url          = {https://ibis.org/touchstone_ver2.0/touchstone_ver2_0.pdf},
+}
+
+@techreport{keysight_s2p_format,
+  author       = {{Keysight Technologies}},
+  title        = {Reading and Writing {S}-Parameter Data Files with the {ENA} Series Network Analyzers},
+  institution  = {Keysight Technologies},
+  year         = {2017},
+  number       = {Application Note 5989-6785EN},
+  note         = {Covers Touchstone v1/v2 import/export and custom ASCII formats},
+  url          = {https://www.keysight.com/},
+}
+
+% ── Support Vector Machines ─────────────────────────────────────
+
+@book{vapnik1995svm,
+  author    = {Vapnik, Vladimir N.},
+  title     = {The Nature of Statistical Learning Theory},
+  publisher = {Springer-Verlag},
+  address   = {New York},
+  year      = {1995},
+  isbn      = {978-0-387-94559-0},
+}
+
+@article{cortes1995svm,
+  author  = {Cortes, Corinna and Vapnik, Vladimir},
+  title   = {Support-Vector Networks},
+  journal = {Machine Learning},
+  volume  = {20},
+  number  = {3},
+  pages   = {273--297},
+  year    = {1995},
+  doi     = {10.1007/BF00994018},
+}
+
+% ── Ensemble Methods ────────────────────────────────────────────
+
+@article{breiman2001rf,
+  author  = {Breiman, Leo},
+  title   = {Random Forests},
+  journal = {Machine Learning},
+  volume  = {45},
+  number  = {1},
+  pages   = {5--32},
+  year    = {2001},
+  doi     = {10.1023/A:1010933404324},
+}
+
+@article{friedman2001gbm,
+  author  = {Friedman, Jerome H.},
+  title   = {Greedy Function Approximation: A Gradient Boosting Machine},
+  journal = {The Annals of Statistics},
+  volume  = {29},
+  number  = {5},
+  pages   = {1189--1232},
+  year    = {2001},
+  doi     = {10.1214/aos/1013203451},
+}
+
+@inproceedings{chen2016xgboost,
+  author    = {Chen, Tianqi and Guestrin, Carlos},
+  title     = {{XGBoost}: A Scalable Tree Boosting System},
+  booktitle = {Proceedings of the 22nd ACM SIGKDD International Conference on
+               Knowledge Discovery and Data Mining},
+  pages     = {785--794},
+  year      = {2016},
+  publisher = {ACM},
+  address   = {New York, NY, USA},
+  doi       = {10.1145/2939672.2939785},
+}
+
+% ── Convolutional & Residual Networks ───────────────────────────
+
+@article{lecun1998cnn,
+  author  = {LeCun, Yann and Bottou, L\'{e}on and Bengio, Yoshua and Haffner, Patrick},
+  title   = {Gradient-Based Learning Applied to Document Recognition},
+  journal = {Proceedings of the IEEE},
+  volume  = {86},
+  number  = {11},
+  pages   = {2278--2324},
+  year    = {1998},
+  doi     = {10.1109/5.726791},
+}
+
+@inproceedings{he2016resnet,
+  author    = {He, Kaiming and Zhang, Xiangyu and Ren, Shaoqing and Sun, Jian},
+  title     = {Deep Residual Learning for Image Recognition},
+  booktitle = {Proceedings of the IEEE Conference on Computer Vision and
+               Pattern Recognition (CVPR)},
+  pages     = {770--778},
+  year      = {2016},
+  doi       = {10.1109/CVPR.2016.90},
+}
+
+% ── Kolmogorov–Arnold Networks ──────────────────────────────────
+
+@article{liu2024kan,
+  author  = {Liu, Ziming and Wang, Yixuan and Vaidya, Sachin and Ruehle, Fabian and
+             Halverson, James and Solja\v{c}i\'{c}, Marin and Hou, Thomas Y. and
+             Tegmark, Max},
+  title   = {{KAN}: {K}olmogorov--{A}rnold Networks},
+  journal = {arXiv preprint arXiv:2404.19756},
+  year    = {2024},
+  eprint  = {2404.19756},
+  archiveprefix = {arXiv},
+  primaryclass  = {cs.LG},
+}
+
+@article{kolmogorov1957representation,
+  author  = {Kolmogorov, Andrey N.},
+  title   = {On the Representation of Continuous Functions of Several Variables
+             by Superposition of Continuous Functions of One Variable and Addition},
+  journal = {Doklady Akademii Nauk SSSR},
+  volume  = {114},
+  number  = {5},
+  pages   = {953--956},
+  year    = {1957},
+}
+
+% ── Software & Frameworks ──────────────────────────────────────
+
+@article{sklearn_docs,
+  author  = {Pedregosa, Fabian and Varoquaux, Ga\"{e}l and Gramfort, Alexandre and
+             Michel, Vincent and Thirion, Bertrand and Grisel, Olivier and
+             Blondel, Mathieu and Prettenhofer, Peter and Weiss, Ron and
+             Dubourg, Vincent and Vanderplas, Jake and Passos, Alexandre and
+             Cournapeau, David and Brucher, Matthieu and Perrot, Matthieu and
+             Duchesnay, \'{E}douard},
+  title   = {Scikit-learn: Machine Learning in {P}ython},
+  journal = {Journal of Machine Learning Research},
+  volume  = {12},
+  pages   = {2825--2830},
+  year    = {2011},
+}
+
+@misc{tensorflow_lite,
+  author       = {{Google}},
+  title        = {{TensorFlow} Lite: Deploy Machine Learning Models on Mobile and Edge Devices},
+  year         = {2023},
+  howpublished = {\url{https://www.tensorflow.org/lite}},
+  note         = {Accessed: 2024-01-15},
+}
+
+@misc{onnx_runtime,
+  author       = {{Microsoft}},
+  title        = {{ONNX} Runtime: Cross-Platform, High Performance ML Inferencing and Training Accelerator},
+  year         = {2023},
+  howpublished = {\url{https://onnxruntime.ai/}},
+  note         = {Accessed: 2024-01-15},
+}
+
+% ── Evaluation & Calibration ───────────────────────────────────
+
+@article{sokolova2009f1,
+  author  = {Sokolova, Marina and Lapalme, Guy},
+  title   = {A Systematic Analysis of Performance Measures for Classification Tasks},
+  journal = {Information Processing \& Management},
+  volume  = {45},
+  number  = {4},
+  pages   = {427--437},
+  year    = {2009},
+  doi     = {10.1016/j.ipm.2009.03.002},
+}
+
+@inproceedings{guo2017calibration,
+  author    = {Guo, Chuan and Pleiss, Geoff and Sun, Yu and Weinberger, Kilian Q.},
+  title     = {On Calibration of Modern Neural Networks},
+  booktitle = {Proceedings of the 34th International Conference on Machine Learning
+               (ICML)},
+  pages     = {1321--1330},
+  year      = {2017},
+  volume    = {70},
+  series    = {Proceedings of Machine Learning Research},
+  publisher = {PMLR},
+}
+
+% ── Neural Networks (General) ──────────────────────────────────
+
+@book{haykin2009nn,
+  author    = {Haykin, Simon},
+  title     = {Neural Networks and Learning Machines},
+  edition   = {3rd},
+  publisher = {Pearson},
+  address   = {Upper Saddle River, NJ},
+  year      = {2009},
+  isbn      = {978-0-13-147139-9},
+}
+
+@book{goodfellow2016deep,
+  author    = {Goodfellow, Ian and Bengio, Yoshua and Courville, Aaron},
+  title     = {Deep Learning},
+  publisher = {MIT Press},
+  address   = {Cambridge, MA},
+  year      = {2016},
+  url       = {https://www.deeplearningbook.org},
+  isbn      = {978-0-262-03561-3},
+}
+
+@book{bishop2006prml,
+  author    = {Bishop, Christopher M.},
+  title     = {Pattern Recognition and Machine Learning},
+  publisher = {Springer},
+  address   = {New York},
+  year      = {2006},
+  isbn      = {978-0-387-31073-2},
+}
+
+% ── Clustering ──────────────────────────────────────────────────
+
+@article{lloyd1982kmeans,
+  author  = {Lloyd, Stuart P.},
+  title   = {Least Squares Quantization in {PCM}},
+  journal = {IEEE Transactions on Information Theory},
+  volume  = {28},
+  number  = {2},
+  pages   = {129--137},
+  year    = {1982},
+  doi     = {10.1109/TIT.1982.1056489},
+}
+
+@inproceedings{macqueen1967kmeans,
+  author    = {MacQueen, James},
+  title     = {Some Methods for Classification and Analysis of Multivariate Observations},
+  booktitle = {Proceedings of the Fifth Berkeley Symposium on Mathematical Statistics
+               and Probability},
+  volume    = {1},
+  pages     = {281--297},
+  year      = {1967},
+  publisher = {University of California Press},
+  address   = {Berkeley, CA},
+}
+
+% ── Logistic Regression ────────────────────────────────────────
+
+@book{hosmer2013logistic,
+  author    = {Hosmer, David W. and Lemeshow, Stanley and Sturdivant, Rodney X.},
+  title     = {Applied Logistic Regression},
+  edition   = {3rd},
+  publisher = {John Wiley \& Sons},
+  address   = {Hoboken, NJ},
+  year      = {2013},
+  isbn      = {978-0-470-58247-3},
+}
+
+% ── Regularisation & Training Techniques ───────────────────────
+
+@inproceedings{zhang2018mixup,
+  author    = {Zhang, Hongyi and Cisse, Moustapha and Dauphin, Yann N. and Lopez-Paz, David},
+  title     = {mixup: Beyond Empirical Risk Minimization},
+  booktitle = {International Conference on Learning Representations (ICLR)},
+  year      = {2018},
+  url       = {https://openreview.net/forum?id=r1Ddp1-Rb},
+}
+
+@article{srivastava2014dropout,
+  author  = {Srivastava, Nitish and Hinton, Geoffrey and Krizhevsky, Alex and
+             Sutskever, Ilya and Salakhutdinov, Ruslan},
+  title   = {Dropout: A Simple Way to Prevent Neural Networks from Overfitting},
+  journal = {Journal of Machine Learning Research},
+  volume  = {15},
+  number  = {1},
+  pages   = {1929--1958},
+  year    = {2014},
+}
+
+@inproceedings{ioffe2015batchnorm,
+  author    = {Ioffe, Sergey and Szegedy, Christian},
+  title     = {Batch Normalization: Accelerating Deep Network Training by Reducing
+               Internal Covariate Shift},
+  booktitle = {Proceedings of the 32nd International Conference on Machine Learning
+               (ICML)},
+  pages     = {448--456},
+  year      = {2015},
+  volume    = {37},
+  series    = {Proceedings of Machine Learning Research},
+  publisher = {PMLR},
+}
+
+@inproceedings{loshchilov2017decoupled,
+  author    = {Loshchilov, Ilya and Hutter, Frank},
+  title     = {Decoupled Weight Decay Regularization},
+  booktitle = {International Conference on Learning Representations (ICLR)},
+  year      = {2019},
+  url       = {https://openreview.net/forum?id=Bkg6RiCqY7},
+  note      = {Originally published as arXiv:1711.05101 in 2017},
+}
+
+% ── Microwave Engineering ──────────────────────────────────────
+
+@book{pozar2011microwave,
+  author    = {Pozar, David M.},
+  title     = {Microwave Engineering},
+  edition   = {4th},
+  publisher = {John Wiley \& Sons},
+  address   = {Hoboken, NJ},
+  year      = {2011},
+  isbn      = {978-0-470-63155-3},
+}
+
+% ── Model Selection & Cross-Validation ─────────────────────────
+
+@article{cawley2010overfitting,
+  author  = {Cawley, Gavin C. and Talbot, Nicola L. C.},
+  title   = {On Over-Fitting in Model Selection and Subsequent Selection Bias in
+             Performance Evaluation},
+  journal = {Journal of Machine Learning Research},
+  volume  = {11},
+  pages   = {2079--2107},
+  year    = {2010},
+}
+
+@inproceedings{kohavi1995cv,
+  author    = {Kohavi, Ron},
+  title     = {A Study of Cross-Validation and Bootstrap for Accuracy Estimation
+               and Model Selection},
+  booktitle = {Proceedings of the Fourteenth International Joint Conference on
+               Artificial Intelligence (IJCAI)},
+  volume    = {2},
+  pages     = {1137--1143},
+  year      = {1995},
+  publisher = {Morgan Kaufmann},
+  address   = {San Francisco, CA},
+}
+
+@article{varma2006nested_cv,
+  author  = {Varma, Sudhir and Simon, Richard},
+  title   = {Bias in Error Estimation When Using Cross-Validation for Model Selection},
+  journal = {BMC Bioinformatics},
+  volume  = {7},
+  number  = {1},
+  pages   = {91},
+  year    = {2006},
+  doi     = {10.1186/1471-2105-7-91},
+}

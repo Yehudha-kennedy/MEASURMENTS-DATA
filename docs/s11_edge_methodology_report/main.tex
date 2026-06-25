@@ -1,0 +1,181 @@
+% main.tex — Master document for S11 Edge Methodology Report
+% Compile with: pdflatex → bibtex → pdflatex → pdflatex
+%
+\documentclass[11pt,a4paper]{article}
+
+% ──────────────────────────────────────────────
+%  Geometry & Typography
+% ──────────────────────────────────────────────
+\usepackage[margin=2.5cm]{geometry}
+\usepackage{microtype}
+
+% ──────────────────────────────────────────────
+%  Mathematics
+% ──────────────────────────────────────────────
+\usepackage{amsmath}
+\usepackage{amssymb}
+
+% ──────────────────────────────────────────────
+%  Tables
+% ──────────────────────────────────────────────
+\usepackage{booktabs}
+\usepackage{longtable}
+\usepackage{tabularx}
+
+% ──────────────────────────────────────────────
+%  Graphics & Colour
+% ──────────────────────────────────────────────
+\usepackage{graphicx}
+\usepackage{xcolor}
+\usepackage{tikz}
+\usetikzlibrary{shapes,arrows,arrows.meta,positioning,calc}
+
+% ──────────────────────────────────────────────
+%  Figures & Captions
+% ──────────────────────────────────────────────
+\usepackage{caption}
+\usepackage{subcaption}
+\usepackage{float}
+
+% ──────────────────────────────────────────────
+%  Units
+% ──────────────────────────────────────────────
+\usepackage{siunitx}
+\sisetup{
+  per-mode=symbol,
+  range-phrase=\text{--},
+  range-units=single
+}
+
+% ──────────────────────────────────────────────
+%  Lists
+% ──────────────────────────────────────────────
+\usepackage{enumitem}
+\usepackage[most]{tcolorbox}
+
+% ──────────────────────────────────────────────
+%  Hyperlinks & Cross-references
+% ──────────────────────────────────────────────
+\usepackage{hyperref}
+\hypersetup{
+  colorlinks  = true,
+  linkcolor   = blue!60!black,
+  citecolor   = green!50!black,
+  urlcolor    = blue!70!black,
+  bookmarksnumbered = true,
+  pdfauthor   = {},
+  pdftitle    = {Methodological Strategy for Edge-Oriented Classification of S11 Measurements},
+  pdfsubject  = {Internal Technical Report},
+}
+\usepackage{cleveref}
+
+% ──────────────────────────────────────────────
+%  Bibliography
+% ──────────────────────────────────────────────
+\usepackage[authoryear,round]{natbib}
+
+% ──────────────────────────────────────────────
+%  Headers & Footers
+% ──────────────────────────────────────────────
+\usepackage{fancyhdr}
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[L]{\nouppercase{\leftmark}}
+\fancyhead[R]{\thepage}
+\renewcommand{\headrulewidth}{0.4pt}
+\renewcommand{\footrulewidth}{0pt}
+
+% Plain style for chapter/section opening pages
+\fancypagestyle{plain}{%
+  \fancyhf{}%
+  \fancyhead[R]{\thepage}%
+  \renewcommand{\headrulewidth}{0pt}%
+}
+
+% ──────────────────────────────────────────────
+%  Section Formatting
+% ──────────────────────────────────────────────
+\usepackage{titlesec}
+\titleformat{\section}
+  {\normalfont\Large\bfseries}{\thesection}{1em}{}
+\titleformat{\subsection}
+  {\normalfont\large\bfseries}{\thesubsection}{1em}{}
+\titleformat{\subsubsection}
+  {\normalfont\normalsize\bfseries}{\thesubsubsection}{1em}{}
+
+% ──────────────────────────────────────────────
+%  Custom Commands
+% ──────────────────────────────────────────────
+\newcommand{\Spar}{$S_{11}$}
+
+% ══════════════════════════════════════════════
+%  DOCUMENT
+% ══════════════════════════════════════════════
+\begin{document}
+
+% ──────────────────────────────────────────────
+%  Title Page
+% ──────────────────────────────────────────────
+\begin{titlepage}
+  \centering
+  \vspace*{3cm}
+
+  {\Huge\bfseries Methodological Strategy for\\[0.3em]
+   Edge-Oriented Classification of\\[0.3em]
+   Single-Port $S_{11}$ Measurements\par}
+
+  \vspace{1.5cm}
+
+  {\Large\itshape Internal Technical Report --- Methodological Plan\par}
+
+  \vspace{2cm}
+
+  {\large June 2026\par}
+
+  \vfill
+
+  \begin{minipage}{0.75\textwidth}
+    \centering
+    \small\itshape
+    This document defines the analysis pipeline before manuscript drafting.
+    It does not present experimental results or performance claims.
+  \end{minipage}
+
+  \vspace{2cm}
+\end{titlepage}
+
+% ──────────────────────────────────────────────
+%  Front Matter
+% ──────────────────────────────────────────────
+\pagenumbering{roman}
+\tableofcontents
+\clearpage
+\listoftables
+\listoffigures
+\clearpage
+\pagenumbering{arabic}
+
+% ──────────────────────────────────────────────
+%  Sections
+% ──────────────────────────────────────────────
+\input{sections/00_executive_summary}
+\input{sections/01_problem_framing}
+\input{sections/02_dataset_abstraction}
+\input{sections/03_representation_routes}
+\input{sections/04_preprocessing_pipeline}
+\input{sections/05_normalization}
+\input{sections/06_overfitting_control}
+\input{sections/07_augmentation}
+%\input{sections/08_algorithms}       % TODO: not yet created
+%\input{sections/09_evaluation}       % TODO: not yet created
+%\input{sections/10_workflow}          % TODO: not yet created
+%\input{sections/11_next_steps}        % TODO: not yet created
+
+% ──────────────────────────────────────────────
+%  Bibliography
+% ──────────────────────────────────────────────
+\clearpage
+\bibliographystyle{plainnat}
+\bibliography{references}
+
+\end{document}

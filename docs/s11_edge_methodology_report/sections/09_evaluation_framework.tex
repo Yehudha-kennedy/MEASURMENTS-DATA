@@ -1,0 +1,420 @@
+% ------------------------------------------------------------------
+% FILE: sections/09_evaluation_framework.tex
+% Evaluation framework: metrics, profiling, ablations, and templates.
+% \input{} into main.tex — do NOT wrap in \documentclass or \begin{document}.
+% ------------------------------------------------------------------
+
+\section{Evaluation Framework}\label{sec:eval}
+
+The algorithm review in \Cref{sec:algorithms} establishes \emph{what}
+will be compared; this section defines \emph{how} the comparison will
+be conducted.  All metrics, profiling protocols, and ablation
+strategies described below constitute a binding evaluation contract:
+every candidate model must be assessed against the same criteria to
+enable fair ranking.  Crucially, \textbf{all tables in this section
+are empty templates}; they will be populated with measured values during
+the experimental phase described in \Cref{sec:nextsteps}, not in this
+report.
+
+
+% ------------------------------------------------------------------
+\subsection{Primary Metric: Macro-Averaged F1 Score}
+\label{subsec:macro_f1}
+% ------------------------------------------------------------------
+
+The primary classification metric is the \textbf{macro-averaged F1
+score}, defined as the unweighted mean of per-class F1 scores:
+%
+\begin{equation}\label{eq:macro_f1}
+  F_{1}^{\text{macro}}
+  = \frac{1}{K} \sum_{k=1}^{K} F_{1,k}
+  = \frac{1}{K} \sum_{k=1}^{K}
+    \frac{2 \, P_k \, R_k}{P_k + R_k},
+\end{equation}
+%
+where $P_k$ and $R_k$ are the precision and recall for class~$k$,
+and $K = 3$~\cite{sokolova2009f1}.
+
+Macro averaging is chosen over accuracy and micro averaging for two
+reasons:
+%
+\begin{enumerate}
+  \item \textbf{Class-balance invariance.}  The dataset has mild class
+        imbalance ($601 : 501 : 501$, ratio $1.20 : 1 : 1$).  Accuracy
+        would overweight performance on the majority class
+        (\texttt{dry}); macro~F1 assigns equal importance to all three
+        states.
+  \item \textbf{Per-class sensitivity.}  A model that sacrifices recall
+        on the rarest or most confusable class (potentially
+        \texttt{ice}) to boost overall accuracy would be penalised
+        under macro~F1 but might appear adequate under accuracy.
+\end{enumerate}
+
+
+% ------------------------------------------------------------------
+\subsection{Per-Class Recall and Precision}
+\label{subsec:perclass}
+% ------------------------------------------------------------------
+
+While macro~F1 is the ranking metric, \textbf{per-class recall}
+identifies which physical state is hardest to detect, and
+\textbf{per-class precision} identifies which state is most frequently
+hallucinated.  Both are reported alongside the confusion matrix for
+every model.
+
+\paragraph{Expected confusion patterns.}
+Based on the physical similarity of the three states, the most
+confusable class pair is expected to be \texttt{wet} vs.\
+\texttt{ice}: both involve a thin layer of water-phase material on
+the sensor surface, and their $S_{11}$ signatures may differ primarily
+in subtle resonance-frequency shifts and magnitude attenuation changes
+caused by the dielectric constant difference between liquid water and
+ice.  The \texttt{dry} state, representing a bare sensor, is expected
+to be the easiest to distinguish.  The confusion matrix will confirm
+or refute this hypothesis.
+
+
+% ------------------------------------------------------------------
+\subsection{Confusion Matrix Analysis}
+\label{subsec:confusion}
+% ------------------------------------------------------------------
+
+For each trained model, the $3 \times 3$ confusion matrix
+$\mathbf{C} \in \mathbb{N}^{3 \times 3}$ will be computed on the
+held-out test partition, where $C_{ij}$ is the number of samples
+with true label~$i$ predicted as label~$j$.  In addition to the raw
+counts, the normalised confusion matrix (each row divided by the row
+sum) will be reported to enable cross-model visual comparison.
+
+Specific patterns to examine:
+%
+\begin{itemize}
+  \item Off-diagonal concentration: is misclassification symmetric
+        (i.e., \texttt{wet}$\to$\texttt{ice} as frequent as
+        \texttt{ice}$\to$\texttt{wet})?
+  \item Diagonal dominance: does the model achieve near-perfect
+        recall on \texttt{dry} while struggling with the other two?
+  \item Error magnitude: are errors single-sample noise or
+        systematic bias toward one class?
+\end{itemize}
+
+
+% ------------------------------------------------------------------
+\subsection{Robustness Testing}
+\label{subsec:robustness}
+% ------------------------------------------------------------------
+
+Real-world deployment exposes the model to measurement noise, sensor
+degradation, and environmental variation not present in laboratory
+data.  To estimate how gracefully each model degrades, the evaluation
+includes a \textbf{robustness stress test}:
+%
+\begin{enumerate}
+  \item Take the fixed held-out test set (no retraining).
+  \item Inject additive white Gaussian noise at calibrated
+        signal-to-noise ratios (SNR):
+        $\text{SNR} \in \{40, 30, 20, 15, 10\}$~dB.
+  \item Re-evaluate macro~F1 at each noise level.
+  \item Plot the resulting \textbf{accuracy degradation curve}:
+        macro~F1 vs.\ injected SNR.
+\end{enumerate}
+
+Models that maintain high macro~F1 at lower SNR are more robust.
+A sharp cliff in the degradation curve indicates that the model's
+decision boundary is fragile and positioned close to the data
+manifold.  A gradual slope indicates robust margin.
+
+For the 2D route (Route~B), an analogous test will apply pixel-level
+Gaussian noise to the rasterised images and measure classification
+stability.
+
+
+% ------------------------------------------------------------------
+\subsection{Model Size Profiling}
+\label{subsec:model_size}
+% ------------------------------------------------------------------
+
+Edge deployment imposes strict constraints on model memory footprint.
+For each candidate model, the following size metrics will be recorded:
+%
+\begin{itemize}
+  \item \textbf{Total trainable parameters:} the number of scalar
+        values that define the model (weights and biases).
+  \item \textbf{Model file size:} the serialised model size on disk
+        in float32, float16, and INT8 formats.
+  \item \textbf{Peak inference memory:} the maximum RAM required during
+        a single forward pass, including intermediate activations.
+  \item \textbf{Estimated FLOPS:} the number of floating-point
+        multiply-accumulate operations for one forward pass, computed
+        analytically or via profiling tools.
+\end{itemize}
+
+These values determine whether a model can fit within the memory budget
+of the target edge hardware class (see \Cref{sec:nextsteps}).  Models
+that exceed the budget after INT8 quantisation will be flagged for
+pruning or architectural reduction before re-evaluation.
+
+
+% ------------------------------------------------------------------
+\subsection{Inference Latency Profiling}
+\label{subsec:latency}
+% ------------------------------------------------------------------
+
+Classification must complete within a real-time budget determined by
+the application's sensing cadence.  Inference latency will be measured
+as:
+%
+\begin{itemize}
+  \item \textbf{Wall-clock time per sample} on desktop hardware
+        (CPU-only, no GPU) as a normalised comparison baseline.
+  \item \textbf{Wall-clock time per sample} on representative edge
+        hardware (ARM Cortex-A class processor), where available.
+  \item \textbf{Throughput} (samples per second) to assess batch
+        processing capability.
+\end{itemize}
+
+All latency measurements will be averaged over at least \num{100}
+inference calls after a warm-up phase to exclude JIT compilation and
+cache-warming effects.  Standard deviation will be reported alongside
+the mean.
+
+
+% ------------------------------------------------------------------
+\subsection{Calibration Analysis (Optional, Later Stage)}
+\label{subsec:calibration}
+% ------------------------------------------------------------------
+
+Well-calibrated models produce confidence scores that accurately
+reflect the true probability of correctness~\cite{guo2017calibration}.
+This property is particularly valuable for edge sensing, where a
+high-confidence misclassification (e.g., confidently labelling
+\texttt{ice} as \texttt{dry}) can have operational consequences.
+
+If calibration analysis is conducted, it will include:
+%
+\begin{itemize}
+  \item \textbf{Reliability diagrams:} plot predicted confidence
+        (binned) against observed accuracy per bin.
+  \item \textbf{Expected Calibration Error (ECE):} the weighted
+        average of the absolute difference between confidence and
+        accuracy across bins:
+        %
+        \begin{equation}\label{eq:ece}
+          \text{ECE} = \sum_{m=1}^{M} \frac{|B_m|}{n}
+          \bigl| \mathrm{acc}(B_m) - \mathrm{conf}(B_m) \bigr|,
+        \end{equation}
+        %
+        where $B_m$ is the $m$-th confidence bin, $|B_m|$ the number of
+        samples in it, and $n$ the total sample count.
+  \item \textbf{Post-hoc recalibration:} temperature scaling or Platt
+        scaling applied to the model's logits, trained on a held-out
+        calibration set.
+\end{itemize}
+
+Calibration analysis is marked as optional because it is a post-training
+diagnostic; it does not affect model selection but may influence the
+deployment configuration.
+
+
+% ------------------------------------------------------------------
+\subsection{Abstention and Reject Option}
+\label{subsec:abstention}
+% ------------------------------------------------------------------
+
+For safety-critical or operationally sensitive applications, a model
+should have the option to \textbf{abstain} from prediction when its
+confidence is below a threshold, rather than risk a misclassification.
+The abstention protocol operates as follows:
+%
+\begin{enumerate}
+  \item Define a confidence threshold $\tau \in (0, 1)$.
+  \item For each test sample, compute the maximum predicted class
+        probability $p_{\max} = \max_k P(y = k \mid \mathbf{x})$.
+  \item If $p_{\max} < \tau$, the model abstains (outputs ``uncertain'').
+  \item Report:
+        \begin{itemize}
+          \item \textbf{Coverage}: fraction of test samples where the
+                model makes a prediction ($p_{\max} \geq \tau$).
+          \item \textbf{Selective accuracy}: accuracy only on
+                non-abstained samples.
+          \item \textbf{Coverage--accuracy trade-off curve}:
+                sweep $\tau$ from 0 to 1 and plot coverage vs.\
+                selective accuracy.
+        \end{itemize}
+\end{enumerate}
+
+This mechanism is complementary to calibration: a well-calibrated model
+will produce a smooth, monotonically increasing selective-accuracy
+curve as $\tau$ increases.  A poorly calibrated model will show erratic
+behaviour.
+
+
+% ------------------------------------------------------------------
+\subsection{Representation-Specific Ablations}
+\label{subsec:ablations}
+% ------------------------------------------------------------------
+
+The representation routes defined in \Cref{sec:repr} offer multiple
+encoding choices.  The evaluation framework requires systematic
+ablation studies to determine which encoding yields the best
+classification performance.
+
+\paragraph{Route~A ablations.}
+Each supervised model will be trained and evaluated on the following
+1D encodings:
+%
+\begin{enumerate}
+  \item Magnitude only ($|S_{11}|$ in dB, $d = 4001$).
+  \item Phase only ($\angle S_{11}$ in degrees, $d = 4001$).
+  \item Magnitude + phase (dual-channel, $d = 8002$ or
+        $L = 4001 \times C = 2$).
+  \item Magnitude + unwrapped phase (dual-channel).
+  \item Magnitude + first derivative of magnitude
+        ($d = 4001 + 4000 = 7{,}001$).
+\end{enumerate}
+
+\paragraph{Route~B ablations.}
+For models compatible with 2D inputs, the following rasterisation
+parameters will be varied:
+%
+\begin{enumerate}
+  \item Image resolution: $64 \times 64$, $128 \times 128$,
+        $224 \times 224$.
+  \item Channel configuration: single-channel (magnitude only),
+        dual-channel (magnitude + phase).
+  \item Rasterisation method: direct curve plot vs.\ heatmap
+        interpolation.
+\end{enumerate}
+
+\paragraph{Ablation reporting.}
+Each ablation varies exactly one encoding dimension while holding all
+other pipeline elements (preprocessing, normalisation, train--test
+split, hyperparameters) constant.  Results will be reported in a
+factorial table with models as rows and encodings as columns.
+
+
+% ------------------------------------------------------------------
+\subsection{Supervised vs.\ Unsupervised Evaluation Boundary}
+\label{subsec:sup_vs_unsup}
+% ------------------------------------------------------------------
+
+K-Means (\Cref{subsec:kmeans}) is the only unsupervised method in
+the comparison.  Its evaluation follows a fundamentally different
+protocol from the nine supervised models:
+%
+\begin{itemize}
+  \item K-Means output is a set of cluster assignments, not class
+        predictions.  Cluster-to-class mapping is performed via
+        Hungarian matching against the true labels.
+  \item The primary metric for K-Means is the \textbf{Adjusted Rand
+        Index (ARI)}, not macro~F1.
+  \item Silhouette scores measure internal cluster quality
+        independently of labels.
+  \item K-Means results \emph{inform} but \emph{do not replace}
+        supervised evaluation.  A high ARI provides evidence that the
+        feature space is well-structured; it does not establish that
+        a nearest-centroid classifier is the best deployment choice.
+\end{itemize}
+
+K-Means results will be reported separately from the supervised model
+ranking and will be interpreted as a diagnostic of representation
+quality rather than a competing classification method.
+
+
+% ------------------------------------------------------------------
+\subsection{Evaluation Table Templates}
+\label{subsec:eval_tables}
+% ------------------------------------------------------------------
+
+The following tables define the structure that experimental results
+will follow.  \textbf{All cells are intentionally left empty}; they
+will be populated during the experimental phase.
+
+% --- Template 1: Macro F1 comparison ---
+\begin{table}[htbp]
+  \centering
+  \caption{Macro-averaged F1 scores across models and Route~A encodings.
+           Values to be filled during the experimental phase.}
+  \label{tab:macro_f1_results}
+  \begin{tabular}{l c c c c c}
+    \toprule
+    \textbf{Model}
+      & \textbf{Mag}
+      & \textbf{Phase}
+      & \textbf{Mag+Phase}
+      & \textbf{Mag+Unwrap}
+      & \textbf{Mag+Deriv} \\
+    \midrule
+    Logistic Regression   & --- & --- & --- & --- & --- \\
+    Linear SVM            & --- & --- & --- & --- & --- \\
+    RBF SVM               & --- & --- & --- & --- & --- \\
+    Random Forest         & --- & --- & --- & --- & --- \\
+    Gradient Boosted Trees & --- & --- & --- & --- & --- \\
+    Multilayer Perceptron & --- & --- & --- & --- & --- \\
+    1D CNN                & --- & --- & --- & --- & --- \\
+    ResNet-1D             & --- & --- & --- & --- & --- \\
+    KAN                   & --- & --- & --- & --- & --- \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+% --- Template 2: Per-class recall ---
+\begin{table}[htbp]
+  \centering
+  \caption{Per-class recall for each model (best-performing encoding).
+           Values to be filled during the experimental phase.}
+  \label{tab:perclass_recall}
+  \begin{tabular}{l c c c}
+    \toprule
+    \textbf{Model}
+      & \textbf{Recall (\texttt{dry})}
+      & \textbf{Recall (\texttt{wet})}
+      & \textbf{Recall (\texttt{ice})} \\
+    \midrule
+    Logistic Regression    & --- & --- & --- \\
+    Linear SVM             & --- & --- & --- \\
+    RBF SVM                & --- & --- & --- \\
+    Random Forest          & --- & --- & --- \\
+    Gradient Boosted Trees & --- & --- & --- \\
+    Multilayer Perceptron  & --- & --- & --- \\
+    1D CNN                 & --- & --- & --- \\
+    ResNet-1D              & --- & --- & --- \\
+    KAN                    & --- & --- & --- \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+% --- Template 3: Model complexity ---
+\begin{table}[htbp]
+  \centering
+  \caption{Model complexity and edge deployment metrics.
+           Values to be filled during the experimental phase.}
+  \label{tab:model_complexity}
+  \begin{tabular}{l r r r r}
+    \toprule
+    \textbf{Model}
+      & \textbf{Parameters}
+      & \textbf{Size (INT8)}
+      & \textbf{FLOPS}
+      & \textbf{Latency} \\
+    \midrule
+    Logistic Regression    & --- & --- & --- & --- \\
+    Linear SVM             & --- & --- & --- & --- \\
+    RBF SVM                & --- & --- & --- & --- \\
+    Random Forest          & --- & --- & --- & --- \\
+    Gradient Boosted Trees & --- & --- & --- & --- \\
+    Multilayer Perceptron  & --- & --- & --- & --- \\
+    1D CNN                 & --- & --- & --- & --- \\
+    ResNet-1D              & --- & --- & --- & --- \\
+    KAN                    & --- & --- & --- & --- \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+\paragraph{Experimental-phase contract.}
+These templates encode the evaluation contract.  During the
+experimental phase, every supervised model must appear in every row,
+and every encoding variant must appear in every column.  Models that
+cannot be trained on a particular encoding (e.g., if Route~B is
+incompatible) will be marked as ``N/A'' rather than omitted.  No
+partial or selective reporting is acceptable.

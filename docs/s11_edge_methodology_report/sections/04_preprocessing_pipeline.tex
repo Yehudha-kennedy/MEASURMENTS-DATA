@@ -1,0 +1,309 @@
+% sections/04_preprocessing_pipeline.tex  –  Preprocessing Pipeline
+% \input{} into main.tex; do NOT wrap in \documentclass or \begin{document}
+
+\section{Preprocessing Pipeline}
+\label{sec:preproc}
+
+Before any learning algorithm receives data, every $S_{11}$ trace must pass
+through a deterministic preprocessing pipeline that ensures correctness,
+consistency, and traceability.  This section describes \emph{Stage~1} of a
+three-stage data-conditioning workflow; \Cref{sec:norm} and
+\Cref{sec:augment} cover the subsequent stages.
+
+%% ------------------------------------------------------------------
+\subsection{Three-Stage Pipeline Overview}
+\label{sec:preproc:stages}
+
+The full data-conditioning workflow is decomposed into three strictly
+sequential stages, each with a distinct purpose:
+
+\begin{enumerate}[label=\textbf{Stage~\arabic*:},leftmargin=3.5em]
+  \item \textbf{Validity preprocessing} (this section).
+        Parses raw files, verifies structural and numerical integrity,
+        quarantines malformed or outlier traces, and assigns canonical
+        sample identifiers.  At the end of this stage every surviving
+        sample is a well-formed numerical array with a unique ID and a
+        verified class label.
+
+  \item \textbf{Normalization} (\Cref{sec:norm}).
+        Transforms feature values (magnitude, phase, or pixel
+        intensities) to distributions that accelerate and stabilise
+        learning.  Normalization statistics are computed on the training
+        partition \emph{only} and applied identically to validation and
+        test partitions.
+
+  \item \textbf{Augmentation} (\Cref{sec:augment}).
+        Synthetically expands the training set with physics-aware
+        perturbations at training time only.  Augmentation is never
+        applied to validation or test data.
+\end{enumerate}
+
+\noindent
+\Cref{fig:pipeline_stages} sketches the three stages and their
+data-flow boundaries.
+
+\begin{figure}[ht]
+\centering
+\begin{tikzpicture}[
+    node distance=1.2cm and 0.6cm,
+    block/.style={rectangle, draw, rounded corners,
+                  minimum width=3.8cm, minimum height=1.0cm,
+                  align=center, font=\small},
+    arrow/.style={-Stealth, thick}
+]
+  \node[block, fill=blue!10]   (raw)  {Raw TSV files\\(\num{1603} traces)};
+  \node[block, fill=green!10,  right=of raw]  (s1)
+        {Stage 1\\Validity preprocessing};
+  \node[block, fill=orange!10, right=of s1]   (s2)
+        {Stage 2\\Normalization};
+  \node[block, fill=red!10,    right=of s2]   (s3)
+        {Stage 3\\Augmentation\\(train only)};
+  \draw[arrow] (raw) -- (s1);
+  \draw[arrow] (s1)  -- (s2);
+  \draw[arrow] (s2)  -- (s3);
+\end{tikzpicture}
+\caption{Three-stage data-conditioning pipeline.  Stages~2 and~3 are
+         covered in \Cref{sec:norm,sec:augment}, respectively.}
+\label{fig:pipeline_stages}
+\end{figure}
+
+The remainder of this section details every sub-step of Stage~1.
+
+%% ------------------------------------------------------------------
+\subsection{Touchstone File Parsing}
+\label{sec:preproc:parsing}
+
+Each $S_{11}$ trace is stored as a plain-text file with three
+tab-separated columns and no header row:
+
+\begin{center}
+\begin{tabular}{ccc}
+\toprule
+\textbf{Column 1} & \textbf{Column 2} & \textbf{Column 3} \\
+\midrule
+Frequency (Hz)     & $|S_{11}|$ (dB)    & $\angle S_{11}$ (deg) \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\paragraph{Parsing assumptions.}
+\begin{itemize}
+  \item \textbf{Delimiter:} horizontal tab (\verb|\t|).
+        The parser must not silently accept comma- or space-delimited
+        variants; mismatched delimiters indicate a file-format error.
+  \item \textbf{No header row:} the first line is expected to be numeric
+        data.  However, a small number of files may carry an optional
+        Touchstone-style option line beginning with
+        \texttt{\#}~\cite{touchstone_spec}.  The parser shall skip any
+        line whose first non-whitespace character is~\texttt{\#} and log
+        the event.
+  \item \textbf{Column count:} exactly three numeric fields per
+        non-comment line.  Lines with fewer or more fields trigger a
+        malformed-row error.
+  \item \textbf{Encoding:} UTF-8 or ASCII; reject files with binary or
+        non-decodable content.
+\end{itemize}
+
+\paragraph{Column interpretation.}
+After parsing, each trace is a matrix
+$\mathbf{T}\in\mathbb{R}^{4001\times 3}$ with columns
+$(f,\;|S_{11}|_{\text{dB}},\;\angle S_{11})$.
+The frequency column is in hertz; for readability in plots and tables we
+convert to gigahertz (\SI{}{\giga\hertz}) by dividing by $10^{9}$,
+yielding a range of approximately \SIrange{8.0}{12.0}{\giga\hertz} with
+a step of roughly \SI{1}{\mega\hertz}.
+The magnitude column is already in decibels (a logarithmic scale) and
+requires no further transformation at this stage.
+The phase column is in degrees and is retained as-is; conversion to
+radians is deferred to the normalization stage if required by a specific
+algorithm.
+
+%% ------------------------------------------------------------------
+\subsection{Frequency-Grid Validation}
+\label{sec:preproc:freqgrid}
+
+A fundamental assumption of the downstream pipeline is that every trace
+shares the \emph{same} $N=4001$-point frequency vector.  This enables
+treating each frequency bin as a fixed feature across all samples.  The
+validation step proceeds as follows:
+
+\begin{enumerate}
+  \item Parse the frequency column of the first valid file and designate
+        it the \emph{reference grid}~$\mathbf{f}_{\text{ref}}$.
+  \item For every subsequent file, compute the element-wise absolute
+        difference
+        $\Delta_i = |f_i - f_{\text{ref},i}|$ for
+        $i=1,\dots,4001$.
+  \item If $\max_i \Delta_i > \epsilon$ (with
+        $\epsilon = \SI{1}{\hertz}$), the file is flagged as
+        \emph{grid-mismatched} and quarantined with a diagnostic log
+        entry.
+  \item Files with $N \neq 4001$ points are similarly quarantined.
+\end{enumerate}
+
+Grid mismatches could indicate a different VNA frequency plan, a
+truncated sweep, or a data-export error.  Quarantined files are excluded
+from all subsequent processing but retained on disk for manual
+inspection.
+
+%% ------------------------------------------------------------------
+\subsection{Missing-Value and Malformed-File Handling}
+\label{sec:preproc:missing}
+
+\paragraph{Missing and non-finite values.}
+Each parsed numeric entry is checked for \texttt{NaN}, $\pm\infty$, and
+non-numeric content (e.g., text strings in a numeric column).
+The handling policy is:
+
+\begin{itemize}
+  \item \textbf{Isolated NaN/Inf} (fewer than $0.1\,\%$ of points in a
+        trace): replace via linear interpolation from the two nearest
+        valid neighbours in the frequency dimension.  Log the location
+        and original value.
+  \item \textbf{Widespread NaN/Inf} ($\geq 0.1\,\%$ of points): reject
+        the entire file.  Interpolating large gaps risks introducing
+        artefacts that distort class-discriminative spectral features.
+\end{itemize}
+
+\paragraph{Malformed files.}
+The following conditions result in immediate file rejection:
+
+\begin{itemize}
+  \item Fewer than $4001$ non-comment lines (truncated acquisition).
+  \item Any non-comment line with a column count $\neq 3$.
+  \item File size of zero bytes or failure to decode as text.
+\end{itemize}
+
+\noindent
+Every rejection is logged with the file path, the reason, and a
+timestamp.  The total number of rejected files is reported before
+proceeding.
+
+%% ------------------------------------------------------------------
+\subsection{Outlier Inspection}
+\label{sec:preproc:outliers}
+
+Outlier screening is performed \emph{before} training to detect
+anomalous traces that may represent measurement errors, sensor
+malfunctions, or mislabelled files.  The procedure operates
+per-frequency-bin within each class:
+
+\begin{enumerate}
+  \item For each class $c \in \{\texttt{dry},\,\texttt{wet},\,
+        \texttt{ice}\}$ and each frequency index $i=1,\dots,4001$,
+        compute the mean $\mu_{c,i}$ and standard deviation
+        $\sigma_{c,i}$ of the magnitude values across all samples in
+        class~$c$.
+  \item Flag any sample whose magnitude at bin~$i$ satisfies
+        \[
+            |x_{i} - \mu_{c,i}| > 4\,\sigma_{c,i}
+        \]
+        as a candidate outlier at that bin.
+  \item A sample flagged at more than $1\,\%$ of frequency bins is
+        promoted to a \emph{trace-level outlier candidate}.
+  \item Trace-level candidates are \emph{not} automatically removed;
+        they are presented for visual inspection via class-aggregated
+        envelope plots (mean $\pm\;2\sigma$ and $\pm\;4\sigma$ bands),
+        and the analyst decides on retention, relabelling, or exclusion.
+\end{enumerate}
+
+The same procedure is repeated for the phase channel.  Automatic
+removal without human review is deliberately avoided because a trace
+that appears statistically anomalous may represent a genuine edge case
+that the classifier should learn.
+
+%% ------------------------------------------------------------------
+\subsection{Class-Label Mapping}
+\label{sec:preproc:labels}
+
+Class labels are derived from the folder structure of the dataset:
+
+\begin{center}
+\begin{tabular}{lcc}
+\toprule
+\textbf{Folder name} & \textbf{Integer label} & \textbf{Sample count} \\
+\midrule
+\texttt{dry}  & 0 & 601 \\
+\texttt{wet}  & 1 & 501 \\
+\texttt{ice}  & 2 & 501 \\
+\midrule
+\multicolumn{2}{l}{\textbf{Total}} & \textbf{1603} \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+The class imbalance ratio is $601:501:501 \approx 1.20:1:1$, which is
+mild but non-trivial; it is accounted for during evaluation
+(\Cref{sec:eval}) via macro-averaged metrics.
+
+\paragraph{Trace-numbering gaps.}
+Inspection of the raw file names reveals numbering gaps in the trace
+indices: traces \texttt{Trc601}--\texttt{Trc699} and
+\texttt{Trc1201}--\texttt{Trc1449} are absent across all classes.
+These gaps are noted as potential missing acquisitions or intentional
+exclusions by the data provider.  The pipeline does not attempt to
+impute or reconstruct the missing trace indices; it simply uses the
+files that are present.
+
+%% ------------------------------------------------------------------
+\subsection{Deterministic Sample Indexing}
+\label{sec:preproc:indexing}
+
+To ensure full reproducibility across experiments, each surviving sample
+is assigned a canonical integer identifier:
+
+\begin{enumerate}
+  \item Sort all valid file paths lexicographically within each class
+        folder.
+  \item Concatenate the sorted lists in label order
+        ($0 \to 1 \to 2$).
+  \item Assign sequential IDs starting from~$0$.
+\end{enumerate}
+
+A mapping file \texttt{sample\_index.csv} is written with columns
+\texttt{sample\_id}, \texttt{class\_label}, \texttt{class\_name}, and
+\texttt{original\_filepath}.  This file is version-controlled alongside
+the code and referenced in all subsequent logs to ensure that any
+experimental result can be traced back to the exact input files.
+
+%% ------------------------------------------------------------------
+\subsection{Stage~1 Summary}
+\label{sec:preproc:summary}
+
+\Cref{tab:preproc_checklist} summarises the validity checks applied
+during Stage~1.
+
+\begin{table}[ht]
+\centering
+\caption{Stage~1 validity-preprocessing checklist.}
+\label{tab:preproc_checklist}
+\small
+\begin{tabular}{p{4.0cm} p{4.5cm} p{3.8cm}}
+\toprule
+\textbf{Check} & \textbf{Condition} & \textbf{Action on failure} \\
+\midrule
+Comment-line filtering &
+  Line starts with \texttt{\#} &
+  Skip line, log event \\
+Column count &
+  $\neq 3$ fields per line &
+  Reject file \\
+Row count &
+  $\neq 4001$ data rows &
+  Quarantine file \\
+Frequency grid &
+  $\max|\Delta f| > \SI{1}{\hertz}$ vs.\ reference &
+  Quarantine file \\
+Non-finite values &
+  NaN or $\pm\infty$ entries &
+  Interpolate ($<0.1\,\%$) or reject \\
+Outlier screening &
+  $>4\sigma$ in $>1\,\%$ of bins &
+  Flag for visual review \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+After Stage~1, the dataset consists of $N_{\text{valid}} \leq 1603$
+well-formed, grid-aligned, canonically indexed traces ready for
+normalization (\Cref{sec:norm}).

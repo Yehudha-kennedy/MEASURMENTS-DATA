@@ -1,0 +1,8 @@
+\contentsline {table}{\numberline {1}{\ignorespaces First five and last three rows of \texttt {Trc0.s1p} (\texttt {dry} class) assuming RI format. Frequency is in~\si {\hertz }, followed by Real and Imaginary linear components.}}{5}{table.caption.1}%
+\contentsline {table}{\numberline {2}{\ignorespaces Class distribution across the three surface-state categories. The imbalance ratio is computed relative to the minority classes.}}{6}{table.caption.2}%
+\contentsline {table}{\numberline {3}{\ignorespaces Comparison of Route~A (1D spectral) Cartesian encoding variants.}}{9}{table.caption.3}%
+\contentsline {table}{\numberline {4}{\ignorespaces Comparison of Route~A (1D spectral) and Route~B (2D image-like) representation families.}}{11}{table.caption.4}%
+\contentsline {table}{\numberline {5}{\ignorespaces Stage~1 validity-preprocessing checklist.}}{15}{table.caption.6}%
+\contentsline {table}{\numberline {6}{\ignorespaces Comparison of normalization strategies.}}{17}{table.caption.7}%
+\contentsline {table}{\numberline {7}{\ignorespaces Indicative parameter counts and overfitting risk relative to $N=1603$ samples.}}{20}{table.caption.8}%
+\contentsline {table}{\numberline {8}{\ignorespaces Summary of augmentation techniques for $S_{11}$ trace data.}}{25}{table.caption.9}%

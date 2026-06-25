@@ -1,0 +1,306 @@
+% sections/06_overfitting_control.tex  –  Overfitting Control
+% \input{} into main.tex; do NOT wrap in \documentclass or \begin{document}
+
+\section{Overfitting Control and Evaluation Integrity}
+\label{sec:overfit}
+
+With only \num{1603} labelled traces, this project operates in a regime
+where overfitting and evaluation bias are the \emph{primary} threats to
+credible conclusions.  A model that memorises the training set —
+or a cross-validation procedure that leaks information across folds —
+can produce accuracy figures that bear no relationship to real-world
+performance on the edge sensor.  This section catalogues the safeguards
+that the experimental pipeline must enforce.
+
+%% ------------------------------------------------------------------
+\subsection{Context: Small-Sample Deep Learning}
+\label{sec:overfit:context}
+
+Modern deep architectures routinely contain millions of trainable
+parameters.  A ResNet-1D or 1D~CNN with even a modest channel depth can
+easily exceed $10^{6}$ weights, yielding a parameter-to-sample ratio far
+above unity.  Classical statistical learning theory warns that
+generalisation degrades when model capacity greatly exceeds the
+information content of the training set~\cite{vapnik1995svm}.  While
+modern regularisation techniques mitigate this to a degree, they do not
+eliminate the risk.
+
+The practical consequence is twofold:
+\begin{enumerate}
+  \item \textbf{Architecture selection} should start from the smallest
+        viable model and scale up only if validation performance
+        saturates (\Cref{sec:overfit:capacity}).
+  \item \textbf{Evaluation protocols} must be unusually rigorous; a
+        single random train/test split is insufficient for stable
+        performance estimates when $N = 1603$
+        (\Cref{sec:overfit:cv}).
+\end{enumerate}
+
+%% ------------------------------------------------------------------
+\subsection{Stratified Train / Validation / Test Split}
+\label{sec:overfit:split}
+
+The simplest holdout protocol divides the dataset into three disjoint
+partitions while preserving the class proportions
+($601:501:501 \approx 1.20{:}1{:}1$):
+
+\begin{center}
+\begin{tabular}{lccc}
+\toprule
+\textbf{Partition} & \textbf{Share} & \textbf{Purpose} \\
+\midrule
+Training      & $60$--$70\,\%$ & Fit model parameters \\
+Validation    & $15$--$20\,\%$ & Tune hyper-parameters, early stopping \\
+Test          & $15$--$20\,\%$ & Final, single-use performance estimate \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+Stratification ensures that every partition contains approximately the
+same proportion of \texttt{dry}, \texttt{wet}, and \texttt{ice} samples.
+For $N=1603$ and a $60/20/20$ split, the test set contains roughly
+$320$ samples — enough for per-class precision and recall estimates but
+small enough that a single unlucky split can shift accuracy by several
+percentage points.
+
+%% ------------------------------------------------------------------
+\subsection{Repeated Stratified $k$-Fold Cross-Validation}
+\label{sec:overfit:cv}
+
+To obtain more stable performance estimates, we employ \emph{repeated
+stratified $k$-fold cross-validation}~\cite{kohavi1995cv}.  Two
+configurations are considered:
+
+\begin{itemize}
+  \item \textbf{$5 \times 5$-fold:} five repetitions of $5$-fold CV,
+        yielding $25$ performance measurements.  Each fold contains
+        ${\sim}320$ test samples.
+  \item \textbf{$3 \times 10$-fold:} three repetitions of $10$-fold CV,
+        yielding $30$ measurements with ${\sim}160$ test samples per
+        fold.
+\end{itemize}
+
+The mean and standard deviation (or $95\,\%$ confidence interval) across
+all folds are reported.  A high standard deviation signals that the
+model's performance is sensitive to the particular train/test partition,
+which is itself a diagnostic of overfitting or insufficient data.
+
+\paragraph{Critical implementation detail.}
+All preprocessing that involves fitting to data — normalization
+statistics (\Cref{sec:norm}), feature-extraction parameters, and
+dimensionality-reduction transforms — must be fit \emph{exclusively} on
+the training fold of each CV iteration and re-fit from scratch when the
+fold changes.  Fitting once on the full dataset and then splitting
+constitutes data leakage and invalidates the CV estimate.
+
+%% ------------------------------------------------------------------
+\subsection{Nested Cross-Validation for Hyper-Parameter Tuning}
+\label{sec:overfit:nested}
+
+When hyper-parameters (e.g., regularisation strength, learning rate,
+tree depth) are tuned via grid or random search, an additional inner CV
+loop is required to prevent the test-fold performance from being
+confounded with the tuning process.  This is \emph{nested
+cross-validation}~\cite{varma2006nested_cv,cawley2010overfitting}:
+
+\begin{enumerate}
+  \item \textbf{Outer loop} ($k_{\text{out}}$ folds): reserves one fold
+        as the test set.
+  \item \textbf{Inner loop} ($k_{\text{in}}$ folds on the remaining
+        data): selects the best hyper-parameter configuration by
+        validation performance.
+  \item The best configuration from the inner loop is retrained on the
+        full outer-training set and evaluated on the outer test fold.
+\end{enumerate}
+
+A typical configuration is $k_{\text{out}} = 5$,
+$k_{\text{in}} = 3$, yielding $15$ model fits per hyper-parameter
+candidate.  The computational cost is substantial but necessary:
+Cawley and Talbot~\cite{cawley2010overfitting} demonstrated that
+non-nested CV can overfit the \emph{evaluation metric itself},
+producing optimistic estimates that do not transfer to unseen data.
+
+%% ------------------------------------------------------------------
+\subsection{Near-Duplicate and Temporal-Correlation Awareness}
+\label{sec:overfit:duplicates}
+
+The trace file names (e.g., \texttt{Trc100.txt}, \texttt{Trc101.txt})
+suggest sequential acquisition.  If consecutive traces were recorded
+within seconds of each other under identical sensor conditions, they may
+be near-duplicates: statistically indistinguishable samples that, if
+split across training and test partitions, artificially inflate
+performance.
+
+\paragraph{Detection protocol.}
+\begin{enumerate}
+  \item Compute the pairwise Pearson correlation (or cosine similarity)
+        of the magnitude vectors within each class.
+  \item Identify clusters of traces with inter-trace correlation
+        $r > 0.999$ (or another empirically determined threshold).
+  \item Assign all members of a high-correlation cluster to the
+        \emph{same} CV fold using a \emph{group-aware} splitter (e.g.,
+        \texttt{GroupKFold} in scikit-learn~\cite{sklearn_docs}).
+\end{enumerate}
+
+Group-aware splitting ensures that the model cannot trivially recognise
+a test trace by having seen its near-twin during training.  The trace-
+numbering gaps noted in \Cref{sec:preproc} (\texttt{Trc601}--\texttt{Trc699},
+\texttt{Trc1201}--\texttt{Trc1449}) may further indicate batch
+boundaries that should be respected during splitting.
+
+%% ------------------------------------------------------------------
+\subsection{Capacity--Dataset Size Mismatch}
+\label{sec:overfit:capacity}
+
+\Cref{tab:model_capacity} provides rough parameter counts for the
+candidate architectures.  The table is indicative; exact counts depend
+on final architecture choices.
+
+\begin{table}[ht]
+\centering
+\caption{Indicative parameter counts and overfitting risk relative to
+         $N=1603$ samples.}
+\label{tab:model_capacity}
+\small
+\begin{tabular}{lrll}
+\toprule
+\textbf{Algorithm} &
+\textbf{Approx.\ parameters} &
+\textbf{Param./sample} &
+\textbf{Overfit risk} \\
+\midrule
+Logistic Regression     & ${\sim}\num{12000}$   & ${\sim}7$     & Low      \\
+Linear SVM              & ${\sim}\num{12000}$   & ${\sim}7$     & Low      \\
+RBF SVM                 & support vectors       & —             & Moderate \\
+Random Forest           & ensemble, depth-bound  & —             & Low--Mod \\
+Gradient Boosted Trees  & ensemble, depth-bound  & —             & Moderate \\
+Multilayer Perceptron   & $\num{50000}$--$\num{500000}$  & $30$--$300$  & High \\
+1D CNN                  & $\num{100000}$--$\num{2000000}$ & $60$--$1200$ & High \\
+ResNet-1D               & $\num{500000}$--$\num{5000000}$ & $300$--$3000$ & Very high \\
+KAN                     & architecture-dependent & variable      & High \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\paragraph{Recommendation.}
+Begin every deep-learning experiment with the \emph{smallest} viable
+architecture (e.g., two convolutional layers with $16$--$32$ filters for
+the 1D~CNN).  Scale up only if validation loss plateaus without
+overfitting.  Tree-based ensembles and linear models serve as strong
+baselines precisely because their effective capacity is easier to
+control.
+
+%% ------------------------------------------------------------------
+\subsection{Regularization Toolkit}
+\label{sec:overfit:reg}
+
+The following regularisation techniques are available and should be
+applied in combination as needed.
+
+\subsubsection{Early Stopping}
+\label{sec:overfit:reg:es}
+
+Monitor the validation loss at the end of each training epoch.  If the
+loss does not improve for a predefined number of consecutive epochs
+(the \emph{patience}), training is halted and the model weights from
+the best epoch are restored.  A patience of $10$--$20$ epochs is a
+reasonable starting point for this dataset size; excessively large
+patience allows the model to overfit before the stopping criterion
+triggers.
+
+\subsubsection{Weight Decay / L2 Regularization}
+\label{sec:overfit:reg:wd}
+
+Weight decay adds a penalty proportional to the squared $\ell_2$-norm
+of the model weights to the loss function:
+\begin{equation}
+  \mathcal{L}_{\text{reg}} = \mathcal{L}_{\text{task}}
+      + \frac{\lambda}{2}\|\mathbf{w}\|_2^2.
+  \label{eq:weight_decay}
+\end{equation}
+For adaptive optimisers (Adam, AdamW), decoupled weight
+decay~\cite{loshchilov2017decoupled} is preferred because it disentangles
+the regularisation effect from the adaptive learning rate.
+
+\subsubsection{Dropout}
+\label{sec:overfit:reg:dropout}
+
+Dropout~\cite{srivastava2014dropout} randomly zeroes a fraction $p$ of
+activations during each forward pass, forcing the network to learn
+redundant representations.  Typical values are $p \in [0.2,\,0.5]$.
+For very small datasets, moderate dropout ($p \approx 0.3$) combined
+with early stopping often outperforms aggressive dropout, which can
+under-fit.
+
+\subsubsection{Label Smoothing}
+\label{sec:overfit:reg:ls}
+
+Standard one-hot targets encourage the model to produce overconfident
+predictions (logit magnitudes $\to \infty$).  Label smoothing replaces
+the hard target $y_c \in \{0,1\}$ with a soft target:
+\begin{equation}
+  y_c^{\text{smooth}} = (1 - \alpha)\,y_c + \frac{\alpha}{C},
+  \label{eq:label_smooth}
+\end{equation}
+where $C=3$ is the number of classes and $\alpha \in [0.05,\,0.2]$ is
+the smoothing factor.  This reduces the gradient magnitude for
+already-correct predictions and acts as an implicit regulariser.
+
+\subsubsection{Pruning}
+\label{sec:overfit:reg:pruning}
+
+Post-training weight pruning removes parameters that contribute little
+to the output, simultaneously reducing model size and (potentially)
+improving generalisation by eliminating memorised noise.  Pruning is
+especially relevant for edge deployment (\Cref{sec:nextsteps}), where
+model size and inference latency are constrained.
+
+%% ------------------------------------------------------------------
+\subsection{Confidence Calibration as a Diagnostic}
+\label{sec:overfit:calibration}
+
+A well-calibrated model produces predicted probabilities that match
+empirical class frequencies: if the model assigns $p=0.8$ to a class
+across many test samples, roughly $80\,\%$ of those predictions should
+be correct.  Guo~et~al.~\cite{guo2017calibration} showed that modern
+deep networks are frequently \emph{miscalibrated} — typically
+overconfident — even when their accuracy is high.
+
+Calibration diagnostics (reliability diagrams, Expected Calibration
+Error) are \textbf{useful post-training assessments} of prediction
+quality but are \textbf{not substitutes} for proper generalisation
+control.  A model can be well-calibrated yet still overfit to a leaky
+evaluation protocol.  Calibration should therefore be measured
+\emph{after} all the safeguards in this section are in place, using the
+held-out test set or the outer fold of nested CV.
+
+Post-hoc calibration methods (temperature scaling, Platt scaling) can
+correct miscalibration at minimal computational cost and are recommended
+before edge deployment, where the classifier's confidence score may
+influence downstream decision logic (e.g., ``flag for human review if
+$\max p_c < 0.7$'').
+
+%% ------------------------------------------------------------------
+\subsection{Summary of Safeguards}
+\label{sec:overfit:summary}
+
+\begin{tcolorbox}[
+  colback=yellow!5!white,
+  colframe=yellow!70!black,
+  title={\textbf{Key Principle}},
+  fonttitle=\bfseries
+]
+Small-sample edge-sensing work is \emph{especially} vulnerable to
+optimistic performance estimates produced by careless data splits,
+leaked preprocessing, or unchecked model capacity.  Every reported
+metric in this project must survive the following audit:
+\begin{enumerate}[nosep]
+  \item Was normalization fit only on the training fold?
+  \item Were near-duplicate traces kept in the same fold?
+  \item Was hyper-parameter tuning isolated in an inner CV loop?
+  \item Is the reported metric averaged over multiple folds/repeats?
+  \item Is the model's parameter count justified relative to $N=1603$?
+\end{enumerate}
+A negative answer to any of these questions invalidates the associated
+result.
+\end{tcolorbox}

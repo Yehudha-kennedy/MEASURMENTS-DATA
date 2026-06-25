@@ -1,0 +1,320 @@
+% sections/02_dataset_abstraction.tex  —  Dataset Abstraction
+% \input{} into main.tex; do NOT wrap in \begin{document}.
+
+\section{Dataset Abstraction}
+\label{sec:dataset}
+
+This section documents the structure, content, and integrity of the
+available measurement data.  Precise characterisation of the dataset is a
+prerequisite for every downstream decision—from representation design
+(\Cref{sec:repr}) to evaluation protocol—because silent assumptions
+about file format, frequency alignment, or class balance can propagate as
+systematic errors through the entire pipeline.
+
+% ─────────────────────────────────────────────────────────────────────
+\subsection{File Format: Touchstone \texttt{.s1p}}
+\label{sec:dataset:format}
+
+The Touchstone format is the de facto standard for exchanging
+frequency-domain network-parameter data between microwave instruments and
+simulation tools~\cite{touchstone_spec, keysight_s2p_format}.  A
+compliant Touchstone file begins with comment lines (prefixed by~\texttt{!})
+followed by an \emph{option line} of the form
+
+\begin{verbatim}
+    # <freq_unit> <param> <format> <R> <ref_impedance>
+\end{verbatim}
+
+\noindent
+which declares the frequency unit, parameter type ($S$, $Y$, $Z$, etc.),
+data format (DB, MA, or RI), and reference impedance.  For a single-port
+\texttt{.s1p} file the data section then contains one row per frequency
+point with three columns: frequency, and two format-dependent values
+(e.g.\ magnitude in~dB and phase in degrees for the DB format).
+
+\subsubsection{Observed Deviation from the Standard}
+\label{sec:dataset:format:deviation}
+
+The \num{1603} files in this dataset \emph{lack} the standard
+\texttt{\#\,\ldots} option header line.  Each file begins directly with
+numeric data in a three-column, tab-separated layout with no comment
+lines and no header row.  While the data content is consistent with the
+Touchstone RI (Real-Imaginary) format, the absence of the option line means that:
+
+\begin{enumerate}
+    \item The frequency unit, data format, and reference impedance must
+        be \emph{inferred} rather than parsed from metadata.
+    \item Standard Touchstone parsers (e.g.\ \texttt{scikit-rf}) may
+        reject or misinterpret these files without a preprocessing step
+        that injects the missing header.
+\end{enumerate}
+
+\noindent
+A robust ingestion pipeline should therefore prepend a synthetic option
+line—e.g.\ \texttt{\# HZ S RI R 50}—before passing files to any
+standards-compliant reader.
+
+% ─────────────────────────────────────────────────────────────────────
+\subsection{Column Interpretation}
+\label{sec:dataset:columns}
+
+Each data row contains three tab-separated fields:
+
+\begin{center}
+\begin{tabular}{cll}
+    \toprule
+    \textbf{Column} & \textbf{Quantity} & \textbf{Unit} \\
+    \midrule
+    1 & Frequency              & \si{\hertz} \\
+    2 & $\text{Re}[S_{11}]$ (Real part) & linear / unitless \\
+    3 & $\text{Im}[S_{11}]$ (Imag part) & linear / unitless \\
+    \bottomrule
+\end{tabular}
+\end{center}
+
+\noindent
+All three quantities are stored as decimal floating-point numbers.
+Frequency values include sub-hertz fractional digits (e.g.\
+\texttt{8000999750.000}), reflecting the instrument's internal frequency
+synthesis resolution.
+
+% ─────────────────────────────────────────────────────────────────────
+\subsection{Sample Trace Inspection}
+\label{sec:dataset:sample}
+
+\Cref{tab:sample_trace} reproduces the first five and last three rows of
+the file \texttt{Trc0.s1p} from the \texttt{dry sensor} folder.  This
+trace is representative of the general file structure across all
+\num{1603} samples.
+
+\begin{table}[htbp]
+    \centering
+    \caption{%
+        First five and last three rows of \texttt{Trc0.s1p}
+        (\texttt{dry} class) assuming RI format. Frequency is in~\si{\hertz}, 
+        followed by Real and Imaginary linear components.%
+    }
+    \label{tab:sample_trace}
+    \small
+    \begin{tabular}{rrrr}
+        \toprule
+        \textbf{Row} &
+        \textbf{Frequency (\si{\hertz})} &
+        \textbf{Real ($\text{Re}[S_{11}]$)} &
+        \textbf{Imaginary ($\text{Im}[S_{11}]$)} \\
+        \midrule
+        1    & 8\,000\,000\,000.000 & $0.065$ & $-0.013$ \\
+        2    & 8\,000\,999\,750.000 & $0.066$ & $-0.012$ \\
+        3    & 8\,001\,999\,500.000 & $0.063$ & $-0.010$ \\
+        4    & 8\,002\,999\,250.000 & $0.065$ & $-0.006$ \\
+        5    & 8\,003\,999\,000.000 & $0.062$ & $-0.006$ \\
+        \midrule
+        3999 & 11\,997\,000\,750.000 & $0.098$ & $-0.007$ \\
+        4000 & 11\,998\,000\,500.000 & $0.100$ & $-0.003$ \\
+        4001 & 11\,999\,000\,250.000 & $0.099$ & $-0.011$ \\
+        \bottomrule
+    \end{tabular}
+\end{table}
+
+Several observations follow from \Cref{tab:sample_trace}:
+
+\begin{itemize}
+    \item The frequency grid begins at exactly \SI{8.0}{\giga\hertz} and
+        ends at approximately \SI{12.0}{\giga\hertz}
+        (\SI{11999000250}{\hertz}), with a nominal step of
+        $\Delta f \approx \SI{999750}{\hertz} \approx \SI{1}{\mega\hertz}$.
+    \item The step size is not an exact integer number of hertz,
+        consistent with a VNA synthesiser dividing a
+        \SI{3.999}{\giga\hertz} span into exactly \num{4000} equal
+        intervals.
+    \item Real and Imaginary components span $[-1, 1]$ bounds, typical
+        of a passive reflective structure.
+    \item Because the representation is Cartesian, the curves are mathematically continuous;
+        there are no ``phase wrap'' discontinuities requiring heuristic unwrapping logic.
+\end{itemize}
+
+% ─────────────────────────────────────────────────────────────────────
+\subsection{Frequency Grid Validation}
+\label{sec:dataset:freqgrid}
+
+A uniform frequency grid is a critical assumption for all downstream
+feature representations.  If any file deviates in the number of points or
+in the frequency values themselves, sample-wise operations
+(concatenation, differencing, normalisation) would silently produce
+misaligned features.
+
+The expected grid is defined by three parameters:
+\begin{align}
+    f_{\text{start}} &= \SI{8\,000\,000\,000}{\hertz},\notag\\
+    f_{\text{stop}}  &= \SI{11\,999\,000\,250}{\hertz},\notag\\
+    N &= 4001 \text{ points},
+    \label{eq:freq_grid}
+\end{align}
+yielding a step of $\Delta f = (f_{\text{stop}} - f_{\text{start}}) /
+(N-1) \approx \SI{999750.0625}{\hertz}$.  The ingestion pipeline must
+verify, for every file, that (i)~the number of rows equals \num{4001},
+and (ii)~the frequency column matches the reference grid to within a
+tolerance of $\pm\SI{1}{\hertz}$.  Files failing either check should be
+flagged and excluded rather than silently truncated or interpolated.
+
+% ─────────────────────────────────────────────────────────────────────
+\subsection{Class Distribution}
+\label{sec:dataset:classes}
+
+\Cref{tab:class_dist} summarises the number of traces per class and
+quantifies the imbalance.
+
+\begin{table}[htbp]
+    \centering
+    \caption{%
+        Class distribution across the three surface-state categories.
+        The imbalance ratio is computed relative to the minority classes.%
+    }
+    \label{tab:class_dist}
+    \begin{tabular}{lrrr}
+        \toprule
+        \textbf{Class} & \textbf{Folder name} & \textbf{Traces} &
+            \textbf{Ratio} \\
+        \midrule
+        \texttt{dry} & \texttt{dry sensor} & 601 & 1.20 \\
+        \texttt{wet} & \texttt{wet sensor} & 501 & 1.00 \\
+        \texttt{ice} & \texttt{ice on sensor} & 501 & 1.00 \\
+        \midrule
+        \textbf{Total} & & \textbf{1603} & \\
+        \bottomrule
+    \end{tabular}
+\end{table}
+
+The imbalance ratio of $1.20\!:\!1\!:\!1$ is mild by the standards of
+applied machine learning.  The \texttt{dry} class has \num{100}
+additional traces relative to \texttt{wet} and \texttt{ice}, which are
+equal in size.  At this level of imbalance, standard stratified splitting
+and stratified cross-validation are typically sufficient to prevent
+biased evaluation.  Aggressive oversampling or synthetic minority
+generation (e.g.\ SMOTE) is unlikely to be necessary but remains
+available as a contingency.
+
+% ─────────────────────────────────────────────────────────────────────
+\subsection{Trace Numbering and Missing Acquisitions}
+\label{sec:dataset:gaps}
+
+File names follow the pattern \texttt{Trc\textlangle{}N\textrangle{}.s1p}
+where $N$ is an integer index.  Inspection of the full file listing
+reveals two systematic gaps in the numbering sequence:
+
+\begin{itemize}
+    \item \textbf{Trc601--Trc699} (\num{99} indices) are absent across
+        all class folders.
+    \item \textbf{Trc1201--Trc1449} (\num{249} indices) are absent
+        across all class folders.
+\end{itemize}
+
+These gaps are consistent across the three class directories, suggesting
+a measurement-campaign-level event (e.g.\ instrument recalibration,
+paused acquisition, or deliberate exclusion of a batch) rather than
+per-class data loss.  The gaps should be noted in any publication
+describing the dataset but do \emph{not} affect the machine learning
+pipeline, which operates on the files that are present and assigns
+canonical indices independently of the original trace numbers.
+
+% ─────────────────────────────────────────────────────────────────────
+\subsection{Folder-to-Label Mapping}
+\label{sec:dataset:labels}
+
+Class labels are derived directly from the folder hierarchy.  Each
+measurement file resides in one of three directories whose names serve as
+ground-truth labels:
+
+\begin{center}
+\begin{tabular}{ll}
+    \toprule
+    \textbf{Folder name} & \textbf{Assigned label} \\
+    \midrule
+    \texttt{dry sensor}    & \texttt{dry} \\
+    \texttt{wet sensor}    & \texttt{wet} \\
+    \texttt{ice on sensor} & \texttt{ice} \\
+    \bottomrule
+\end{tabular}
+\end{center}
+
+\noindent
+There is no auxiliary label file; the folder membership \emph{is} the
+label.  This simple scheme avoids label-file synchronisation errors but
+means that any accidental file movement would silently corrupt the
+ground truth.  The ingestion pipeline should therefore checksum the full
+file listing against a frozen manifest at the start of every experiment.
+
+% ─────────────────────────────────────────────────────────────────────
+\subsection{Deterministic Indexing Scheme}
+\label{sec:dataset:indexing}
+
+To ensure reproducibility, we propose a canonical sample~ID that is
+independent of the original trace numbering.  Each sample receives an
+identifier of the form
+
+\begin{center}
+    \texttt{\textlangle{}class\_prefix\textrangle{}\_\textlangle{}zero-padded index\textrangle{}}
+\end{center}
+
+\noindent
+where:
+\begin{itemize}
+    \item \textbf{class\_prefix} is one of \texttt{dry}, \texttt{wet},
+        or \texttt{ice}.
+    \item \textbf{zero-padded index} is a four-digit integer assigned by
+        sorting the files within each class folder in \emph{lexicographic
+        order} by their original file name, then numbering from~\texttt{0000}.
+\end{itemize}
+
+\noindent
+For example, the first file in the \texttt{dry sensor} folder
+(\texttt{Trc0.s1p}) receives the canonical~ID \texttt{dry\_0000}; the
+last file in the \texttt{ice on sensor} folder receives
+\texttt{ice\_0500}.  This scheme satisfies three requirements:
+
+\begin{enumerate}
+    \item \textbf{Uniqueness.}  Every sample has a globally unique
+        identifier.
+    \item \textbf{Determinism.}  The same set of files always produces
+        the same mapping, regardless of operating-system directory
+        traversal order, provided lexicographic sorting is used.
+    \item \textbf{Traceability.}  The original file name is recorded
+        alongside the canonical~ID in the dataset manifest, preserving
+        the link to the raw acquisition.
+\end{enumerate}
+
+% ─────────────────────────────────────────────────────────────────────
+\subsection{Metadata Logging Requirements}
+\label{sec:dataset:metadata}
+
+Every experimental run must record the following metadata to enable
+post-hoc auditing and reproduction:
+
+\begin{enumerate}
+    \item \textbf{Dataset manifest:}  A table mapping each canonical
+        sample~ID to its original file path and an integrity hash
+        (e.g.\ SHA-256 of the raw file bytes).
+    \item \textbf{Frequency grid reference:}  The exact $f_{\text{start}}$,
+        $f_{\text{stop}}$, and~$N$ used, plus the tolerance applied
+        during grid validation.
+    \item \textbf{Class distribution:}  The number of samples per class
+        after any exclusion or filtering step.
+    \item \textbf{Exclusion log:}  A list of any files excluded during
+        ingestion, with the reason for exclusion (e.g.\ wrong number of
+        rows, frequency grid mismatch, corrupt data).
+    \item \textbf{Software versions:}  Python interpreter version and
+        versions of all critical libraries (NumPy, scikit-learn,
+        TensorFlow/PyTorch, XGBoost, etc.).
+    \item \textbf{Random seeds:}  All seeds used for splitting,
+        initialisation, and any stochastic algorithm component.
+    \item \textbf{Preprocessing parameters:}  Normalisation statistics
+        (mean, standard deviation, min, max) computed on the training
+        fold, along with any augmentation or feature-engineering
+        settings.
+\end{enumerate}
+
+\noindent
+These requirements are not optional conveniences; in a small-sample
+regime where every split decision materially affects reported
+performance, full provenance is the only defence against irreproducible
+results.

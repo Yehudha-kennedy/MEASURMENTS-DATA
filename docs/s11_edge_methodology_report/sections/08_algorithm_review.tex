@@ -1,0 +1,846 @@
+% ------------------------------------------------------------------
+% FILE: sections/08_algorithm_review.tex
+% Comparative review of 10 candidate algorithms for S11 classification.
+% \input{} into main.tex — do NOT wrap in \documentclass or \begin{document}.
+% ------------------------------------------------------------------
+
+\section{Tiered Algorithm Strategy}\label{sec:algorithms}
+
+Rather than conducting a blind flat search across arbitrary models, this methodology
+adopts a principled \textbf{tiered complexity hierarchy} (Level 0 to Level 3). We
+advance through complexity levels sequentially, only proceeding to the next tier if
+the current tier fails to meet performance or robustness requirements.
+Within this hierarchy, three architectures are highlighted as the primary candidates
+for success: \textbf{Linear SVM / Logistic Regression} (for maximum interpretability
+and minimal deployment cost), \textbf{Gradient Boosted Trees} (for consistent dominance
+on tabular data and immunity to normalization tuning), and the \textbf{1D CNN} (for its
+natural alignment with the local spectral structure of the data and excellent edge profile).
+
+\paragraph{Review contract.}
+To ensure that comparisons are fair and self-contained, every algorithm
+review answers the same ten questions:
+%
+\begin{enumerate}
+  \item \textbf{Core mechanism} --- what mathematical or structural principle underlies the model?
+  \item \textbf{Expected input shape} --- what dimensionality and layout does the algorithm require?
+  \item \textbf{Compatible representation route} --- Route~A (1D~spectral), Route~B (2D~image-like), or both?
+  \item \textbf{Required preprocessing} --- what upstream pipeline stages are mandatory?
+  \item \textbf{Preferred normalization} --- z-score, min--max, robust, or none?
+  \item \textbf{Augmentation compatibility} --- which augmentation strategies from \Cref{sec:augment} apply?
+  \item \textbf{Overfitting risk under \num{1603} samples} --- low, medium, or high?
+  \item \textbf{Interpretability level} --- can predictions be traced back to physical frequency features?
+  \item \textbf{Edge deployment suitability} --- model size, inference cost, and toolchain maturity.
+  \item \textbf{Main failure modes} --- under what conditions will the algorithm break down?
+\end{enumerate}
+
+
+
+% ==================================================================
+\subsection{Level 0: Unsupervised Structure Probe}\label{subsec:level0}
+% ==================================================================
+\subsubsection{K-Means Clustering}\label{subsec:kmeans}
+% ==================================================================
+
+\paragraph{Core mechanism.}
+K-Means is an unsupervised centroid-based clustering algorithm that
+partitions $n$ observations into $k$ clusters by iteratively minimising
+the within-cluster sum of squared
+distances~\cite{lloyd1982kmeans, macqueen1967kmeans}.  Given an
+initial set of $k$ centroids, the algorithm alternates between
+(1)~assigning each sample to the nearest centroid and (2)~updating
+each centroid to the mean of its assigned samples, until convergence.
+
+\paragraph{Critical framing.}
+\textbf{K-Means is an unsupervised structure probe, not a primary
+classifier.}  Its purpose in this pipeline is to answer a foundational
+question \emph{before} supervised learning begins: do the three
+physical states (\texttt{dry}, \texttt{wet}, \texttt{ice}) produce
+naturally separable clusters in the chosen feature space?  If K-Means
+with $k = 3$ recovers clusters that align well with the known labels,
+this provides evidence that the feature representation captures
+physically meaningful differences.  If not, the representation may
+need revision before investing in supervised model training.
+
+\paragraph{Expected input shape.}
+Flattened 1D feature vectors, identical to the supervised methods.
+
+\paragraph{Compatible route.}
+Route~A.
+
+\paragraph{Required preprocessing.}
+Shared pipeline from \Cref{sec:preproc}.
+
+\paragraph{Preferred normalization.}
+\textbf{Z-score normalisation is essential.}  K-Means uses Euclidean
+distance to assign cluster membership; without normalisation, features
+with larger numerical ranges (e.g., phase in degrees vs.\ magnitude
+in dB) will dominate the distance calculation and distort cluster
+assignments.
+
+\paragraph{Augmentation compatibility.}
+Not applicable.  Augmentation is a supervised training technique;
+K-Means operates on the original data to probe its natural structure.
+
+\paragraph{Overfitting risk.}
+\textbf{None in the conventional sense.}  K-Means does not use labels
+during training, so there is no label leakage or label-driven
+memorisation.  However, the algorithm \emph{can} find spurious
+structure in high-dimensional spaces (the curse of dimensionality
+facilitates apparent clustering even in random data).  Silhouette
+analysis and comparison against random label permutations guard
+against this.
+
+\paragraph{Interpretability.}
+\textbf{High.}  Each cluster centroid is a $d$-dimensional vector in
+the same feature space as the input, and can be plotted directly as a
+spectral trace.  This enables visual comparison: does the
+\texttt{dry}-aligned centroid look like a prototypical dry-state
+$S_{11}$ trace?  Cluster-to-class assignment can be evaluated via the
+Adjusted Rand Index (ARI), which measures agreement between the
+discovered partition and the true labels, corrected for chance.
+
+\paragraph{Edge deployment suitability.}
+\textbf{Very high.}  Inference is a nearest-centroid lookup: compute
+$k = 3$ Euclidean distances and select the minimum.  This requires
+$3 \times d$ multiply-accumulate operations and negligible memory
+(three $d$-dimensional centroids).  The entire model fits in less than
+\SI{100}{\kilo\byte} and can be implemented in any language.
+
+\paragraph{Main failure modes.}
+K-Means assumes that clusters are convex, isotropic, and roughly
+equally sized --- assumptions that may not hold for $S_{11}$ feature
+spaces.  If the \texttt{wet} and \texttt{ice} classes form elongated
+or overlapping distributions, K-Means may (a)~split one true class
+into two clusters, or (b)~merge two distinct classes into one cluster.
+Running K-Means with multiple random initialisations, evaluating
+silhouette scores, and comparing alternative values of $k$ (e.g.,
+$k \in \{2, 3, 4, 5\}$) will help diagnose these failure modes.
+
+\paragraph{Evaluation protocol.}
+Because K-Means does not use labels, its output requires a distinct
+evaluation protocol:
+%
+\begin{itemize}
+  \item Run K-Means with $k = 3$ and multiple random initialisations
+        (e.g., \num{50}).
+  \item Assign each discovered cluster to the class label that has
+        the highest overlap (Hungarian matching).
+  \item Compute the Adjusted Rand Index (ARI) between the cluster
+        assignments and the true labels.
+  \item Compute the silhouette score to assess cluster cohesion and
+        separation.
+  \item Visualise cluster centroids as spectral traces and compare
+        against per-class mean spectra.
+  \item Repeat the analysis for each candidate feature encoding
+        (magnitude-only, magnitude-plus-phase, etc.) to determine
+        which representation yields the cleanest unsupervised
+        separation.
+\end{itemize}
+
+
+% ==================================================================
+% Summary comparison table (defined in tables/algorithm_comparison.tex)
+% ==================================================================
+
+\bigskip
+\input{tables/algorithm_comparison}
+
+% ==================================================================
+% Framework clarification
+% ==================================================================
+
+\paragraph{A note on implementation frameworks.}
+Keras, TensorFlow, and PyTorch are \emph{software frameworks} for
+implementing and training neural network architectures --- they are
+not algorithms in themselves.  Keras, for example, is a high-level API
+that can be used to implement the MLP (\Cref{subsec:mlp}), 1D~CNN
+(\Cref{subsec:cnn1d}), or ResNet-1D (\Cref{subsec:resnet1d})
+architectures described above, among many others.  Similarly,
+scikit-learn~\cite{sklearn_docs} provides implementations of logistic
+regression, SVM variants, Random Forest, Gradient Boosted Trees, MLP,
+and K-Means.  The choice of implementation framework affects engineering
+convenience, deployment compatibility, and edge-runtime availability,
+but it does not change the mathematical properties of the underlying
+algorithm.  Framework selection is discussed in \Cref{sec:nextsteps}
+as part of the implementation stack.
+
+% ==================================================================
+\subsection{Level 1: Linear Baselines}\label{subsec:level1}
+% ==================================================================
+\subsubsection{Logistic Regression}\label{subsec:logreg}
+% ==================================================================
+
+\paragraph{Core mechanism.}
+Multinomial logistic regression extends binary logistic regression to
+the three-class setting by modelling the posterior probability of each
+class as a softmax over linear combinations of the input
+features~\cite{hosmer2013logistic}.  For an input vector
+$\mathbf{x} \in \mathbb{R}^{d}$ and $K=3$ classes, the model computes
+%
+\begin{equation}
+  P(y = k \mid \mathbf{x})
+  = \frac{\exp(\mathbf{w}_k^\top \mathbf{x} + b_k)}
+         {\sum_{j=1}^{K} \exp(\mathbf{w}_j^\top \mathbf{x} + b_j)},
+  \qquad k = 1, \dots, K,
+\end{equation}
+%
+where $\mathbf{w}_k$ and $b_k$ are the weight vector and bias for
+class~$k$.  The decision boundaries are hyperplanes in the
+$d$-dimensional feature space.
+
+\paragraph{Expected input shape.}
+A flattened one-dimensional feature vector of length $d$.  When
+using magnitude-only encoding, $d = 4001$; with magnitude-plus-phase
+dual-channel encoding, $d = 8002$.
+
+\paragraph{Compatible route.}
+Route~A exclusively.  The model has no mechanism to exploit
+two-dimensional spatial structure.
+
+\paragraph{Required preprocessing.}
+Standard shared pipeline from \Cref{sec:preproc}: Touchstone parsing,
+frequency-grid validation, class-label assignment.
+
+\paragraph{Preferred normalization.}
+Per-feature z-score normalization (fit on training partition only) is
+preferred because the magnitude of $S_{11}$ in dB and phase in degrees
+occupy different numerical ranges.  Min--max scaling is acceptable but
+more sensitive to outliers.
+
+\paragraph{Augmentation compatibility.}
+Compatible with all Route~A augmentations: additive Gaussian noise,
+magnitude scaling, phase perturbation.  Since the model has minimal
+capacity, augmentation primarily serves as a regulariser against
+noise rather than a capacity enhancer.
+
+\paragraph{Overfitting risk.}
+\textbf{Very low.}  The total parameter count is $K \times (d + 1)$,
+which is at most $3 \times 8003 = 24{,}009$ parameters --- well below
+the $\num{1603}$-sample regime where high-capacity models become
+dangerous.  $L_2$ regularisation (controlled by the inverse
+regularisation strength $C$) further constrains the weight magnitudes.
+
+\paragraph{Interpretability.}
+\textbf{High.}  Each weight $w_{k,i}$ directly quantifies the
+contribution of frequency bin~$i$ to the log-odds of class~$k$.  This
+enables direct mapping of learned coefficients onto the physical
+frequency axis, revealing which spectral regions drive classification.
+
+\paragraph{Edge deployment suitability.}
+\textbf{Excellent.}  The inference operation is a single matrix--vector
+multiplication followed by a softmax, requiring $\mathcal{O}(Kd)$
+multiply-accumulate operations.  The model fits in less than
+\SI{100}{\kilo\byte} even without quantisation.  No specialised
+runtime is required; inference can be implemented in plain~C.
+
+\paragraph{Main failure modes.}
+Logistic regression assumes that the classes are linearly separable (or
+approximately so) in the feature space.  If the physical differences
+between \texttt{wet} and \texttt{ice} manifest as nonlinear patterns
+--- for instance, resonance peak \emph{shifts} combined with
+magnitude \emph{dips} at different frequency locations --- a linear
+boundary will misclassify the overlap region.  Dimensionality reduction
+to a small number of principal components may also discard discriminative
+spectral detail.
+
+
+% ==================================================================
+\subsubsection{Linear SVM}\label{subsec:lsvm}
+% ==================================================================
+
+\paragraph{Core mechanism.}
+A support vector machine with a linear kernel finds the maximum-margin
+separating hyperplane between classes~\cite{cortes1995svm,
+vapnik1995svm}.  For three classes, the implementation typically uses
+a one-vs-rest (OVR) or one-vs-one (OVO) decomposition, training
+$K$ or $\binom{K}{2}$ binary classifiers respectively.
+
+\paragraph{Expected input shape.}
+Flattened 1D vector, same as logistic regression.
+
+\paragraph{Compatible route.}
+Route~A exclusively.
+
+\paragraph{Required preprocessing.}
+Shared pipeline from \Cref{sec:preproc}.
+
+\paragraph{Preferred normalization.}
+Z-score or min--max scaling.  The margin maximisation objective is
+sensitive to feature scale; un-normalised features with large dynamic
+range will dominate the margin calculation and suppress contributions
+from lower-magnitude features.
+
+\paragraph{Augmentation compatibility.}
+Same as logistic regression.  Noise-based augmentations can be viewed
+as implicit regularisation of the margin.
+
+\paragraph{Overfitting risk.}
+\textbf{Low.}  The margin constraint is itself a structural
+regulariser.  The penalty parameter $C$ controls the trade-off between
+margin width and training-set misclassification tolerance.  With proper
+cross-validated selection of~$C$, the model generalises well even on
+small datasets.
+
+\paragraph{Interpretability.}
+\textbf{High.}  The normal vector of each separating hyperplane can be
+projected back onto the frequency axis, analogously to logistic
+regression coefficients.  Support vectors identify the most ambiguous
+training samples near the decision boundary.
+
+\paragraph{Edge deployment suitability.}
+\textbf{Good.}  Inference requires computing the sign of
+$\mathbf{w}^\top \mathbf{x} + b$ for each binary classifier.  For
+OVR with $K=3$, this is three inner products.  If the support vector
+set is sparse (common for well-separated data), the stored model is
+very compact.
+
+\paragraph{Main failure modes.}
+Identical to logistic regression: linear decision boundaries are
+insufficient if class separations are inherently nonlinear.  The linear
+SVM may achieve slightly different margins than logistic regression on
+the same data, but neither can overcome the fundamental limitation of
+linearity.
+
+
+
+% ==================================================================
+\subsection{Level 2: Non-Linear Tabular Models}\label{subsec:level2}
+% ==================================================================
+\subsubsection{RBF SVM}\label{subsec:rbfsvm}
+% ==================================================================
+
+\paragraph{Core mechanism.}
+Replacing the linear kernel with the Radial Basis Function (RBF)
+kernel
+$K(\mathbf{x}, \mathbf{x}') = \exp\!\bigl(-\gamma \|\mathbf{x} -
+\mathbf{x}'\|^2\bigr)$
+implicitly maps the input to an infinite-dimensional Hilbert space,
+enabling nonlinear decision boundaries in the original feature
+space~\cite{vapnik1995svm}.
+
+\paragraph{Expected input shape.}
+Flattened 1D vector, same as the linear methods.
+
+\paragraph{Compatible route.}
+Route~A.  Although the kernel can, in principle, operate on any fixed-length
+vector, its distance-based nature assumes that all feature dimensions are
+commensurable after normalisation.
+
+\paragraph{Required preprocessing.}
+Shared pipeline from \Cref{sec:preproc}.
+
+\paragraph{Preferred normalization.}
+\textbf{Z-score normalization is essential.}  The RBF kernel computes
+Euclidean distances between feature vectors; features on larger scales
+will dominate these distances and distort the kernel matrix.  Robust
+scaling is an alternative when extreme outliers are suspected.
+
+\paragraph{Augmentation compatibility.}
+Compatible with all Route~A augmentations.  Because the RBF SVM can
+already model nonlinear boundaries, augmentation primarily improves
+robustness to measurement noise rather than increasing effective
+complexity.
+
+\paragraph{Overfitting risk.}
+\textbf{Medium.}  Two hyperparameters require careful tuning:
+$\gamma$ (kernel width) and $C$ (penalty).  A high $\gamma$ combined
+with a large $C$ can produce a decision surface that tightly wraps
+around individual training points, effectively memorising the
+training set.  Nested cross-validation is essential to control this
+risk.
+
+\paragraph{Interpretability.}
+\textbf{Low--medium.}  The decision function depends on kernel
+evaluations against the support vectors, making it difficult to trace
+predictions back to individual frequency bins.  Partial dependence
+plots or SHAP-based kernel explanations can provide post-hoc
+interpretability, but at additional computational cost.
+
+\paragraph{Edge deployment suitability.}
+\textbf{Moderate.}  Inference requires computing
+$f(\mathbf{x}) = \sum_{i \in \mathcal{SV}} \alpha_i y_i
+K(\mathbf{x}, \mathbf{x}_i) + b$,
+where the sum is over all support vectors.  If the number of support
+vectors is large (a risk with noisy or overlapping classes), both
+memory and computation scale unfavourably.  Approximate methods (e.g.,
+Nyström approximation) or explicit kernel-map expansions can mitigate
+this but add implementation complexity.
+
+\paragraph{Main failure modes.}
+Poor scaling to very high-dimensional inputs without prior
+dimensionality reduction.  With $d = 4001$ or $d = 8002$, the pairwise
+kernel matrix becomes expensive to compute during training, and the
+support vector set may become dense.  Additionally, the kernel
+hyperparameter $\gamma$ can be fragile: values that work well for one
+noise level may fail under distribution shift.
+
+
+% ==================================================================
+\subsubsection{Random Forest}\label{subsec:rf}
+% ==================================================================
+
+\paragraph{Core mechanism.}
+A Random Forest is an ensemble of $B$ decision trees, each trained on
+a bootstrap sample of the training data with random feature subsampling
+at each split~\cite{breiman2001rf}.  The ensemble prediction is the
+majority vote (classification) or average (probability estimate) across
+all trees.  Feature subsampling decorrelates the individual trees,
+reducing variance relative to a single deep tree.
+
+\paragraph{Expected input shape.}
+Flattened 1D feature vector.  Each feature corresponds to a frequency
+bin (magnitude, phase, or derived quantity).
+
+\paragraph{Compatible route.}
+Route~A.  While decision trees can technically operate on any tabular
+input, they have no mechanism to exploit 2D spatial structure.
+
+\paragraph{Required preprocessing.}
+Shared pipeline from \Cref{sec:preproc}.
+
+\paragraph{Preferred normalization.}
+\textbf{Not strictly required.}  Decision-tree splits compare each
+feature against a threshold; these comparisons are invariant to
+monotonic transformations of the features.  However, if downstream
+interpretation or ensemble combination with normalisation-sensitive
+models is planned, applying z-score normalisation for consistency is
+harmless.
+
+\paragraph{Augmentation compatibility.}
+Compatible with Route~A augmentations.  Noise injection can provide
+additional regularisation, but the bootstrap mechanism already
+introduces sampling diversity.
+
+\paragraph{Overfitting risk.}
+\textbf{Low--medium.}  Controlled by the number of trees
+(\texttt{n\_estimators}), maximum tree depth (\texttt{max\_depth}),
+and minimum samples per leaf (\texttt{min\_samples\_leaf}).
+Unrestricted depth allows each tree to perfectly memorise its bootstrap
+sample; setting \texttt{max\_depth} $\leq 20$ or
+\texttt{min\_samples\_leaf} $\geq 5$ is recommended for $\num{1603}$
+samples.  Increasing \texttt{n\_estimators} does not increase
+overfitting risk (it reduces variance), but it increases model size.
+
+\paragraph{Interpretability.}
+\textbf{Good.}  Feature importance scores (mean decrease in impurity
+or permutation importance) map directly to frequency bins, revealing
+which spectral regions are most discriminative.  This provides a
+physically interpretable summary of which portions of the $S_{11}$
+trace carry classification information.
+
+\paragraph{Edge deployment suitability.}
+\textbf{Good.}  Each tree is a sequence of if--else comparisons with
+no matrix operations.  Trees can be serialised as compact lookup
+structures.  Inference can be parallelised across trees.  However,
+large ensembles ($B > 100$) with deep trees may exceed the memory
+budget of constrained microcontrollers.  Ensemble pruning (removing
+low-contribution trees) is straightforward.
+
+\paragraph{Main failure modes.}
+Individual trees can memorise the training set if depth is
+unrestricted, but the ensemble average typically smooths this out.
+The primary practical risk is \emph{model size}: an ensemble of 500
+deep trees with $d = 8002$ features can produce a serialised model
+exceeding \SI{50}{\mega\byte}, which is prohibitive for edge
+deployment.  Feature subsampling with $\sqrt{d} \approx 90$ features
+per split keeps individual trees lightweight, but total ensemble
+memory must be profiled.  Random Forests can also underperform when
+the discriminative signal is spread thinly across many correlated
+features rather than concentrated in a few strong predictors.
+
+
+% ==================================================================
+\subsubsection{Gradient Boosted Trees}\label{subsec:gbt}
+% ==================================================================
+
+\paragraph{Core mechanism.}
+Gradient Boosted Trees (GBT) build an additive ensemble of shallow
+decision trees in a sequential (boosting) fashion, where each new tree
+is trained to correct the residual errors of the current
+ensemble~\cite{friedman2001gbm}.  Modern implementations such as
+XGBoost~\cite{chen2016xgboost} add column subsampling,
+second-order gradient information, and regularisation terms to the
+objective, making GBT one of the most competitive methods for
+tabular data across many application domains.
+
+\paragraph{Expected input shape.}
+Flattened 1D feature vector, identical to Random Forest.
+
+\paragraph{Compatible route.}
+Route~A.
+
+\paragraph{Required preprocessing.}
+Shared pipeline from \Cref{sec:preproc}.
+
+\paragraph{Preferred normalization.}
+Not strictly required for the same reasons as Random Forest (tree
+splits are scale-invariant), but normalisation is harmless and aids
+pipeline consistency.
+
+\paragraph{Augmentation compatibility.}
+Compatible with Route~A augmentations.  Column subsampling and row
+subsampling within XGBoost already provide built-in stochastic
+regularisation; additional augmentation can complement but should
+be applied judiciously to avoid excessive noise.
+
+\paragraph{Overfitting risk.}
+\textbf{Medium.}  The sequential nature of boosting means that each
+additional tree further reduces training loss.  Without early stopping,
+GBT can drive the training loss to zero and memorise the training set.
+Three hyperparameters jointly control capacity: \texttt{learning\_rate}
+(shrinkage), \texttt{max\_depth} (per-tree complexity), and
+\texttt{n\_estimators} (total rounds).  A low learning rate
+($\eta \leq 0.1$) with early stopping on a validation set is the
+standard remedy.  Nested cross-validation is recommended to guard
+against optimistic tuning on a single split.
+
+\paragraph{Interpretability.}
+\textbf{Good.}  Like Random Forest, GBT provides feature importance
+scores that map to frequency bins.  SHAP (SHapley Additive
+exPlanations) values are particularly well-developed for
+tree-ensemble models and can provide both global and per-sample
+explanations.
+
+\paragraph{Edge deployment suitability.}
+\textbf{Good.}  Boosted tree ensembles are typically shallower than
+Random Forest trees (depth~3--6 is common), producing smaller models.
+After pruning and quantisation, a trained GBT model can often fit
+within \SI{1}{\mega\byte}.  Inference is a sequence of if--else
+evaluations with no floating-point matrix operations, which is ideal
+for microcontrollers without hardware FPU.
+
+\paragraph{Main failure modes.}
+Sensitivity to the learning rate: too high causes oscillation and
+overfitting; too low requires many boosting rounds, inflating model
+size and training time.  GBT can also overfit when the number of
+informative features is small relative to the total feature count,
+as uninformative features are repeatedly sampled and split upon.
+Feature selection or dimensionality reduction before training can
+mitigate this.
+
+
+
+% ==================================================================
+\subsection{Level 3: Deep Architectures}\label{subsec:level3}
+% ==================================================================
+\subsubsection{Multilayer Perceptron}\label{subsec:mlp}
+% ==================================================================
+
+\paragraph{Core mechanism.}
+A Multilayer Perceptron (MLP) is a fully connected feedforward neural
+network consisting of one or more hidden layers with nonlinear
+activation functions~\cite{haykin2009nn, goodfellow2016deep}.  For an
+input $\mathbf{x} \in \mathbb{R}^d$, a single-hidden-layer MLP
+computes
+%
+\begin{equation}
+  \hat{\mathbf{y}}
+  = \mathrm{softmax}\!\bigl(\mathbf{W}_2 \,
+    \sigma(\mathbf{W}_1 \mathbf{x} + \mathbf{b}_1) + \mathbf{b}_2\bigr),
+\end{equation}
+%
+where $\sigma$ is a pointwise nonlinearity (e.g., ReLU), and
+$(\mathbf{W}_1, \mathbf{b}_1, \mathbf{W}_2, \mathbf{b}_2)$ are
+learnable parameters.  Deeper architectures stack additional
+hidden layers.
+
+\paragraph{Expected input shape.}
+Flattened 1D vector of length $d$ for Route~A inputs.  Route~B inputs
+(2D images) can also be flattened, although this discards spatial
+structure.  Thus, the MLP is compatible with both routes in principle
+but benefits from neither's structure.
+
+\paragraph{Compatible route.}
+Route~A (primary) or Route~B (via flattening).
+
+\paragraph{Required preprocessing.}
+Shared pipeline from \Cref{sec:preproc}.
+
+\paragraph{Preferred normalization.}
+Z-score or min--max normalisation is required.  Neural networks
+trained with gradient descent are sensitive to feature scale:
+un-normalised inputs cause poorly conditioned loss landscapes, slow
+convergence, and potential numerical instability~\cite{goodfellow2016deep}.
+
+\paragraph{Augmentation compatibility.}
+Compatible with all Route~A augmentations and, if flattened Route~B
+is used, with 2D augmentations applied before flattening.  Dropout
+within the network provides implicit augmentation via stochastic
+feature masking.
+
+\paragraph{Overfitting risk.}
+\textbf{Medium--high.}  A two-hidden-layer MLP with 256 and 128 units
+has approximately $256d + 256 + 128 \times 256 + 128 + 3 \times 128 +
+3 \approx 1{,}057{,}000$ parameters for $d = 4001$ --- roughly 660
+parameters per training sample.  This ratio warrants aggressive
+regularisation: dropout ($p = 0.3$--$0.5$), weight decay
+($\lambda = 10^{-4}$--$10^{-3}$), and early stopping based on
+validation loss.  Smaller architectures (e.g., 64--32 units) trade
+capacity for safety.
+
+\paragraph{Interpretability.}
+\textbf{Low--medium.}  Unlike logistic regression, the hidden layers
+introduce nonlinear transformations that obscure the relationship
+between input features and predictions.  Gradient-based saliency maps
+or integrated gradients can provide post-hoc attribution to input
+frequency bins, but these are approximate and can be misleading
+without careful validation.
+
+\paragraph{Edge deployment suitability.}
+\textbf{Good, if architecture is compact.}  A small MLP
+(e.g., $4001 \to 64 \to 32 \to 3$) has approximately
+\num{258000} parameters, requiring $\sim$\SI{1}{\mega\byte} in
+float32 or $\sim$\SI{256}{\kilo\byte} in INT8.  Inference is
+dominated by matrix--vector multiplications that are well-supported
+by TensorFlow Lite and ONNX Runtime on ARM
+targets~\cite{tensorflow_lite, onnx_runtime}.  Larger architectures
+quickly exceed edge memory budgets.
+
+\paragraph{Main failure modes.}
+The MLP has \emph{no spectral or spatial inductive bias}: it treats
+every input position independently, so there is no built-in notion
+that adjacent frequency bins are related.  This means the MLP must
+learn locality from scratch, which is data-inefficient.  With only
+\num{1603} samples, the MLP may fail to discover localized spectral
+patterns (e.g., resonance peak shifts) that a convolutional
+architecture would capture natively.
+
+
+% ==================================================================
+\subsubsection{1D Convolutional Neural Network}\label{subsec:cnn1d}
+% ==================================================================
+
+\paragraph{Core mechanism.}
+A 1D Convolutional Neural Network (CNN) applies learned convolutional
+filters (kernels) along the frequency axis of the input
+trace~\cite{lecun1998cnn}.  Each filter produces a feature map that
+captures local patterns at its receptive field scale.  Stacking
+convolutional layers with pooling operations builds a hierarchy of
+increasingly abstract spectral features.
+
+\paragraph{Expected input shape.}
+A 1D sequence of length $L = 4001$ with $C$ channels, where $C = 1$
+for magnitude-only or $C = 2$ for magnitude-plus-phase encoding.
+
+\paragraph{Compatible route.}
+Route~A (primary).  Multi-channel 1D input naturally accommodates
+the dual-channel representations discussed in \Cref{sec:repr}.
+
+\paragraph{Required preprocessing.}
+Shared pipeline from \Cref{sec:preproc}.
+
+\paragraph{Preferred normalization.}
+Z-score normalisation of the input, optionally supplemented by batch
+normalisation layers within the network.  Batch normalisation
+stabilises training by normalising activations at each layer,
+reducing sensitivity to the input scale~\cite{goodfellow2016deep}.
+
+\paragraph{Augmentation compatibility.}
+Highly compatible with all Route~A augmentations.  The convolutional
+architecture is particularly well suited to benefit from frequency-local
+jitter and additive noise augmentations, as these diversify the
+local patterns that the kernels must learn to recognise.
+
+\paragraph{Overfitting risk.}
+\textbf{Medium.}  Convolutional layers share parameters across
+positions, drastically reducing the parameter count relative to an
+MLP of comparable representational capacity.  A compact 1D CNN
+(e.g., three convolutional blocks with 16--32--64 filters followed by
+global average pooling and a dense head) may have fewer than
+\num{50000} parameters.  However, overfitting remains a concern with
+\num{1603} samples; dropout, weight decay, and early stopping are
+recommended.
+
+\paragraph{Spectral inductive bias.}
+This is the key advantage of the 1D CNN for $S_{11}$ classification.
+Convolutional kernels of width $k$ (e.g., $k = 5$--$11$) learn to
+detect localized frequency-domain patterns: resonance peaks,
+absorption dips, slope changes, and inflection points.  These are
+precisely the features that distinguish \texttt{dry}, \texttt{wet},
+and \texttt{ice} states in $S_{11}$ spectra.  The inductive bias
+encodes the physically motivated assumption that adjacent frequency
+bins carry correlated information.
+
+\paragraph{Interpretability.}
+\textbf{Medium.}  First-layer convolutional filters can be visualised
+directly as frequency-domain templates.  Gradient-weighted class
+activation maps (Grad-CAM, adapted to 1D) can highlight which spectral
+regions most influence each class prediction, providing a physically
+meaningful attribution.
+
+\paragraph{Edge deployment suitability.}
+\textbf{Good.}  1D convolutions are computationally efficient
+($\mathcal{O}(L \times C_{\text{in}} \times C_{\text{out}} \times k)$
+per layer) and are natively supported by TensorFlow Lite and ONNX
+Runtime~\cite{tensorflow_lite, onnx_runtime}.  INT8 quantisation of
+convolutional layers is well-studied and typically preserves accuracy
+with minimal degradation.  A compact 1D CNN can achieve sub-millisecond
+inference on ARM Cortex-A class processors.
+
+\paragraph{Main failure modes.}
+The receptive field of a single convolutional layer is limited to $k$
+frequency bins.  Without sufficient depth, striding, or pooling, the
+network may fail to capture \emph{global} spectral shape (e.g., the
+overall tilt of $|S_{11}|$ across the full \SI{8}{}--\SI{12}{\giga\hertz}
+band).  Architectures must be designed to ensure that the effective
+receptive field covers the full frequency span before the classification
+head.  Additionally, very deep 1D CNNs without residual connections may
+suffer from vanishing gradients.
+
+
+% ==================================================================
+\subsubsection{ResNet-1D}\label{subsec:resnet1d}
+% ==================================================================
+
+\paragraph{Core mechanism.}
+ResNet-1D adapts the residual network architecture~\cite{he2016resnet}
+to one-dimensional inputs.  Each residual block computes
+$\mathbf{h}_{\ell+1} = \mathbf{h}_\ell + \mathcal{F}(\mathbf{h}_\ell)$,
+where $\mathcal{F}$ is a stack of convolutional, batch-normalisation,
+and activation layers.  The skip (identity) connection enables gradient
+flow through very deep networks, allowing the model to learn
+hierarchical spectral features across multiple scales.
+
+\paragraph{Expected input shape.}
+1D sequence, identical to the 1D CNN.
+
+\paragraph{Compatible route.}
+Route~A.
+
+\paragraph{Required preprocessing.}
+Shared pipeline from \Cref{sec:preproc}.
+
+\paragraph{Preferred normalization.}
+Z-score input normalisation combined with batch normalisation within
+residual blocks.
+
+\paragraph{Augmentation compatibility.}
+Highly compatible with all Route~A augmentations.  Given the high
+capacity of ResNet-1D, augmentation is not merely beneficial but
+\emph{essential} for regularisation under the \num{1603}-sample
+constraint.
+
+\paragraph{Overfitting risk.}
+\textbf{High.}  This is the highest-capacity model in the comparison.
+A modest ResNet-1D with 8 residual blocks and 64 filters per block
+can easily exceed \num{500000} parameters --- more than 300 parameters
+per training sample.  Without aggressive regularisation, the model
+will memorise the training set.  The following safeguards are mandatory:
+%
+\begin{itemize}
+  \item \textbf{Dropout} ($p = 0.3$--$0.5$) after residual blocks.
+  \item \textbf{Weight decay} ($\lambda = 10^{-3}$--$10^{-2}$).
+  \item \textbf{Early stopping} with patience of 10--20 epochs on
+        validation loss.
+  \item \textbf{Architecture minimisation}: use the smallest depth
+        and width that achieve competitive validation performance.
+  \item \textbf{Data augmentation} at every training epoch.
+\end{itemize}
+
+\paragraph{Interpretability.}
+\textbf{Low--medium.}  The depth of the architecture makes it harder
+to trace predictions back to input features compared with a shallow
+1D CNN.  Grad-CAM and saliency methods remain applicable but become
+less reliable as network depth increases.
+
+\paragraph{Edge deployment suitability.}
+\textbf{Moderate.}  A well-pruned and quantised ResNet-1D can be
+deployed on ARM Cortex-A class hardware via TensorFlow Lite or ONNX
+Runtime~\cite{tensorflow_lite, onnx_runtime}, but may exceed the
+constraints of Cortex-M class microcontrollers.  The residual
+connections themselves add negligible overhead (element-wise addition),
+so inference cost is dominated by the convolutional layers.  INT8
+quantisation and channel pruning are viable reduction strategies.
+
+\paragraph{Main failure modes.}
+ResNet-1D is the model \emph{most prone to overfitting} in this
+comparison.  The combination of high capacity and small training set
+creates a setting where validation performance can diverge sharply
+from training performance.  Careful architecture search (varying
+depth, width, and regularisation simultaneously) is necessary, and
+nested cross-validation is strongly recommended to obtain reliable
+performance estimates.  Training instability (e.g., loss spikes) can
+also occur if learning rates are not carefully scheduled.
+
+
+% ==================================================================
+\subsubsection{Kolmogorov--Arnold Network (KAN)}\label{subsec:kan}
+% ==================================================================
+
+\paragraph{Core mechanism.}
+Kolmogorov--Arnold Networks~\cite{liu2024kan} replace the fixed
+activation functions of traditional neural networks with
+\emph{learnable univariate functions} placed on the edges (connections)
+rather than the nodes.  This design is inspired by the
+Kolmogorov--Arnold representation theorem~\cite{kolmogorov1957representation},
+which states that any continuous multivariate function can be
+decomposed into a finite composition of continuous univariate functions
+and addition.  In practice, the learnable edge functions are
+parameterised as B-spline curves with adjustable control points.
+
+\paragraph{Expected input shape.}
+Flattened 1D feature vector, Route~A.
+
+\paragraph{Compatible route.}
+Route~A.  Convolutional variants of KAN (KAN-Conv) have been proposed
+but remain experimental.
+
+\paragraph{Required preprocessing.}
+Shared pipeline from \Cref{sec:preproc}.
+
+\paragraph{Preferred normalization.}
+Z-score normalisation is recommended, although the learnable activation
+functions can, in principle, adapt to arbitrary input scales.  In
+practice, well-scaled inputs accelerate convergence and improve
+numerical stability of the B-spline parameterisation.
+
+\paragraph{Augmentation compatibility.}
+Compatible with Route~A augmentations, but the interaction between
+augmented data and learned B-spline activations is not yet well
+characterised in the literature.
+
+\paragraph{Overfitting risk.}
+\textbf{High.}  KAN introduces additional learnable parameters
+(B-spline control points) on every edge, potentially exceeding the
+parameter count of a comparable MLP.  The architecture is new, and
+regularisation strategies tailored to KAN are still under active
+research.  With \num{1603} samples, overfitting is a significant
+concern.  Weight decay, grid-based sparsification, and early stopping
+should be employed, but their effectiveness on small $S_{11}$ datasets
+is unknown.
+
+\paragraph{Interpretability.}
+\textbf{Potentially high.}  A distinctive claimed advantage of KAN is
+that the learned univariate functions on each edge can be individually
+visualised and inspected.  If the network is sufficiently shallow
+(e.g., two layers), each edge function represents a learned
+transformation of a specific input feature or intermediate
+representation.  This could, in principle, reveal physically meaningful
+nonlinear relationships between specific frequency bins and the
+classification outcome.  However, this interpretability has been
+demonstrated primarily on low-dimensional synthetic tasks; its utility
+on a $d = 4001$-dimensional spectral input is unvalidated.
+
+\paragraph{Edge deployment suitability.}
+\textbf{Uncertain.}  As of mid-2025, there is no established deployment
+toolchain for KAN on embedded hardware.  B-spline evaluation requires
+locating the correct interval and computing polynomial basis functions,
+which is more complex per-parameter than the multiply-accumulate
+operations of standard neural networks.  Neither TensorFlow Lite nor
+ONNX Runtime natively support KAN layers.  Custom inference kernels
+would need to be implemented and optimised, adding significant
+engineering risk.
+
+\paragraph{Main failure modes.}
+The KAN ecosystem is immature.  Limited scaling studies exist for
+inputs with $d > 100$.  Training can exhibit instability due to the
+B-spline parameterisation (control-point oscillations, poor
+initialisation).  The lack of established best practices for
+architecture selection, regularisation, and hyperparameter tuning on
+real-world datasets makes KAN a high-risk, high-potential-reward choice
+in this comparison.  It is included for methodological completeness
+and because its interpretability claims are particularly relevant to
+physics-grounded sensing applications, but it should be treated as
+experimental.
+
+

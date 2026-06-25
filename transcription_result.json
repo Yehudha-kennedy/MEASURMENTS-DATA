@@ -1,0 +1,1246 @@
+{
+  "text": " Hello Mr. Muhammad and everyone. Hello Bruno. Hi Kennedy. Hi Mateo. Okay so I think we only waiting for Aiden to join. Aiden is here. Oh okay good. Okay so thank you very much for making to this meeting. We are just quickly going around the table and introducing ourselves. And then I'll describe the project and then how we are going forward. So I think this colleague knows me. He met Mateo and Kennedy back in Quito in Ecuador. And so I'm passing it over to Fatemeh and then Aiden and then people on the other side of the world they can introduce themselves. Thank you. Hello everyone. I'm Fatemeh Niknehad. I'm doing my PhD in electrical engineering and specifically in microwave engineering at UBCO under supervision of Dr. Zarifdi as you know. And my research area is mainly focused on ice detection. My name is Aiden. I'm an undergraduate research assistant. I'm going into my final year before I graduate. And I mainly have a with developing RIO devices, RIO systems for these ice sensors for commercial applications. Okay so maybe on your side Mateo you can go first and then Kennedy. Hi everyone. I am Mateo Belénez. I'm a graduate student from biomedical engineering in Jataitec. Currently my focus is to serve as the chair of the EEE Tripoli EEE Nanotechnology Council student capture. My research on technical focus center is the serial hallucination on biomedical EI and scampilline deployment for ECG signals. So currently I work as a research volunteer at the staff groups on the multi-critical data global consortium. And nice to meet you. Hello everyone. My name is Kennedy Rodriguez. I'm also studying at the HITH biomedical engineer undergraduate. And my focus are electronic devices and ML engineering. Thank you. Okay thank you very much. So just one thing that Mateo and Kennedy I read your paper. The paper looks very good and now from my perspective at least it is kind of ready for submission to the transaction. So I'm leaving it to you and decide with you and your supervisor when to submit. So it's okay from my side now. Okay. Special thanks Mr. Mohamed. In his suspect we are currently resplaining and upriding the the redaction of the paper because our tutors, especially our teachers have given us some technical technical recommendations to improving the manuscript. So another aspect I have to we have I love to consider because we have a presentation. We could create this paper in two versions because Kennedy has another proposal to do in the next steps on this investigation. Please Kennedy could you remind me to share your screen. Yeah sure. Mr. Mohamed could you admit to share my screen please. Yeah just give me one second. Yeah it should be fine. Can you see my screen right now? Yeah. Great. Yes. So we would like to introduce you to a band. Okay. Okay. Okay. We want to build some active electrodes, generating seven electrodes that we will supplies in general bars at Kip. Then we would like to this is the pipeline for the communication from the skin to the AI. So as you can see we have skin. another transmitter, we want to use communication and SPN now that is really helpful and it will provide you a more efficient signal. And to finally we have the analog symbol system and that's all. Okay, I think we can discuss this more in the offline meeting between three of us, me, Kennedy and Matto and then see how the things are going forward. So that's perfect. So Kennedy if you stop sharing your screen that would be better. So okay, so the main purpose of this meeting is people in Ecuador, they have very good knowledge in both AI and hardware implementation of that. So the plan is writing a paper, five of us together and this paper is going to be focused on using AI and edge devices for ice detection. So here's the plan I'm sharing with everyone. So Fateme has measured more than 500 results, 400 measurements or 500 measurements for ice condition on the sensors that she has developed. So the sensors are our own work, my lab's work. So we developed the sensor, we made the readout structures, readout device, Hayden is these days working on a low cost readout structure so we don't, we won't need vector network analyzers anymore. So, but however, we will give you those results, we will give you the result for ice, result for water, result for air, which means that there is nothing on the sensor. Okay, the request that we are going to have from you is investigate at least three to six different algorithms, AI machine algorithms that can implement or can be implemented and also can detect the clearly ice, water and air based on the data that we are giving to you. Also try to add some noise level to these data yourself and then see how much noise you can add based on those algorithms and still algorithm can clearly detect it. I remember when I was in Keto, Mato showed me a table, a nice table, correct detection, incorrect protections and stuff like that using AI. Basically, we want to regenerate that for at least three or minimum three and maximum that's a six different algorithms. And these algorithms only thing that you need to just keep in mind in selecting different algorithms is easy to deployable. So they need to be only, you need to just think in this way, you can get very complicated algorithm, no problem, but then it is going to be very hard to deploy it on microcontroller. So we are looking for something that can be easily deployed on edge devices and at the same time, it uses AI for enhancing the detectability. Would that work for you? So do you think that it is feasible in the next couple of weeks? It could be reachable. Maybe in this case, we call an improved investigation about the algorithms. And Guillaume Montescher is in a right plan because I need to have a checklist plan with Kennedy because we currently divide our task. So it could be attached maybe in two or three weeks dividing the tasks. That's all good. There is no rush. So what we are going to do as a task list, if someone maybe Kennedy or Matto, you can start creating a task list and then every day or every time that we are meeting, you can put a check mark or if it's still ongoing, you can put it ongoing. But the next step is I'm going to ask Fatemeh to send you a lot of data. So Fatemeh, after the meeting is finished, please make sure that you send at least 500 measured s-parameters, scattering parameters for ice, water and air. The same thing that you said, okay, for the frequency selective surfaces that we are developing for ice detection. So when Matto and Kennedy receive that, I believe the first step is using Matlab or Python to just analyze the data and then maybe applying different machine learning algorithms. When you get acceptable results in Matlab, then it is the time for the hardware implementation. When the hardware implementation is finished, you can take a video. We will attach that video to that to the paper submission. If everything goes good, the plan is submitting this paper to high trip and microwave theory and technology transaction. That is the highest, most prestigious journal in I would say most of the engineering that is specifically in Microgrip Engineering. So it is not an easy journal, but this is the plan. So then we will help each other writing the paper. Our side Fatemeh will write the sensor part. Matto and Kennedy will write the hardware implementation AI part. And so Aden will write the readout part and data processing part and maybe communication. And then the entire paper will be ready for submission. And one beautiful thing about this paper and I'm going and if it's published, I'm going to be very feel proud of myself. In this paper, we will have three undergrad students working on it. This is not my first time. I'm just going to show you one paper. And for Kennedy and Matto, if you are, if you still want to get more information about our sensors and so Fatemeh, can you in your email, send a link to all of our ice detection papers. So then they can also take a look into those papers. And if they have any question, later they can come back to us. Okay. Okay. So I just want to show you this and then maybe we can, and if you have any question, I will answer. If not, then we can maybe conclude the talk. And just give me one second. And okay. So I'm going to share my screen for a second. So this is my Google scholar. So most of the time, if I have, if I wrote a paper and if you want to see my previous papers, you can come to this page and you can easily find it. Okay. But the one that I want to highlight for this purpose is number three. We published this paper in 2017. And it got 169 citation. That means that all around the world, people read this paper, they use this paper and cite this paper. But one thing that I really want to talk about this paper is look at that. One, two, three, p, undergrad students were in this paper. But the, so previously we did this, but this time we will only have three undergrad students and the Fatemeh and myself. So this is going to be more challenging and more prestigious. Okay. So what have you didn't see? Oh yeah, I can establish. Okay. So do you have any questions for me? Especially in this case, I have divided the question into parts versus I have prepared a presentation about the job that we have implemented with Kennedy. If you want, I could share my screen and present in another part. In this case, the actual, the currently manuscript is ready to send to EEEE, EEEE, TETS Viocas, right? Yeah, it's a bioretical circuit analysis. Okay. After we send the EEEE, TETS Viocas, we will improve and a new job, this investigation will be upgrade the manuscript to focus to the new journal as you mentioned, right? With the new data. Okay. Because the data that we used was for biomedical application. This one is for ice detection. Okay. Now it's clear. So in this part, I want to share my screen. So it's not a problem. I could share the job. We are currently working. So okay. Yeah, you can share. Let me know if you can see my, okay. So the, I have prepared this, this, this, this, because it's the current job that we are working with Kennedy and my team that is the time for ACGH AI that has this metrics, the latency per 10 seconds is 15 milliseconds, have an accuracy of 90% and MECRIF 1 square of 87.2%. So in this case, the clinical graph that we located is the cardiovascular disease that remains the leading global cause of death. Here in Ecuador, it goes on roughly 20% of mortality. The central is in monitoring matters of the leming settings. The key input got is the transformers on large-lingual models come from well with a memory and energy requirements for local microcontroller deployment. And the safety gap is the deterministic models first across on your ambulatory artifacts. The safer output can be of station and human review. So operating the stages is the an ECG classifier divided in a arrhythmia and pathologies in, it could be useful in a super 10 dollars hardware only if it combines E-88 compression and string is from budgeting. So the version has already achieved is this, almost 13 databases have integrated under training of this model. The model has this amount of parameters, 1.14 million of parameters. And it has an accuracy of 84.5 to 1%. It has tested in one of the outers that is it and currently is not in this meeting. And in the external data set has achieved a 90.3% of accuracy. In another part, one of the improvements that we have this point on how we we we specialise this this manuscript is a principle we calibrate and sense the the the using three sensors, ECG sensors, and we recalculate and produce the six the six frontal derivation from a patient. So in this image we can see we have only three sensors that have reducing the noisy levels and using the artificial intelligence in this case the data four we classify nine types of arrhythmia plus psi plus five plus five in a casket AI way. In another part we classify pathologies in this case we classify five types of pathology plus two more in a casket way. So this is the currently data that we have attached the external the the database the the data from test to to train the model was this where from these data databases. The principle is the CPSC. The way that we implement those database is because the gap of the alymics because a model need to be in first with the different signals or different signals from different countries because the gap is a model could predict and could not learn the signal and could learn how the signal works in that country. So in this way we by this way we train the model using different assets for different countries especially from China and Germany from US and others. In another part this is the functional architecture from the ResNet and the model use squeeze anesthesia under a microcontroller project and this is the way that we achieve using residual blocks to achieve the 1.4 million parameters. In another part this is the surface office that may be attention. This is how the the quarantine or casket AI works in this case the multicolor robot that guarantees if the model not hallucinate or not predict as well the data the confidence level will decrease and this autonomous zones or the quarantine zone will activate. This confidence is when the confidence is lower to 80 percent the sigma attach this attach this this extension and will activate the quarantine zone. So this is our matrix confusion and the rock curves from it it is the rocket curves from they are from the the most predicted levels from HR read me and this is from the night primary the night primary arrhythmia. This is the the unresume of the metrics that we achieve with this edge deployment method. In another part we increase the skill to achieve an explainable AI using the graph come to to see how and in which ways the the model recognize and host activation of the of the perceptron. In this case the windows classified at 70.741575 d 71 percent and this is the code the quarantine zone works this is the image directly directly attaches to the manuscript and in another part this is the the a resume of how the latency works and how the is the implement of of is 32 in this case we have a map at the 94.75 d 1 percent of the one one don't sign 42.263. We don't acquire it but in this case what is a widows windows is the samples that the model directly cut under the signal because they cut a latency of 10 milliseconds and in this this middle middle this we don't process the data the model this is the next steps and thanks this is the current legit that we are working in another part this is the let me wait a minute is the currently manuscript this is so things that you we missed yeah this is the this is the manuscript that he we have a chart the name of the manuscript is love goes live lead acg acquisition on selective arreama classification targeting the sp3d us3 class this is especially is specializated to artificial artificial intelligence and edge devices this is a compressing multitask resnet 1d use 2d with a squeeze anesthetician attention and od ood attention and neuro symbolic is your liquid constraints this is the graphic that i show you the the method of the metal legit how it works and so matter just can you go back to that figure so before we continue i just want to mention that i also applied for a grant from my tax and we are waiting for the results if the grant is given to us i will be able to bring both metal and kennedy for its period of three months to come to my lab and then you know do some research in the lab in person so that's another good thing about this collaboration so looking at this figure basically at the end with the data that we are going to provide you this part that's a bit changed with the ice okay so and maybe i then you can have a meeting you and fateme can have a meeting with them and then instead of this figure because we are going to let's say use it for the wind turbine so you can make a wind turbine like this and then the data is going to the instrumentation amplifiers and then from instrumentation amplifiers it goes to the rest of the chain of the detection so basically matter what we are going to give you we are going to give you the data so basically you can ignore this part and then use the data that we give you and then start processing from here up okay that's okay okay that's for sure um let me continue in this part this is the table one is that a comparison of recent literature of the different ecg classification and invaded deployment this this is students using our resume benchmark and users are the emerging learning transformers temporary transformers and as you can see this model are big of massive and they are currently available to the to an edge deployment and in many reasons have classes with new pathologies and have a biggest parameter but in this case we have deployed the model to take the specific this this specific arid mass and is that this specific pathologies with a light model with cascade on a could be attached with a different ways because we could now is an is p32 with another way we could implement in a app on an app or making in a pk on sending to cell phones it could be another way to implement in a edge devices and is the is this is other and figures that we have attached of the methodology that is the whole the whole the model has has trained and this guide we sample windows of 10 seconds from each database because the principal problem of this is was the the different databases have different amount of of time a recording sorry to maybe I can interrupt you here so maybe the data that we have in frequency that's as parameters it can be re plotted at different time frames like this okay and it could be very similar to this figure okay and then again you use it for the purpose of processing okay okay so we need to conclude I need to go to the next meeting okay so it seems that now we all know what we are going to do the tasks has been divided in the first step needs to send you all the data that we have gathered so basically the same thing that you did with 14 000 data it or maybe 149 000 data that you showed this time we have more limited data it's just 500 so you need to work with these 500 data and my suggestion is maybe you can add noise to these data you know what I'm saying yeah documentation exactly and then see how the things are working and then and I know so Fatemeh will send you some link to our papers that has been published on microwave ice sensing so you can get a general idea how this system is going to work and maybe from now on we will have two week or biweekly meetings and then and biweekly meetings we can update each other and then write the paper and finalize it uh is this system for uh get any I didn't get your question uh any question is more related about how the electronic bar works and we have like a boobing center or clean vector to coordinate the movement on the boobing uh this is related to which uh the A training the A3 oh the AI training so basically what you are going to do you plot the s parameter and then use image processing to get the curve or what I didn't get your point okay uh just for the like you said we want we have to find models I was wondering what we are going to sensor about the boobing movement or the eye tracking that was my question related but more for the electronic part three the models that I mentioned it is mainly for AI so as an example in AI you can have different methods you know um lots of machine learning methods so but out of those different machine learning methods which one are you going to use so selection of that is up to you okay what my my suggestion is select the ones that you can easily deploy it on the hardware so as an example in MATLAB you can make a very complicated algorithm but implementation of that on a microcontroller is almost impossible it needs lots of microcontrollers talking to each other that soon so try not to use that use the one that is simple okay okay thank you okay awesome thank you everyone thanks again for making for this meeting and uh looking forward to working with you looking forward to publish this very nice paper thank you very much again and thank you everyone to stay here in this meeting it's a pleasure to meet you and thank you very much thank you all right thank you very much bye for now",
+  "language": "en",
+  "segments": [
+    {
+      "start": 0.0,
+      "end": 6.0,
+      "text": " Hello Mr. Muhammad and everyone."
+    },
+    {
+      "start": 6.0,
+      "end": 10.0,
+      "text": " Hello Bruno."
+    },
+    {
+      "start": 10.0,
+      "end": 12.0,
+      "text": " Hi Kennedy."
+    },
+    {
+      "start": 12.0,
+      "end": 14.0,
+      "text": " Hi Mateo."
+    },
+    {
+      "start": 14.0,
+      "end": 20.0,
+      "text": " Okay so I think we only waiting for Aiden to join."
+    },
+    {
+      "start": 20.0,
+      "end": 22.0,
+      "text": " Aiden is here."
+    },
+    {
+      "start": 22.0,
+      "end": 24.0,
+      "text": " Oh okay good."
+    },
+    {
+      "start": 24.0,
+      "end": 29.0,
+      "text": " Okay so thank you very much for making to this meeting."
+    },
+    {
+      "start": 29.0,
+      "end": 33.0,
+      "text": " We are just quickly going around the table and introducing ourselves."
+    },
+    {
+      "start": 33.0,
+      "end": 38.0,
+      "text": " And then I'll describe the project and then how we are going forward."
+    },
+    {
+      "start": 38.0,
+      "end": 41.0,
+      "text": " So I think this colleague knows me."
+    },
+    {
+      "start": 41.0,
+      "end": 47.0,
+      "text": " He met Mateo and Kennedy back in Quito in Ecuador."
+    },
+    {
+      "start": 47.0,
+      "end": 58.0,
+      "text": " And so I'm passing it over to Fatemeh and then Aiden and then people on the other side of the world they can introduce themselves."
+    },
+    {
+      "start": 58.0,
+      "end": 60.0,
+      "text": " Thank you."
+    },
+    {
+      "start": 60.0,
+      "end": 63.0,
+      "text": " Hello everyone. I'm Fatemeh Niknehad."
+    },
+    {
+      "start": 63.0,
+      "end": 76.0,
+      "text": " I'm doing my PhD in electrical engineering and specifically in microwave engineering at UBCO under supervision of Dr. Zarifdi as you know."
+    },
+    {
+      "start": 76.0,
+      "end": 86.0,
+      "text": " And my research area is mainly focused on ice detection."
+    },
+    {
+      "start": 86.0,
+      "end": 91.0,
+      "text": " My name is Aiden. I'm an undergraduate research assistant."
+    },
+    {
+      "start": 91.0,
+      "end": 95.0,
+      "text": " I'm going into my final year before I graduate."
+    },
+    {
+      "start": 95.0,
+      "end": 106.0,
+      "text": " And I mainly have a with developing RIO devices, RIO systems for these ice sensors for commercial applications."
+    },
+    {
+      "start": 106.0,
+      "end": 112.0,
+      "text": " Okay so maybe on your side Mateo you can go first and then Kennedy."
+    },
+    {
+      "start": 112.0,
+      "end": 114.0,
+      "text": " Hi everyone. I am Mateo Belénez."
+    },
+    {
+      "start": 114.0,
+      "end": 118.0,
+      "text": " I'm a graduate student from biomedical engineering in Jataitec."
+    },
+    {
+      "start": 118.0,
+      "end": 129.0,
+      "text": " Currently my focus is to serve as the chair of the EEE Tripoli EEE Nanotechnology Council student capture."
+    },
+    {
+      "start": 129.0,
+      "end": 137.0,
+      "text": " My research on technical focus center is the serial hallucination on biomedical EI"
+    },
+    {
+      "start": 137.0,
+      "end": 142.0,
+      "text": " and scampilline deployment for ECG signals."
+    },
+    {
+      "start": 142.0,
+      "end": 152.0,
+      "text": " So currently I work as a research volunteer at the staff groups on the multi-critical data global consortium."
+    },
+    {
+      "start": 152.0,
+      "end": 157.0,
+      "text": " And nice to meet you."
+    },
+    {
+      "start": 157.0,
+      "end": 160.0,
+      "text": " Hello everyone. My name is Kennedy Rodriguez."
+    },
+    {
+      "start": 160.0,
+      "end": 165.0,
+      "text": " I'm also studying at the HITH biomedical engineer undergraduate."
+    },
+    {
+      "start": 165.0,
+      "end": 173.0,
+      "text": " And my focus are electronic devices and ML engineering. Thank you."
+    },
+    {
+      "start": 173.0,
+      "end": 179.0,
+      "text": " Okay thank you very much. So just one thing that Mateo and Kennedy I read your paper."
+    },
+    {
+      "start": 179.0,
+      "end": 187.0,
+      "text": " The paper looks very good and now from my perspective at least it is kind of ready for submission to the transaction."
+    },
+    {
+      "start": 187.0,
+      "end": 196.0,
+      "text": " So I'm leaving it to you and decide with you and your supervisor when to submit. So it's okay from my side now."
+    },
+    {
+      "start": 196.0,
+      "end": 197.0,
+      "text": " Okay."
+    },
+    {
+      "start": 197.0,
+      "end": 201.0,
+      "text": " Special thanks Mr. Mohamed."
+    },
+    {
+      "start": 201.0,
+      "end": 212.0,
+      "text": " In his suspect we are currently resplaining and upriding the the redaction of the paper because our tutors,"
+    },
+    {
+      "start": 212.0,
+      "end": 223.0,
+      "text": " especially our teachers have given us some technical technical recommendations to improving the manuscript."
+    },
+    {
+      "start": 223.0,
+      "end": 235.0,
+      "text": " So another aspect I have to we have I love to consider because we have a presentation."
+    },
+    {
+      "start": 235.0,
+      "end": 248.0,
+      "text": " We could create this paper in two versions because Kennedy has another proposal to do in the next steps on this investigation."
+    },
+    {
+      "start": 248.0,
+      "end": 252.0,
+      "text": " Please Kennedy could you remind me to share your screen."
+    },
+    {
+      "start": 252.0,
+      "end": 255.0,
+      "text": " Yeah sure."
+    },
+    {
+      "start": 255.0,
+      "end": 259.0,
+      "text": " Mr. Mohamed could you admit to share my screen please."
+    },
+    {
+      "start": 259.0,
+      "end": 262.0,
+      "text": " Yeah just give me one second."
+    },
+    {
+      "start": 262.0,
+      "end": 270.0,
+      "text": " Yeah it should be fine."
+    },
+    {
+      "start": 270.0,
+      "end": 272.0,
+      "text": " Can you see my screen right now?"
+    },
+    {
+      "start": 272.0,
+      "end": 273.0,
+      "text": " Yeah."
+    },
+    {
+      "start": 273.0,
+      "end": 274.0,
+      "text": " Great."
+    },
+    {
+      "start": 274.0,
+      "end": 275.0,
+      "text": " Yes."
+    },
+    {
+      "start": 275.0,
+      "end": 280.0,
+      "text": " So we would like to introduce you to a band."
+    },
+    {
+      "start": 280.0,
+      "end": 281.0,
+      "text": " Okay."
+    },
+    {
+      "start": 281.0,
+      "end": 282.0,
+      "text": " Okay."
+    },
+    {
+      "start": 282.0,
+      "end": 283.0,
+      "text": " Okay."
+    },
+    {
+      "start": 283.0,
+      "end": 291.0,
+      "text": " We want to build some active electrodes, generating seven electrodes that we will supplies in general bars at Kip."
+    },
+    {
+      "start": 291.0,
+      "end": 299.0,
+      "text": " Then we would like to this is the pipeline for the communication from the skin to the AI."
+    },
+    {
+      "start": 299.0,
+      "end": 309.0,
+      "text": " So as you can see we have skin."
+    },
+    {
+      "start": 309.0,
+      "end": 315.4,
+      "text": " another transmitter, we want to use communication and SPN now that is really helpful and"
+    },
+    {
+      "start": 317.32,
+      "end": 325.64,
+      "text": " it will provide you a more efficient signal. And to finally we have the analog symbol system"
+    },
+    {
+      "start": 326.76,
+      "end": 334.36,
+      "text": " and that's all. Okay, I think we can discuss this more in the offline meeting between three of us,"
+    },
+    {
+      "start": 334.36,
+      "end": 340.12,
+      "text": " me, Kennedy and Matto and then see how the things are going forward. So that's perfect."
+    },
+    {
+      "start": 340.68,
+      "end": 347.88,
+      "text": " So Kennedy if you stop sharing your screen that would be better. So okay, so the main purpose"
+    },
+    {
+      "start": 347.88,
+      "end": 357.08000000000004,
+      "text": " of this meeting is people in Ecuador, they have very good knowledge in both AI and hardware"
+    },
+    {
+      "start": 357.08,
+      "end": 365.56,
+      "text": " implementation of that. So the plan is writing a paper, five of us together and this paper is"
+    },
+    {
+      "start": 365.56,
+      "end": 375.15999999999997,
+      "text": " going to be focused on using AI and edge devices for ice detection. So here's the plan I'm sharing"
+    },
+    {
+      "start": 375.15999999999997,
+      "end": 384.52,
+      "text": " with everyone. So Fateme has measured more than 500 results, 400 measurements or 500 measurements"
+    },
+    {
+      "start": 384.52,
+      "end": 390.84,
+      "text": " for ice condition on the sensors that she has developed. So the sensors are our own work,"
+    },
+    {
+      "start": 390.84,
+      "end": 399.15999999999997,
+      "text": " my lab's work. So we developed the sensor, we made the readout structures, readout device,"
+    },
+    {
+      "start": 399.15999999999997,
+      "end": 406.03999999999996,
+      "text": " Hayden is these days working on a low cost readout structure so we don't, we won't need vector"
+    },
+    {
+      "start": 406.03999999999996,
+      "end": 413.0,
+      "text": " network analyzers anymore. So, but however, we will give you those results, we will give you the"
+    },
+    {
+      "start": 413.08,
+      "end": 420.52,
+      "text": " result for ice, result for water, result for air, which means that there is nothing on the sensor."
+    },
+    {
+      "start": 420.52,
+      "end": 428.92,
+      "text": " Okay, the request that we are going to have from you is investigate at least three to six"
+    },
+    {
+      "start": 429.64,
+      "end": 438.68,
+      "text": " different algorithms, AI machine algorithms that can implement or can be implemented and also can"
+    },
+    {
+      "start": 438.68,
+      "end": 449.72,
+      "text": " detect the clearly ice, water and air based on the data that we are giving to you. Also try to add"
+    },
+    {
+      "start": 449.72,
+      "end": 458.2,
+      "text": " some noise level to these data yourself and then see how much noise you can add based on those"
+    },
+    {
+      "start": 458.2,
+      "end": 465.08,
+      "text": " algorithms and still algorithm can clearly detect it. I remember when I was in Keto,"
+    },
+    {
+      "start": 465.15999999999997,
+      "end": 471.32,
+      "text": " Mato showed me a table, a nice table, correct detection, incorrect protections and stuff like"
+    },
+    {
+      "start": 471.32,
+      "end": 477.8,
+      "text": " that using AI. Basically, we want to regenerate that for at least three or minimum three and"
+    },
+    {
+      "start": 477.8,
+      "end": 484.03999999999996,
+      "text": " maximum that's a six different algorithms. And these algorithms only thing that you need to"
+    },
+    {
+      "start": 484.03999999999996,
+      "end": 492.44,
+      "text": " just keep in mind in selecting different algorithms is easy to deployable. So they need to be only,"
+    },
+    {
+      "start": 492.44,
+      "end": 498.04,
+      "text": " you need to just think in this way, you can get very complicated algorithm, no problem,"
+    },
+    {
+      "start": 498.04,
+      "end": 506.2,
+      "text": " but then it is going to be very hard to deploy it on microcontroller. So we are looking for something"
+    },
+    {
+      "start": 506.2,
+      "end": 513.4,
+      "text": " that can be easily deployed on edge devices and at the same time, it uses AI for enhancing the"
+    },
+    {
+      "start": 514.36,
+      "end": 517.24,
+      "text": " detectability. Would that work for you?"
+    },
+    {
+      "start": 521.4,
+      "end": 526.1999999999999,
+      "text": " So do you think that it is feasible in the next couple of weeks?"
+    },
+    {
+      "start": 528.84,
+      "end": 535.72,
+      "text": " It could be reachable. Maybe in this case, we call an improved investigation about the algorithms."
+    },
+    {
+      "start": 536.12,
+      "end": 546.28,
+      "text": " And Guillaume Montescher is in a right plan because I need to have a checklist plan with Kennedy"
+    },
+    {
+      "start": 546.28,
+      "end": 555.1600000000001,
+      "text": " because we currently divide our task. So it could be attached maybe in two or three weeks"
+    },
+    {
+      "start": 556.36,
+      "end": 564.12,
+      "text": " dividing the tasks. That's all good. There is no rush. So what we are going to do as a task list,"
+    },
+    {
+      "start": 564.36,
+      "end": 571.08,
+      "text": " if someone maybe Kennedy or Matto, you can start creating a task list and then every day or every"
+    },
+    {
+      "start": 571.08,
+      "end": 576.92,
+      "text": " time that we are meeting, you can put a check mark or if it's still ongoing, you can put it ongoing."
+    },
+    {
+      "start": 577.48,
+      "end": 585.88,
+      "text": " But the next step is I'm going to ask Fatemeh to send you a lot of data. So Fatemeh, after the"
+    },
+    {
+      "start": 585.88,
+      "end": 592.28,
+      "text": " meeting is finished, please make sure that you send at least 500 measured s-parameters,"
+    },
+    {
+      "start": 593.0799999999999,
+      "end": 600.04,
+      "text": " scattering parameters for ice, water and air. The same thing that you said,"
+    },
+    {
+      "start": 601.48,
+      "end": 607.48,
+      "text": " okay, for the frequency selective surfaces that we are developing for ice detection."
+    },
+    {
+      "start": 608.52,
+      "end": 617.0,
+      "text": " So when Matto and Kennedy receive that, I believe the first step is using Matlab or Python to just"
+    },
+    {
+      "start": 617.0,
+      "end": 622.04,
+      "text": " analyze the data and then maybe applying different machine learning algorithms."
+    },
+    {
+      "start": 622.76,
+      "end": 629.16,
+      "text": " When you get acceptable results in Matlab, then it is the time for the hardware implementation."
+    },
+    {
+      "start": 629.72,
+      "end": 635.4,
+      "text": " When the hardware implementation is finished, you can take a video. We will attach that video to"
+    },
+    {
+      "start": 635.4,
+      "end": 642.76,
+      "text": " that to the paper submission. If everything goes good, the plan is submitting this paper to high"
+    },
+    {
+      "start": 642.76,
+      "end": 651.08,
+      "text": " trip and microwave theory and technology transaction. That is the highest, most prestigious"
+    },
+    {
+      "start": 651.08,
+      "end": 656.68,
+      "text": " journal in I would say most of the engineering that is specifically in Microgrip Engineering."
+    },
+    {
+      "start": 657.48,
+      "end": 666.04,
+      "text": " So it is not an easy journal, but this is the plan. So then we will help each other writing the paper."
+    },
+    {
+      "start": 666.6,
+      "end": 672.28,
+      "text": " Our side Fatemeh will write the sensor part. Matto and Kennedy will write the hardware"
+    },
+    {
+      "start": 672.28,
+      "end": 679.16,
+      "text": " implementation AI part. And so Aden will write the readout part and data processing part and"
+    },
+    {
+      "start": 679.16,
+      "end": 687.4,
+      "text": " maybe communication. And then the entire paper will be ready for submission. And one beautiful"
+    },
+    {
+      "start": 687.4,
+      "end": 692.6,
+      "text": " thing about this paper and I'm going and if it's published, I'm going to be very"
+    },
+    {
+      "start": 692.6,
+      "end": 699.3199999999999,
+      "text": " feel proud of myself. In this paper, we will have three undergrad students working on it."
+    },
+    {
+      "start": 699.96,
+      "end": 707.6400000000001,
+      "text": " This is not my first time. I'm just going to show you one paper. And for Kennedy and Matto, if you"
+    },
+    {
+      "start": 707.6400000000001,
+      "end": 717.1600000000001,
+      "text": " are, if you still want to get more information about our sensors and so Fatemeh, can you in your"
+    },
+    {
+      "start": 717.1600000000001,
+      "end": 725.48,
+      "text": " email, send a link to all of our ice detection papers. So then they can also take a look into"
+    },
+    {
+      "start": 725.48,
+      "end": 735.5600000000001,
+      "text": " those papers. And if they have any question, later they can come back to us. Okay. Okay. So I just"
+    },
+    {
+      "start": 735.5600000000001,
+      "end": 743.4,
+      "text": " want to show you this and then maybe we can, and if you have any question, I will answer. If not,"
+    },
+    {
+      "start": 743.4,
+      "end": 751.08,
+      "text": " then we can maybe conclude the talk. And just give me one second."
+    },
+    {
+      "start": 751.1600000000001,
+      "end": 754.6800000000001,
+      "text": " And"
+    },
+    {
+      "start": 767.72,
+      "end": 772.84,
+      "text": " okay. So I'm going to share my screen for a second."
+    },
+    {
+      "start": 773.5600000000001,
+      "end": 781.64,
+      "text": " So this is my Google scholar. So most of the time, if I have, if I wrote a paper and if you want to"
+    },
+    {
+      "start": 781.64,
+      "end": 788.2,
+      "text": " see my previous papers, you can come to this page and you can easily find it. Okay. But the one that"
+    },
+    {
+      "start": 788.2,
+      "end": 797.5600000000001,
+      "text": " I want to highlight for this purpose is number three. We published this paper in 2017. And it got"
+    },
+    {
+      "start": 797.9599999999999,
+      "end": 806.68,
+      "text": " 169 citation. That means that all around the world, people read this paper, they use this"
+    },
+    {
+      "start": 806.68,
+      "end": 813.2399999999999,
+      "text": " paper and cite this paper. But one thing that I really want to talk about this paper is look at that."
+    },
+    {
+      "start": 813.8,
+      "end": 824.8399999999999,
+      "text": " One, two, three, p, undergrad students were in this paper. But the, so previously we did this,"
+    },
+    {
+      "start": 824.84,
+      "end": 834.52,
+      "text": " but this time we will only have three undergrad students and the Fatemeh and myself. So this is"
+    },
+    {
+      "start": 834.52,
+      "end": 847.64,
+      "text": " going to be more challenging and more prestigious. Okay. So what have you didn't see? Oh yeah,"
+    },
+    {
+      "start": 847.64,
+      "end": 852.68,
+      "text": " I can establish. Okay. So do you have any questions for me?"
+    },
+    {
+      "start": 856.12,
+      "end": 864.1999999999999,
+      "text": " Especially in this case, I have divided the question into parts versus I have prepared a"
+    },
+    {
+      "start": 864.1999999999999,
+      "end": 873.96,
+      "text": " presentation about the job that we have implemented with Kennedy. If you want, I could share my screen"
+    },
+    {
+      "start": 873.96,
+      "end": 885.96,
+      "text": " and present in another part. In this case, the actual, the currently manuscript is ready to send to"
+    },
+    {
+      "start": 887.0,
+      "end": 895.96,
+      "text": " EEEE, EEEE, TETS Viocas, right? Yeah, it's a bioretical circuit analysis. Okay. After we send the"
+    },
+    {
+      "start": 896.9200000000001,
+      "end": 906.9200000000001,
+      "text": " EEEE, TETS Viocas, we will improve and a new job, this investigation will be upgrade the manuscript to"
+    },
+    {
+      "start": 907.88,
+      "end": 920.12,
+      "text": " focus to the new journal as you mentioned, right? With the new data. Okay. Because the data that we"
+    },
+    {
+      "start": 920.12,
+      "end": 929.24,
+      "text": " used was for biomedical application. This one is for ice detection. Okay. Now it's clear. So in this part,"
+    },
+    {
+      "start": 929.24,
+      "end": 936.52,
+      "text": " I want to share my screen. So it's not a problem. I could share the job. We are currently working."
+    },
+    {
+      "start": 937.24,
+      "end": 939.72,
+      "text": " So okay. Yeah, you can share."
+    },
+    {
+      "start": 940.52,
+      "end": 960.2,
+      "text": " Let me know if you can see my, okay. So the, I have prepared this, this, this, this, because it's the"
+    },
+    {
+      "start": 960.2800000000001,
+      "end": 970.2800000000001,
+      "text": " current job that we are working with Kennedy and my team that is the time for ACGH AI that has"
+    },
+    {
+      "start": 970.2800000000001,
+      "end": 982.12,
+      "text": " this metrics, the latency per 10 seconds is 15 milliseconds, have an accuracy of 90% and"
+    },
+    {
+      "start": 982.2,
+      "end": 992.6,
+      "text": " MECRIF 1 square of 87.2%. So in this case, the clinical graph that we located is the cardiovascular"
+    },
+    {
+      "start": 992.6,
+      "end": 1000.68,
+      "text": " disease that remains the leading global cause of death. Here in Ecuador, it goes on roughly 20%"
+    },
+    {
+      "start": 1001.48,
+      "end": 1008.6800000000001,
+      "text": " of mortality. The central is in monitoring matters of the leming settings. The key input got is the"
+    },
+    {
+      "start": 1008.68,
+      "end": 1013.88,
+      "text": " transformers on large-lingual models come from well with a memory and energy requirements"
+    },
+    {
+      "start": 1013.88,
+      "end": 1020.4399999999999,
+      "text": " for local microcontroller deployment. And the safety gap is the deterministic models first"
+    },
+    {
+      "start": 1020.4399999999999,
+      "end": 1027.48,
+      "text": " across on your ambulatory artifacts. The safer output can be of station and human review. So"
+    },
+    {
+      "start": 1028.44,
+      "end": 1035.24,
+      "text": " operating the stages is the an ECG classifier divided in a arrhythmia and pathologies"
+    },
+    {
+      "start": 1036.2,
+      "end": 1043.96,
+      "text": " in, it could be useful in a super 10 dollars hardware only if it combines E-88 compression"
+    },
+    {
+      "start": 1043.96,
+      "end": 1057.16,
+      "text": " and string is from budgeting. So the version has already achieved is this, almost 13 databases"
+    },
+    {
+      "start": 1057.16,
+      "end": 1067.4,
+      "text": " have integrated under training of this model. The model has this amount of parameters,"
+    },
+    {
+      "start": 1067.4,
+      "end": 1081.5600000000002,
+      "text": " 1.14 million of parameters. And it has an accuracy of 84.5 to 1%. It has tested in one of the"
+    },
+    {
+      "start": 1081.56,
+      "end": 1090.6799999999998,
+      "text": " outers that is it and currently is not in this meeting. And in the external data set has"
+    },
+    {
+      "start": 1090.6799999999998,
+      "end": 1100.6799999999998,
+      "text": " achieved a 90.3% of accuracy. In another part, one of the improvements that we have"
+    },
+    {
+      "start": 1100.68,
+      "end": 1112.6000000000001,
+      "text": " this point on how we we we specialise this this manuscript is a principle we calibrate and sense"
+    },
+    {
+      "start": 1112.6000000000001,
+      "end": 1124.6000000000001,
+      "text": " the the the using three sensors, ECG sensors, and we recalculate and produce the six the six"
+    },
+    {
+      "start": 1124.6,
+      "end": 1132.76,
+      "text": " frontal derivation from a patient. So in this image we can see we have only three sensors"
+    },
+    {
+      "start": 1132.76,
+      "end": 1141.24,
+      "text": " that have reducing the noisy levels and using the artificial intelligence in this case the data"
+    },
+    {
+      "start": 1142.2,
+      "end": 1148.36,
+      "text": " four we classify nine types of arrhythmia plus psi plus five"
+    },
+    {
+      "start": 1150.92,
+      "end": 1160.28,
+      "text": " plus five in a casket AI way. In another part we classify pathologies in this case we classify"
+    },
+    {
+      "start": 1160.28,
+      "end": 1169.88,
+      "text": " five types of pathology plus two more in a casket way. So this is the currently data that"
+    },
+    {
+      "start": 1169.88,
+      "end": 1180.1200000000001,
+      "text": " we have attached the external the the database the the data from test to to train the model was"
+    },
+    {
+      "start": 1180.92,
+      "end": 1189.8000000000002,
+      "text": " this where from these data databases. The principle is the CPSC. The way that we"
+    },
+    {
+      "start": 1191.0,
+      "end": 1198.5200000000002,
+      "text": " implement those database is because the gap of the alymics because a model need to be"
+    },
+    {
+      "start": 1198.52,
+      "end": 1206.44,
+      "text": " in first with the different signals or different signals from different countries because the gap"
+    },
+    {
+      "start": 1206.44,
+      "end": 1217.0,
+      "text": " is a model could predict and could not learn the signal and could learn how the signal works in that"
+    },
+    {
+      "start": 1217.0,
+      "end": 1223.8,
+      "text": " country. So in this way we by this way we train the model using different assets for different"
+    },
+    {
+      "start": 1223.8,
+      "end": 1234.84,
+      "text": " countries especially from China and Germany from US and others. In another part this is the functional"
+    },
+    {
+      "start": 1234.84,
+      "end": 1242.2,
+      "text": " architecture from the ResNet and the model use squeeze anesthesia under a microcontroller"
+    },
+    {
+      "start": 1242.2,
+      "end": 1252.36,
+      "text": " project and this is the way that we achieve using residual blocks to achieve the 1.4 million"
+    },
+    {
+      "start": 1252.36,
+      "end": 1260.52,
+      "text": " parameters. In another part this is the surface office that may be attention. This is how the"
+    },
+    {
+      "start": 1260.52,
+      "end": 1269.08,
+      "text": " the quarantine or casket AI works in this case the multicolor robot that guarantees if the model"
+    },
+    {
+      "start": 1269.08,
+      "end": 1275.3999999999999,
+      "text": " not hallucinate or not predict as well the data the confidence level"
+    },
+    {
+      "start": 1275.64,
+      "end": 1283.48,
+      "text": " will decrease and this autonomous zones or the quarantine zone will activate."
+    },
+    {
+      "start": 1284.76,
+      "end": 1291.88,
+      "text": " This confidence is when the confidence is lower to 80 percent the sigma attach this"
+    },
+    {
+      "start": 1292.52,
+      "end": 1300.76,
+      "text": " attach this this extension and will activate the quarantine zone. So this is our matrix confusion"
+    },
+    {
+      "start": 1300.76,
+      "end": 1307.32,
+      "text": " and the rock curves from it it is the rocket curves from they are from the the most predicted"
+    },
+    {
+      "start": 1307.32,
+      "end": 1315.4,
+      "text": " levels from HR read me and this is from the night primary the night primary arrhythmia."
+    },
+    {
+      "start": 1317.48,
+      "end": 1326.28,
+      "text": " This is the the unresume of the metrics that we achieve with this edge deployment method."
+    },
+    {
+      "start": 1326.92,
+      "end": 1337.48,
+      "text": " In another part we increase the skill to achieve an explainable AI using the graph come to to see how"
+    },
+    {
+      "start": 1337.48,
+      "end": 1348.68,
+      "text": " and in which ways the the model recognize and host activation of the of the perceptron. In this"
+    },
+    {
+      "start": 1348.68,
+      "end": 1361.0800000000002,
+      "text": " case the windows classified at 70.741575 d 71 percent and this is the code the quarantine zone"
+    },
+    {
+      "start": 1361.0800000000002,
+      "end": 1369.4,
+      "text": " works this is the image directly directly attaches to the manuscript and in another part this is the"
+    },
+    {
+      "start": 1370.3600000000001,
+      "end": 1380.3600000000001,
+      "text": " the a resume of how the latency works and how the is the implement of of is 32 in this case we"
+    },
+    {
+      "start": 1380.3600000000001,
+      "end": 1395.4,
+      "text": " have a map at the 94.75 d 1 percent of the one one don't sign 42.263. We don't acquire it but"
+    },
+    {
+      "start": 1395.4,
+      "end": 1405.16,
+      "text": " in this case what is a widows windows is the samples that the model directly cut under the signal"
+    },
+    {
+      "start": 1405.16,
+      "end": 1413.4,
+      "text": " because they cut a latency of 10 milliseconds and in this this middle middle this we don't"
+    },
+    {
+      "start": 1413.4,
+      "end": 1421.64,
+      "text": " process the data the model this is the next steps and thanks this is the current legit that we are"
+    },
+    {
+      "start": 1422.1200000000001,
+      "end": 1434.3600000000001,
+      "text": " working in another part this is the let me wait a minute is the currently manuscript"
+    },
+    {
+      "start": 1435.4,
+      "end": 1442.92,
+      "text": " this is so things that you we missed yeah this is the this is the manuscript that he we have a"
+    },
+    {
+      "start": 1442.92,
+      "end": 1448.44,
+      "text": " chart the name of the manuscript is love goes live lead acg acquisition on selective arreama"
+    },
+    {
+      "start": 1448.44,
+      "end": 1454.76,
+      "text": " classification targeting the sp3d us3 class this is especially is specializated to"
+    },
+    {
+      "start": 1455.3200000000002,
+      "end": 1462.2,
+      "text": " artificial artificial intelligence and edge devices this is a compressing multitask resnet"
+    },
+    {
+      "start": 1462.2,
+      "end": 1470.1200000000001,
+      "text": " 1d use 2d with a squeeze anesthetician attention and od ood attention and neuro symbolic"
+    },
+    {
+      "start": 1470.12,
+      "end": 1477.1599999999999,
+      "text": " is your liquid constraints this is the graphic that i show you the the method of the metal"
+    },
+    {
+      "start": 1477.1599999999999,
+      "end": 1484.4399999999998,
+      "text": " legit how it works and so matter just can you go back to that figure so before we continue i just"
+    },
+    {
+      "start": 1484.4399999999998,
+      "end": 1491.9599999999998,
+      "text": " want to mention that i also applied for a grant from my tax and we are waiting for the results if"
+    },
+    {
+      "start": 1491.9599999999998,
+      "end": 1498.76,
+      "text": " the grant is given to us i will be able to bring both metal and kennedy for its period of three"
+    },
+    {
+      "start": 1498.76,
+      "end": 1503.96,
+      "text": " months to come to my lab and then you know do some research in the lab in person so that's"
+    },
+    {
+      "start": 1503.96,
+      "end": 1512.68,
+      "text": " another good thing about this collaboration so looking at this figure basically at the end"
+    },
+    {
+      "start": 1513.32,
+      "end": 1521.64,
+      "text": " with the data that we are going to provide you this part that's a bit changed with the ice"
+    },
+    {
+      "start": 1522.44,
+      "end": 1531.8000000000002,
+      "text": " okay so and maybe i then you can have a meeting you and fateme can have a meeting with them and"
+    },
+    {
+      "start": 1531.8000000000002,
+      "end": 1537.88,
+      "text": " then instead of this figure because we are going to let's say use it for the wind turbine so you"
+    },
+    {
+      "start": 1537.88,
+      "end": 1545.64,
+      "text": " can make a wind turbine like this and then the data is going to the instrumentation amplifiers"
+    },
+    {
+      "start": 1545.64,
+      "end": 1551.24,
+      "text": " and then from instrumentation amplifiers it goes to the rest of the chain of the detection"
+    },
+    {
+      "start": 1551.8000000000002,
+      "end": 1557.88,
+      "text": " so basically matter what we are going to give you we are going to give you the data so basically"
+    },
+    {
+      "start": 1557.88,
+      "end": 1565.0,
+      "text": " you can ignore this part and then use the data that we give you and then start processing from here"
+    },
+    {
+      "start": 1565.0,
+      "end": 1576.6000000000001,
+      "text": " up okay that's okay okay that's for sure um let me continue in this part this is the table one"
+    },
+    {
+      "start": 1576.6,
+      "end": 1582.6,
+      "text": " is that a comparison of recent literature of the different ecg classification and invaded deployment"
+    },
+    {
+      "start": 1584.04,
+      "end": 1590.52,
+      "text": " this this is students using our resume benchmark and users are the emerging learning transformers"
+    },
+    {
+      "start": 1590.52,
+      "end": 1597.1599999999999,
+      "text": " temporary transformers and as you can see this model are big of massive and they are"
+    },
+    {
+      "start": 1597.16,
+      "end": 1606.44,
+      "text": " currently available to the to an edge deployment and in many reasons have classes with new pathologies"
+    },
+    {
+      "start": 1606.44,
+      "end": 1612.52,
+      "text": " and have a biggest parameter but in this case we have deployed the model to take the specific"
+    },
+    {
+      "start": 1613.88,
+      "end": 1621.3200000000002,
+      "text": " this this specific arid mass and is that this specific pathologies with a light model"
+    },
+    {
+      "start": 1622.28,
+      "end": 1630.04,
+      "text": " with cascade on a could be attached with a different ways because we could now is an"
+    },
+    {
+      "start": 1630.04,
+      "end": 1639.32,
+      "text": " is p32 with another way we could implement in a app on an app or making in a pk on sending to"
+    },
+    {
+      "start": 1639.96,
+      "end": 1648.84,
+      "text": " cell phones it could be another way to implement in a edge devices and is the is this is other"
+    },
+    {
+      "start": 1649.48,
+      "end": 1657.08,
+      "text": " and figures that we have attached of the methodology that is the whole the whole the model has"
+    },
+    {
+      "start": 1657.8799999999999,
+      "end": 1664.6,
+      "text": " has trained and this guide we sample windows of 10 seconds from each database because the"
+    },
+    {
+      "start": 1664.6,
+      "end": 1672.12,
+      "text": " principal problem of this is was the the different databases have different amount of of time"
+    },
+    {
+      "start": 1672.6,
+      "end": 1679.1599999999999,
+      "text": " a recording sorry to maybe I can interrupt you here so maybe the data that we have in frequency"
+    },
+    {
+      "start": 1679.1599999999999,
+      "end": 1687.2399999999998,
+      "text": " that's as parameters it can be re plotted at different time frames like this okay and it"
+    },
+    {
+      "start": 1687.2399999999998,
+      "end": 1695.08,
+      "text": " could be very similar to this figure okay and then again you use it for the purpose of processing"
+    },
+    {
+      "start": 1695.08,
+      "end": 1701.3999999999999,
+      "text": " okay okay so we need to conclude I need to go to the next meeting okay"
+    },
+    {
+      "start": 1702.4399999999998,
+      "end": 1707.8,
+      "text": " so it seems that now we all know what we are going to do the tasks has been divided"
+    },
+    {
+      "start": 1709.08,
+      "end": 1714.9199999999998,
+      "text": " in the first step needs to send you all the data that we have gathered so basically the same thing"
+    },
+    {
+      "start": 1714.9199999999998,
+      "end": 1722.6799999999998,
+      "text": " that you did with 14 000 data it or maybe 149 000 data that you showed this time we have more"
+    },
+    {
+      "start": 1722.6799999999998,
+      "end": 1730.84,
+      "text": " limited data it's just 500 so you need to work with these 500 data and my suggestion is maybe you"
+    },
+    {
+      "start": 1730.84,
+      "end": 1738.4399999999998,
+      "text": " can add noise to these data you know what I'm saying yeah documentation exactly and then see how"
+    },
+    {
+      "start": 1738.4399999999998,
+      "end": 1744.84,
+      "text": " the things are working and then and I know so Fatemeh will send you some link to our papers"
+    },
+    {
+      "start": 1744.84,
+      "end": 1751.72,
+      "text": " that has been published on microwave ice sensing so you can get a general idea how this system is"
+    },
+    {
+      "start": 1751.72,
+      "end": 1759.48,
+      "text": " going to work and maybe from now on we will have two week or biweekly meetings and then and biweekly"
+    },
+    {
+      "start": 1759.48,
+      "end": 1763.64,
+      "text": " meetings we can update each other and then write the paper and finalize it"
+    },
+    {
+      "start": 1768.92,
+      "end": 1773.32,
+      "text": " uh is this system for uh get any I didn't get your question"
+    },
+    {
+      "start": 1775.16,
+      "end": 1779.64,
+      "text": " uh any question is more related about how the electronic bar works"
+    },
+    {
+      "start": 1780.6,
+      "end": 1786.6,
+      "text": " and we have like a boobing center or clean vector to coordinate the movement on the boobing"
+    },
+    {
+      "start": 1787.1599999999999,
+      "end": 1798.76,
+      "text": " uh this is related to which uh the A training the A3 oh the AI training so basically what you"
+    },
+    {
+      "start": 1798.76,
+      "end": 1806.52,
+      "text": " are going to do you plot the s parameter and then use image processing to get the curve or what"
+    },
+    {
+      "start": 1807.48,
+      "end": 1809.8799999999999,
+      "text": " I didn't get your point"
+    },
+    {
+      "start": 1811.48,
+      "end": 1820.84,
+      "text": " okay uh just for the like you said we want we have to find models I was wondering what we are"
+    },
+    {
+      "start": 1820.84,
+      "end": 1829.48,
+      "text": " going to sensor about the boobing movement or the eye tracking that was my question related"
+    },
+    {
+      "start": 1829.48,
+      "end": 1831.48,
+      "text": " but more for the electronic part"
+    },
+    {
+      "start": 1833.88,
+      "end": 1843.48,
+      "text": " three the models that I mentioned it is mainly for AI so as an example in AI you can have different"
+    },
+    {
+      "start": 1843.48,
+      "end": 1852.04,
+      "text": " methods you know um lots of machine learning methods so but out of those different machine"
+    },
+    {
+      "start": 1852.04,
+      "end": 1858.04,
+      "text": " learning methods which one are you going to use so selection of that is up to you"
+    },
+    {
+      "start": 1860.2,
+      "end": 1868.1200000000001,
+      "text": " okay what my my suggestion is select the ones that you can easily deploy it on the hardware"
+    },
+    {
+      "start": 1869.16,
+      "end": 1875.8,
+      "text": " so as an example in MATLAB you can make a very complicated algorithm but implementation of that"
+    },
+    {
+      "start": 1875.8,
+      "end": 1882.2,
+      "text": " on a microcontroller is almost impossible it needs lots of microcontrollers talking to each other"
+    },
+    {
+      "start": 1882.2,
+      "end": 1892.3600000000001,
+      "text": " that soon so try not to use that use the one that is simple okay okay thank you okay awesome"
+    },
+    {
+      "start": 1892.3600000000001,
+      "end": 1897.64,
+      "text": " thank you everyone thanks again for making for this meeting and uh looking forward to working"
+    },
+    {
+      "start": 1897.64,
+      "end": 1904.04,
+      "text": " with you looking forward to publish this very nice paper thank you very much again and thank you"
+    },
+    {
+      "start": 1904.04,
+      "end": 1909.88,
+      "text": " everyone to stay here in this meeting it's a pleasure to meet you and thank you very much"
+    },
+    {
+      "start": 1909.88,
+      "end": 1915.0800000000002,
+      "text": " thank you all right thank you very much bye for now"
+    }
+  ]
+}

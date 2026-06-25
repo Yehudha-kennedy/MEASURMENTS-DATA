@@ -1,0 +1,151 @@
+\begin{thebibliography}{19}
+\providecommand{\natexlab}[1]{#1}
+\providecommand{\url}[1]{\texttt{#1}}
+\expandafter\ifx\csname urlstyle\endcsname\relax
+  \providecommand{\doi}[1]{doi: #1}\else
+  \providecommand{\doi}{doi: \begingroup \urlstyle{rm}\Url}\fi
+
+\bibitem[Cawley and Talbot(2010)]{cawley2010overfitting}
+Gavin~C. Cawley and Nicola L.~C. Talbot.
+\newblock On over-fitting in model selection and subsequent selection bias in
+  performance evaluation.
+\newblock \emph{Journal of Machine Learning Research}, 11:\penalty0 2079--2107,
+  2010.
+
+\bibitem[Cortes and Vapnik(1995)]{cortes1995svm}
+Corinna Cortes and Vladimir Vapnik.
+\newblock Support-vector networks.
+\newblock \emph{Machine Learning}, 20\penalty0 (3):\penalty0 273--297, 1995.
+\newblock \doi{10.1007/BF00994018}.
+
+\bibitem[Goodfellow et~al.(2016)Goodfellow, Bengio, and
+  Courville]{goodfellow2016deep}
+Ian Goodfellow, Yoshua Bengio, and Aaron Courville.
+\newblock \emph{Deep Learning}.
+\newblock MIT Press, Cambridge, MA, 2016.
+\newblock ISBN 978-0-262-03561-3.
+\newblock URL \url{https://www.deeplearningbook.org}.
+
+\bibitem[{Google}(2023)]{tensorflow_lite}
+{Google}.
+\newblock {TensorFlow} lite: Deploy machine learning models on mobile and edge
+  devices.
+\newblock \url{https://www.tensorflow.org/lite}, 2023.
+\newblock Accessed: 2024-01-15.
+
+\bibitem[Guo et~al.(2017)Guo, Pleiss, Sun, and Weinberger]{guo2017calibration}
+Chuan Guo, Geoff Pleiss, Yu~Sun, and Kilian~Q. Weinberger.
+\newblock On calibration of modern neural networks.
+\newblock In \emph{Proceedings of the 34th International Conference on Machine
+  Learning (ICML)}, volume~70 of \emph{Proceedings of Machine Learning
+  Research}, pages 1321--1330. PMLR, 2017.
+
+\bibitem[Haykin(2009)]{haykin2009nn}
+Simon Haykin.
+\newblock \emph{Neural Networks and Learning Machines}.
+\newblock Pearson, Upper Saddle River, NJ, 3rd edition, 2009.
+\newblock ISBN 978-0-13-147139-9.
+
+\bibitem[Hosmer et~al.(2013)Hosmer, Lemeshow, and
+  Sturdivant]{hosmer2013logistic}
+David~W. Hosmer, Stanley Lemeshow, and Rodney~X. Sturdivant.
+\newblock \emph{Applied Logistic Regression}.
+\newblock John Wiley \& Sons, Hoboken, NJ, 3rd edition, 2013.
+\newblock ISBN 978-0-470-58247-3.
+
+\bibitem[{IBIS Open Forum}(2009)]{touchstone_spec}
+{IBIS Open Forum}.
+\newblock Touchstone\textsuperscript{\textregistered} file format
+  specification, version~2.0.
+\newblock Technical report, IBIS Open Forum, 2009.
+\newblock URL \url{https://ibis.org/touchstone_ver2.0/touchstone_ver2_0.pdf}.
+\newblock Defines the standard \texttt{.s1p}/\texttt{.s2p}/\texttt{.snp} file
+  format for S-parameter data interchange.
+
+\bibitem[Ioffe and Szegedy(2015)]{ioffe2015batchnorm}
+Sergey Ioffe and Christian Szegedy.
+\newblock Batch normalization: Accelerating deep network training by reducing
+  internal covariate shift.
+\newblock In \emph{Proceedings of the 32nd International Conference on Machine
+  Learning (ICML)}, volume~37 of \emph{Proceedings of Machine Learning
+  Research}, pages 448--456. PMLR, 2015.
+
+\bibitem[{Keysight Technologies}(2017)]{keysight_s2p_format}
+{Keysight Technologies}.
+\newblock Reading and writing {S}-parameter data files with the {ENA} series
+  network analyzers.
+\newblock Technical Report Application Note 5989-6785EN, Keysight Technologies,
+  2017.
+\newblock URL \url{https://www.keysight.com/}.
+\newblock Covers Touchstone v1/v2 import/export and custom ASCII formats.
+
+\bibitem[Kohavi(1995)]{kohavi1995cv}
+Ron Kohavi.
+\newblock A study of cross-validation and bootstrap for accuracy estimation and
+  model selection.
+\newblock In \emph{Proceedings of the Fourteenth International Joint Conference
+  on Artificial Intelligence (IJCAI)}, volume~2, pages 1137--1143, San
+  Francisco, CA, 1995. Morgan Kaufmann.
+
+\bibitem[Loshchilov and Hutter(2019)]{loshchilov2017decoupled}
+Ilya Loshchilov and Frank Hutter.
+\newblock Decoupled weight decay regularization.
+\newblock In \emph{International Conference on Learning Representations
+  (ICLR)}, 2019.
+\newblock URL \url{https://openreview.net/forum?id=Bkg6RiCqY7}.
+\newblock Originally published as arXiv:1711.05101 in 2017.
+
+\bibitem[{Microsoft}(2023)]{onnx_runtime}
+{Microsoft}.
+\newblock {ONNX} runtime: Cross-platform, high performance ml inferencing and
+  training accelerator.
+\newblock \url{https://onnxruntime.ai/}, 2023.
+\newblock Accessed: 2024-01-15.
+
+\bibitem[Pedregosa et~al.(2011)Pedregosa, Varoquaux, Gramfort, Michel, Thirion,
+  Grisel, Blondel, Prettenhofer, Weiss, Dubourg, Vanderplas, Passos,
+  Cournapeau, Brucher, Perrot, and Duchesnay]{sklearn_docs}
+Fabian Pedregosa, Ga\"{e}l Varoquaux, Alexandre Gramfort, Vincent Michel,
+  Bertrand Thirion, Olivier Grisel, Mathieu Blondel, Peter Prettenhofer, Ron
+  Weiss, Vincent Dubourg, Jake Vanderplas, Alexandre Passos, David Cournapeau,
+  Matthieu Brucher, Matthieu Perrot, and \'{E}douard Duchesnay.
+\newblock Scikit-learn: Machine learning in {P}ython.
+\newblock \emph{Journal of Machine Learning Research}, 12:\penalty0 2825--2830,
+  2011.
+
+\bibitem[Pozar(2011)]{pozar2011microwave}
+David~M. Pozar.
+\newblock \emph{Microwave Engineering}.
+\newblock John Wiley \& Sons, Hoboken, NJ, 4th edition, 2011.
+\newblock ISBN 978-0-470-63155-3.
+
+\bibitem[Srivastava et~al.(2014)Srivastava, Hinton, Krizhevsky, Sutskever, and
+  Salakhutdinov]{srivastava2014dropout}
+Nitish Srivastava, Geoffrey Hinton, Alex Krizhevsky, Ilya Sutskever, and Ruslan
+  Salakhutdinov.
+\newblock Dropout: A simple way to prevent neural networks from overfitting.
+\newblock \emph{Journal of Machine Learning Research}, 15\penalty0
+  (1):\penalty0 1929--1958, 2014.
+
+\bibitem[Vapnik(1995)]{vapnik1995svm}
+Vladimir~N. Vapnik.
+\newblock \emph{The Nature of Statistical Learning Theory}.
+\newblock Springer-Verlag, New York, 1995.
+\newblock ISBN 978-0-387-94559-0.
+
+\bibitem[Varma and Simon(2006)]{varma2006nested_cv}
+Sudhir Varma and Richard Simon.
+\newblock Bias in error estimation when using cross-validation for model
+  selection.
+\newblock \emph{BMC Bioinformatics}, 7\penalty0 (1):\penalty0 91, 2006.
+\newblock \doi{10.1186/1471-2105-7-91}.
+
+\bibitem[Zhang et~al.(2018)Zhang, Cisse, Dauphin, and
+  Lopez-Paz]{zhang2018mixup}
+Hongyi Zhang, Moustapha Cisse, Yann~N. Dauphin, and David Lopez-Paz.
+\newblock mixup: Beyond empirical risk minimization.
+\newblock In \emph{International Conference on Learning Representations
+  (ICLR)}, 2018.
+\newblock URL \url{https://openreview.net/forum?id=r1Ddp1-Rb}.
+
+\end{thebibliography}

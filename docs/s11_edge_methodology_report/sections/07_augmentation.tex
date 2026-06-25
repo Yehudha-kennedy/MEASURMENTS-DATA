@@ -1,0 +1,362 @@
+% sections/07_augmentation.tex  –  Data Augmentation (Stage 3)
+% \input{} into main.tex; do NOT wrap in \documentclass or \begin{document}
+
+\section{Data Augmentation}
+\label{sec:augment}
+
+Augmentation is \textbf{Stage~3} of the data-conditioning pipeline
+introduced in \Cref{sec:preproc}.  Its purpose is to synthetically
+expand the training set so that models — particularly deep networks
+with high parameter counts (\Cref{sec:overfit}) — see greater input
+variety during optimisation.  Two principles govern every augmentation
+applied in this project:
+
+\begin{enumerate}
+  \item \textbf{Physics-awareness.}  Every transformation must have a
+        credible physical or instrumental justification.
+        $S_{11}$ traces encode the electromagnetic response of a sensor
+        in a specific physical state; arbitrary perturbations that
+        violate Maxwell's equations or produce non-physical spectral
+        shapes do not improve real-world robustness.
+  \item \textbf{Training-time only.}  Augmented samples are generated
+        on-the-fly (or pre-generated and cached) for the training
+        partition exclusively.  Validation and test data are never
+        augmented; doing so would corrupt the evaluation protocol.
+\end{enumerate}
+
+\begin{tcolorbox}[
+  colback=orange!5!white,
+  colframe=orange!75!black,
+  title={\textbf{Warning — Plausibility vs.\ Diversity}},
+  fonttitle=\bfseries
+]
+Augmentations that create visually diverse but physically implausible
+samples can inflate the apparent dataset size without improving
+real-world generalisation.  Each augmentation must have a credible
+physical or instrumental justification.  When in doubt, ablate: train
+with and without the augmentation and compare validation performance.
+\end{tcolorbox}
+
+%% ------------------------------------------------------------------
+\subsection{Additive Gaussian Noise}
+\label{sec:augment:noise}
+
+\paragraph{Physical justification.}
+Every VNA measurement contains additive thermal and receiver noise.
+The noise floor depends on the instrument's dynamic range, IF bandwidth,
+and averaging factor.  Injecting Gaussian noise simulates repeated
+measurements of the same physical state under slightly different
+instrument conditions.
+
+\paragraph{Implementation.}
+For each training sample $\mathbf{x} \in \mathbb{R}^{4001}$ (magnitude
+channel), generate a perturbed copy:
+\begin{equation}
+  \tilde{\mathbf{x}} = \mathbf{x} + \boldsymbol{\varepsilon},
+  \qquad
+  \varepsilon_i \sim \mathcal{N}(0,\,\sigma_{\text{noise}}^{2}),
+  \label{eq:gauss_noise}
+\end{equation}
+where $\sigma_{\text{noise}}$ is chosen to match a realistic
+signal-to-noise ratio (SNR).  For a modern benchtop VNA with a dynamic
+range of \SI{80}{\decibel} or more, noise levels on the order of
+\SIrange{0.01}{0.1}{\decibel} per point are representative.  The same
+procedure is applied independently to the phase channel with an
+appropriate phase-noise variance (typically a few hundredths of a
+degree).
+
+\paragraph{Risk level: \textbf{Low}.}
+Additive instrument noise is a well-understood corruption mechanism.
+The augmentation is compatible with both Route~A and Route~B.
+
+%% ------------------------------------------------------------------
+\subsection{Frequency-Local Smooth Perturbation}
+\label{sec:augment:jitter}
+
+\paragraph{Physical justification.}
+Minor calibration drift between measurement sessions can introduce
+smooth, low-frequency distortions in the magnitude and phase responses.
+These manifest as gentle undulations superimposed on the true spectral
+shape rather than as point-wise noise.
+
+\paragraph{Implementation.}
+Generate a smooth perturbation curve by sampling a small number
+($K = 5$--$10$) of random control points along the frequency axis,
+drawing their amplitudes from $\mathcal{N}(0,\,\sigma_{\text{jitter}})$,
+and interpolating with a cubic spline to produce a continuous
+perturbation vector $\boldsymbol{\delta} \in \mathbb{R}^{4001}$.
+The perturbed trace is $\tilde{\mathbf{x}} = \mathbf{x} +
+\boldsymbol{\delta}$.
+
+The amplitude $\sigma_{\text{jitter}}$ must be small enough that the
+resulting trace remains within the class-aggregated envelope identified
+during outlier screening (\Cref{sec:preproc}).
+
+\paragraph{Risk level: \textbf{Low--Medium}.}
+The perturbation is physically motivated but the amplitude must be
+bounded carefully; excessive jitter can blur inter-class boundaries.
+
+%% ------------------------------------------------------------------
+\subsection{Magnitude Scaling}
+\label{sec:augment:magscale}
+
+\paragraph{Physical justification.}
+Variations in cable loss, connector torque, and adapter insertion loss
+introduce a quasi-constant multiplicative offset (in log-magnitude, an
+additive offset in dB) across the frequency band.  Simulating this
+variation makes the classifier robust to test-time setup differences.
+
+\paragraph{Implementation.}
+Apply a per-sample random gain $g$ drawn uniformly from
+$[\SI{-1.5}{\decibel},\,\SI{+1.5}{\decibel}]$:
+\begin{equation}
+  \tilde{x}_i = x_i + g, \qquad g \sim \mathcal{U}(-1.5,\;1.5),
+  \label{eq:mag_scale}
+\end{equation}
+where $x_i$ is the magnitude at frequency bin~$i$ in dB.
+The $\pm\SI{1.5}{\decibel}$ range is representative of typical cable
+and connector variability in X-band (\SIrange{8}{12}{\giga\hertz})
+setups.
+
+\paragraph{Risk level: \textbf{Low}.}
+A uniform gain offset preserves the spectral \emph{shape}, which
+carries the class-discriminative information.  Route~A and Route~B
+compatible.
+
+%% ------------------------------------------------------------------
+\subsection{Phase Perturbation}
+\label{sec:augment:phase}
+
+\paragraph{Physical justification.}
+Electrical length changes due to cable flexure or temperature drift
+introduce a nearly linear phase offset
+$\Delta\phi(f) \approx \alpha + \beta f$ across the band.
+Small additional smooth fluctuations simulate connector phase
+instability.
+
+\paragraph{Implementation.}
+For each training sample, generate a random affine phase offset:
+\begin{equation}
+  \tilde{\phi}_i = \phi_i + \alpha + \beta\, f_i,
+  \label{eq:phase_perturb}
+\end{equation}
+where $\alpha \sim \mathcal{U}(-5^{\circ},\,5^{\circ})$ is a constant
+offset and $\beta$ is drawn such that the total additional phase slope
+across the \SI{4}{\giga\hertz} band does not exceed
+$\pm\SI{10}{\degree}$.  Optionally, a smooth spline perturbation
+(as in \Cref{sec:augment:jitter}) may be added to simulate non-linear
+phase instability, but the total perturbation must remain small enough
+to avoid creating non-physical discontinuities or phase wrapping
+artefacts.
+
+\paragraph{Risk level: \textbf{Medium}.}
+Phase perturbations are physically justified but require careful
+bounding.  Excessive phase noise can create unrealistic spectral
+features, particularly near resonances where phase transitions are
+steep.
+
+%% ------------------------------------------------------------------
+\subsection{Frequency-Axis Shift}
+\label{sec:augment:freqshift}
+
+\paragraph{Physical justification.}
+A rigid shift of the frequency axis simulates a change in the VNA's
+start/stop frequencies or a systematic frequency-reference error.  This
+augmentation is \textbf{only justified} if the sensor acquisition
+protocol includes variable centre-frequency settings or IF bandwidth
+changes that alter the effective frequency grid.
+
+\paragraph{Implementation (conditional).}
+Shift the entire trace by $\Delta f$ frequency bins (with edge padding):
+\begin{equation}
+  \tilde{x}_i = x_{i + \Delta f},
+  \qquad \Delta f \sim \mathcal{U}(-N_{\text{shift}},\;N_{\text{shift}}),
+  \label{eq:freq_shift}
+\end{equation}
+where $N_{\text{shift}}$ is a small integer (e.g., $1$--$5$ bins,
+corresponding to \SIrange{1}{5}{\mega\hertz}).
+
+\paragraph{Risk level: \textbf{Medium--High}.}
+If the acquisition protocol uses a fixed frequency plan (as appears to
+be the case in this dataset), frequency-axis shifting has no physical
+basis and should \textbf{not} be applied.  It is listed here for
+completeness and should be reconsidered only if the data provider
+confirms variable acquisition settings.
+
+%% ------------------------------------------------------------------
+\subsection{Mixup Augmentation}
+\label{sec:augment:mixup}
+
+Mixup~\cite{zhang2018mixup} creates new training samples as convex
+combinations of existing ones:
+\begin{equation}
+  \tilde{\mathbf{x}} = \lambda\,\mathbf{x}_a + (1-\lambda)\,\mathbf{x}_b,
+  \qquad
+  \tilde{y} = \lambda\,y_a + (1-\lambda)\,y_b,
+  \qquad
+  \lambda \sim \text{Beta}(\alpha,\alpha),
+  \label{eq:mixup}
+\end{equation}
+where $(\mathbf{x}_a, y_a)$ and $(\mathbf{x}_b, y_b)$ are two
+randomly selected training samples and $\alpha \in (0,1]$ controls the
+interpolation strength.
+
+\paragraph{Risk assessment: \textbf{High}.}
+Mixup was designed for natural-image classification where interpolated
+images remain perceptually plausible.  For $S_{11}$ traces, an
+interpolation between a \texttt{dry} trace and an \texttt{ice} trace
+produces a spectrum that does not correspond to any physical sensor
+state.  Furthermore, the soft label $\tilde{y}$ is uninterpretable in
+the sensor context: there is no meaningful ``$40\,\%$~dry,
+$60\,\%$~ice'' state.
+
+\paragraph{Recommendation.}
+Mixup should be used \emph{only} for intra-class interpolation (both
+$\mathbf{x}_a$ and $\mathbf{x}_b$ from the same class) or avoided
+entirely.  If employed inter-class, the benefit must be demonstrated
+via careful ablation against a non-Mixup baseline, and the
+interpretability implications must be documented.
+
+%% ------------------------------------------------------------------
+\subsection{Image-Domain Augmentations for Route~B}
+\label{sec:augment:image}
+
+Route~B encodes $S_{11}$ traces as 2D images (e.g., magnitude heatmaps,
+spectrograms, or recurrence plots).  Standard computer-vision
+augmentations become available, but their applicability must be evaluated
+against the underlying physics:
+
+\begin{itemize}
+  \item \textbf{Horizontal flip} (frequency-axis reversal):
+        reverses the order of frequency bins.  This has no physical
+        interpretation — $S_{11}$ at \SI{8}{\giga\hertz} and
+        $S_{11}$ at \SI{12}{\giga\hertz} are not interchangeable —
+        but may act as a form of regularisation if the classifier does
+        not rely on absolute frequency position.
+        \emph{Risk: Medium.}
+
+  \item \textbf{Vertical flip} (magnitude-axis reversal):
+        inverts the magnitude scale, creating physically impossible
+        positive-dB returns.  \emph{Risk: High.  Not recommended.}
+
+  \item \textbf{Random rotation}:
+        rotates the image by an arbitrary angle.  A magnitude-vs.\
+        -frequency plot rotated by even a few degrees mixes frequency
+        and magnitude axes, destroying the physical meaning of both.
+        \emph{Risk: Very high.  Not recommended.}
+
+  \item \textbf{Random crop / resize}:
+        crops a sub-region and resizes to the original dimensions.
+        Acceptable only if the crop preserves the full frequency range;
+        cropping out a resonant feature removes class-discriminative
+        information.
+        \emph{Risk: Medium.}
+
+  \item \textbf{Colour jitter / brightness perturbation}:
+        for single-channel greyscale images, brightness perturbation is
+        analogous to magnitude scaling (\Cref{sec:augment:magscale})
+        and shares the same justification and risk level.
+        \emph{Risk: Low.}
+\end{itemize}
+
+%% ------------------------------------------------------------------
+\subsection{Augmentation Summary Table}
+\label{sec:augment:table}
+
+\Cref{tab:augment_summary} consolidates all augmentation techniques,
+their physical justification, risk level, and route compatibility.
+
+\begin{table}[ht]
+\centering
+\caption{Summary of augmentation techniques for $S_{11}$ trace data.}
+\label{tab:augment_summary}
+\small
+\renewcommand{\arraystretch}{1.15}
+\begin{tabular}{p{3.2cm} p{3.6cm} p{1.4cm} p{1.7cm}}
+\toprule
+\textbf{Technique} &
+\textbf{Physical justification} &
+\textbf{Risk} &
+\textbf{Route} \\
+\midrule
+Additive Gaussian noise &
+  VNA thermal / receiver noise floor &
+  Low &
+  A, B \\
+Smooth freq.-local jitter &
+  Calibration drift between sessions &
+  Low--Med &
+  A, B \\
+Magnitude scaling ($\pm$\,dB) &
+  Cable loss / connector variation &
+  Low &
+  A, B \\
+Phase perturbation &
+  Electrical-length / temperature drift &
+  Medium &
+  A \\
+Frequency-axis shift &
+  Variable centre-freq.\ (conditional) &
+  Med--High &
+  A \\
+Mixup (inter-class) &
+  None (mathematical regulariser) &
+  High &
+  A, B \\
+Mixup (intra-class) &
+  Interpolation within physical state &
+  Medium &
+  A, B \\
+Horizontal flip (image) &
+  None (regulariser) &
+  Medium &
+  B \\
+Vertical flip (image) &
+  None (non-physical) &
+  High &
+  B \\
+Random rotation (image) &
+  None (non-physical) &
+  Very high &
+  B \\
+Random crop / resize &
+  Sub-band analysis (if full range kept) &
+  Medium &
+  B \\
+Brightness perturbation &
+  Analogous to magnitude scaling &
+  Low &
+  B \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+%% ------------------------------------------------------------------
+\subsection{Augmentation Budget and Ablation}
+\label{sec:augment:ablation}
+
+The number of augmented copies per original sample (the
+\emph{augmentation factor}) must be chosen with care.  A factor of
+$k$ transforms the effective training-set size from $N_{\text{train}}$
+to $(1+k)\,N_{\text{train}}$, but the information content does not
+scale linearly because augmented samples are correlated with their
+parents.  Diminishing returns set in rapidly; empirical guidance from
+the small-sample regime suggests $k \in [2,\,5]$ as a reasonable
+starting range.
+
+\paragraph{Ablation protocol.}
+For every augmentation technique that is included in the final pipeline,
+a controlled ablation must be performed:
+\begin{enumerate}
+  \item Train the model \emph{without} the augmentation and record
+        validation performance (mean $\pm$ std over repeated CV).
+  \item Train with the augmentation under identical hyper-parameters and
+        compare.
+  \item Retain the augmentation only if it produces a statistically
+        meaningful improvement (e.g., paired $t$-test or Wilcoxon
+        signed-rank test on fold-level metrics).
+\end{enumerate}
+
+This evidence-based approach prevents the accumulation of augmentations
+that individually seem harmless but collectively distort the training
+distribution away from the true data manifold.

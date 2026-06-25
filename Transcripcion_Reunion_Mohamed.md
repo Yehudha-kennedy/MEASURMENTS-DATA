@@ -1,0 +1,470 @@
+# 📝 Transcripción de Reunión — Recorder 1532
+
+**Fecha de la grabación:** Grabación extraída del archivo `Recorder - 1532.wav`  
+**Duración:** ~32 minutos  
+**Idioma detectado:** Inglés  
+**Tipo:** Reunión de investigación colaborativa (videoconferencia)
+
+---
+
+## 👥 Participantes
+
+| Nombre | Rol / Afiliación |
+|--------|-----------------|
+| **Mohamed (Dr. Zarifdi)** | Profesor / Supervisor principal — UBCO (University of British Columbia Okanagan) |
+| **Fatemeh Niknehad** | Estudiante de PhD en Ingeniería Eléctrica (Microwave Engineering) — UBCO |
+| **Aiden** | Asistente de investigación undergraduate — UBCO |
+| **Mateo Belénez** | Estudiante graduado de Ingeniería Biomédica — Yachay Tech, Ecuador |
+| **Kennedy Rodríguez** | Estudiante undergraduate de Ingeniería Biomédica — Yachay Tech, Ecuador |
+
+---
+
+## 🎯 Objetivo Principal de la Reunión
+
+Planificar la escritura de un **paper colaborativo** entre los 5 participantes, enfocado en **detección de hielo usando IA y dispositivos edge (microcontroladores)**.
+
+---
+
+## 📋 Resumen de lo Discutido
+
+### 1. Presentaciones Iniciales (00:00 - 02:53)
+
+- **Mohamed** da la bienvenida y menciona que conoció a Mateo y Kennedy en Quito, Ecuador.
+- **Fatemeh Niknehad**: PhD en ingeniería eléctrica, especializada en microwave engineering bajo la supervisión de Dr. Zarifdi. Su investigación se enfoca en **detección de hielo**.
+- **Aiden**: Asistente de investigación undergraduate en su último año. Trabaja en el desarrollo de **dispositivos RIO (readout) para sensores de hielo** para aplicaciones comerciales.
+- **Mateo Belénez**: Estudiante graduado de ingeniería biomédica en Yachay Tech. Chair del IEEE Nanotechnology Council Student Chapter. Investigación enfocada en **IA biomédica y despliegue en microcontroladores para señales ECG**.
+- **Kennedy Rodríguez**: Undergraduate en ingeniería biomédica en Yachay Tech. Enfocado en **dispositivos electrónicos y ML engineering**.
+
+---
+
+### 2. Estado del Paper Actual (02:53 - 04:12)
+
+- Mohamed confirma que **leyó el paper de Mateo y Kennedy** y dice que está **listo para someterse** a la revista (IEEE TETS BioCAS).
+- Mateo menciona que sus tutores les dieron **recomendaciones técnicas** para mejorar la redacción del manuscrito.
+- Se discute la posibilidad de crear **dos versiones del paper**: una para la revista actual y otra mejorada para un journal más prestigioso.
+
+---
+
+### 3. Propuesta de Hardware de Kennedy (04:12 - 05:40)
+
+- Kennedy comparte pantalla y presenta un diseño de **electrodos activos** (7 electrodos).
+- Muestra el **pipeline de comunicación**: desde la piel → transmisión SPN → sistema analógico → IA.
+- Mohamed sugiere discutir esto con más detalle en una reunión offline entre él, Kennedy y Mateo.
+
+---
+
+### 4. Descripción del Proyecto Principal — Detección de Hielo con IA (05:40 - 08:37)
+
+Mohamed describe el proyecto colaborativo:
+
+- **Los sensores son desarrollados en su laboratorio (UBCO)**.
+- Fatemeh ha realizado **más de 500 mediciones** de parámetros S para tres condiciones:
+  - 🧊 **Hielo**
+  - 💧 **Agua**
+  - 🌬️ **Aire** (nada en el sensor)
+- Aiden trabaja en una **estructura de readout de bajo costo** para eliminar la necesidad de analizadores de red vectoriales.
+- **Solicitud para Mateo y Kennedy**: Investigar entre **3 a 6 algoritmos de IA/machine learning** que:
+  - Detecten claramente hielo, agua y aire.
+  - Sean **fáciles de desplegar en microcontroladores/edge devices**.
+  - Se prueben con diferentes **niveles de ruido** añadido a los datos.
+- Mohamed recuerda una tabla que Mateo le mostró en Quito con detección correcta/incorrecta y quiere **replicar eso con los nuevos datos**.
+
+> **Criterio clave**: Los algoritmos deben ser **simples y desplegables en hardware** — evitar algoritmos demasiado complejos que no puedan implementarse en microcontroladores.
+
+---
+
+### 5. Viabilidad y Plan de Tareas (08:37 - 10:22)
+
+- Mateo confirma que es **factible en 2-3 semanas**, dividiendo tareas con Kennedy.
+- Mohamed sugiere crear un **task list/checklist** que se actualice en cada reunión.
+- **Paso 1**: Fatemeh enviará los **500 parámetros S medidos** (hielo, agua, aire) de las frequency selective surfaces.
+- **Paso 2**: Mateo y Kennedy analizan los datos en **MATLAB o Python** y aplican diferentes algoritmos de ML.
+- **Paso 3**: Cuando los resultados en software sean aceptables, se procede con la **implementación en hardware**.
+- **Paso 4**: Grabar un **video** de la implementación para adjuntar al paper.
+
+---
+
+### 6. Plan de Publicación (10:22 - 11:27)
+
+- El **objetivo es publicar** en **IEEE Microwave Theory and Technology Transactions** — el journal más prestigioso en microwave engineering.
+- Mohamed reconoce que **no es un journal fácil**, pero es el plan.
+- **División de escritura del paper:**
+  - **Fatemeh**: Parte del sensor
+  - **Mateo y Kennedy**: Implementación de hardware + IA
+  - **Aiden**: Parte de readout y procesamiento de datos + comunicación
+
+---
+
+### 7. Orgullo del Proyecto y Referencia a Paper Anterior (11:27 - 14:12)
+
+- Mohamed destaca que el paper tendrá **3 estudiantes undergraduate** como autores, lo cual es notable.
+- Muestra su **Google Scholar** y destaca un paper publicado en 2017 con **169 citaciones**, donde también participaron 3 estudiantes undergraduate.
+- Este nuevo proyecto será **más desafiante y prestigioso**.
+
+---
+
+### 8. Presentación de Mateo — Trabajo Actual en ECG con IA (14:12 - 27:52)
+
+Mateo comparte pantalla y presenta el trabajo actual con Kennedy:
+
+#### Métricas del Modelo Actual:
+| Métrica | Valor |
+|---------|-------|
+| Latencia por 10 segundos | 15 ms |
+| Accuracy | 90% |
+| Macro F1 Score | 87.2% |
+| Parámetros del modelo | 1.14 millones |
+| Accuracy en dataset externo | 90.3% |
+| Accuracy en test interno | 84.51% |
+
+#### Contexto Clínico:
+- Enfermedades cardiovasculares son la principal causa de muerte global.
+- En Ecuador representan ~20% de la mortalidad.
+- Los transformers y LLMs tienen requisitos de memoria/energía demasiado altos para microcontroladores.
+
+#### Arquitectura del Modelo:
+- **ResNet 1D comprimido** con **Squeeze-and-Excitation Attention** + **OOD Attention** + **Neuro-symbolic liquid constraints**.
+- Entrenado con **13 bases de datos** de diferentes países (China, Alemania, EE.UU., etc.) para evitar sesgos geográficos.
+- Clasifica:
+  - **9 tipos de arritmia** + PSI en forma cascada
+  - **5 tipos de patologías** + 2 más en cascada
+- Usa solo **3 sensores ECG** y recalcula las **6 derivaciones frontales**.
+
+#### Zona de Cuarentena (Safety):
+- Cuando la confianza del modelo baja de **80%**, se activa una "zona de cuarentena" para evitar predicciones erróneas.
+- Sistema de IA explicable usando **GradCAM**.
+
+#### Despliegue Edge:
+- Implementado en **ESP32**.
+- También posible implementar en **apps móviles** o enviar a celulares.
+- Ventanas de muestreo de **10 segundos** por base de datos.
+
+#### Manuscrito Actual:
+- Título: *"Low-Cost Live-Lead ECG Acquisition on Selective Arrhythmia Classification Targeting ESP32"*
+- Especializado en IA y edge devices.
+- Comparación con literatura reciente muestra que otros modelos son demasiado grandes para edge deployment.
+
+---
+
+### 9. Adaptación al Proyecto de Detección de Hielo (24:44 - 28:21)
+
+- Mohamed menciona que **aplicó a un grant de MITACS**. Si es aprobado, podrá traer a Mateo y Kennedy a su laboratorio en UBCO por **3 meses**.
+- Para adaptar el trabajo al proyecto de hielo:
+  - Los datos de frecuencia (parámetros S) se pueden **re-plotear en diferentes time frames**.
+  - La figura del paper se modificará: en vez de ECG, será un **wind turbine** (turbina eólica).
+  - El flujo será: datos del sensor → amplificadores de instrumentación → cadena de detección con IA.
+  - Mohamed dice: **"Les daremos los datos, ustedes ignoran la parte del sensor y procesan desde ahí hacia adelante."**
+
+---
+
+### 10. Conclusiones y Próximos Pasos (28:15 - 31:55)
+
+Mohamed resume las acciones:
+
+1. ✅ **Fatemeh enviará los 500 datos medidos** (parámetros S de hielo, agua, aire).
+2. ✅ Mateo y Kennedy trabajarán con esos **500 datos** (vs los 14,000-149,000 del trabajo anterior).
+3. ✅ **Sugerencia de Mohamed**: Añadir **ruido (data augmentation)** a los datos para evaluar robustez.
+4. ✅ **Fatemeh enviará links** a papers publicados sobre microwave ice sensing para contexto.
+5. ✅ **Reuniones bi-semanales** (cada 2 semanas) para actualizaciones y escritura del paper.
+
+#### Pregunta de Kennedy sobre Selección de Modelos:
+- Kennedy pregunta sobre qué se va a sensar exactamente y cómo seleccionar modelos.
+- Mohamed aclara que la selección de **algoritmos de ML es responsabilidad de Mateo y Kennedy**.
+- **Consejo clave**: *"Seleccionen los modelos que puedan desplegarse fácilmente en hardware. En MATLAB puedes hacer un algoritmo muy complicado, pero implementarlo en un microcontrolador es casi imposible."*
+
+#### Cierre:
+- Mohamed agradece a todos por la reunión.
+- Expresa entusiasmo por la colaboración y la publicación del paper.
+
+---
+
+## 📌 Tareas Asignadas (Action Items)
+
+| # | Tarea | Responsable | Deadline |
+|---|-------|-------------|----------|
+| 1 | Enviar 500 mediciones de parámetros S (hielo, agua, aire) | **Fatemeh** | Inmediato |
+| 2 | Enviar links a papers de microwave ice sensing | **Fatemeh** | Inmediato |
+| 3 | Crear task list/checklist del proyecto | **Mateo / Kennedy** | Próxima reunión |
+| 4 | Investigar 3-6 algoritmos de ML para detección (desplegables en edge) | **Mateo / Kennedy** | 2-3 semanas |
+| 5 | Analizar datos en MATLAB/Python y aplicar algoritmos | **Mateo / Kennedy** | En progreso |
+| 6 | Añadir ruido a los datos y evaluar robustez | **Mateo / Kennedy** | Junto con #4 |
+| 7 | Implementación en hardware cuando software funcione | **Mateo / Kennedy** | Posterior |
+| 8 | Grabar video de la implementación hardware | **Todos** | Pre-submission |
+| 9 | Escribir parte del sensor | **Fatemeh** | Durante escritura |
+| 10 | Escribir parte de readout y comunicación | **Aiden** | Durante escritura |
+| 11 | Escribir parte de IA + hardware | **Mateo / Kennedy** | Durante escritura |
+| 12 | Reuniones bi-semanales | **Todos** | Continuo |
+
+---
+
+## 🎯 Objetivo del Paper Colaborativo
+
+> Publicar en **IEEE Microwave Theory and Technology Transactions** un paper sobre **detección de hielo en turbinas eólicas** usando sensores de microondas desarrollados en UBCO, con algoritmos de IA desplegables en **edge devices (microcontroladores)**, desarrollados por el equipo de Yachay Tech en Ecuador.
+
+---
+
+## 🔑 Información Clave Adicional
+
+- **Grant MITACS**: Mohamed aplicó para traer a Mateo y Kennedy a UBCO por 3 meses.
+- **Paper actual de Mateo/Kennedy**: Listo para someter a IEEE TETS BioCAS.
+- **Datos disponibles**: 500 mediciones (limitados vs los 149,000 del trabajo anterior).
+- **Técnica de augmentación sugerida**: Añadir ruido artificial para aumentar el dataset.
+- **Criterio de selección de algoritmos**: Priorizar **simplicidad y desplegabilidad** sobre complejidad.
+
+---
+
+## 📝 Transcripción Completa con Timestamps
+
+<details>
+<summary>Click para expandir la transcripción completa</summary>
+
+```
+[00:00 - 00:06] Hello Mr. Muhammad and everyone.
+[00:06 - 00:10] Hello Bruno.
+[00:10 - 00:12] Hi Kennedy.
+[00:12 - 00:14] Hi Mateo.
+[00:14 - 00:20] Okay so I think we only waiting for Aiden to join.
+[00:20 - 00:22] Aiden is here.
+[00:22 - 00:24] Oh okay good.
+[00:24 - 00:29] Okay so thank you very much for making to this meeting.
+[00:29 - 00:33] We are just quickly going around the table and introducing ourselves.
+[00:33 - 00:38] And then I'll describe the project and then how we are going forward.
+[00:38 - 00:41] So I think this colleague knows me.
+[00:41 - 00:47] He met Mateo and Kennedy back in Quito in Ecuador.
+[00:47 - 00:58] And so I'm passing it over to Fatemeh and then Aiden and then people on the other side of the world they can introduce themselves.
+[00:58 - 01:00] Thank you.
+[01:00 - 01:03] Hello everyone. I'm Fatemeh Niknehad.
+[01:03 - 01:16] I'm doing my PhD in electrical engineering and specifically in microwave engineering at UBCO under supervision of Dr. Zarifdi as you know.
+[01:16 - 01:26] And my research area is mainly focused on ice detection.
+[01:26 - 01:31] My name is Aiden. I'm an undergraduate research assistant.
+[01:31 - 01:35] I'm going into my final year before I graduate.
+[01:35 - 01:46] And I mainly have a with developing RIO devices, RIO systems for these ice sensors for commercial applications.
+[01:46 - 01:52] Okay so maybe on your side Mateo you can go first and then Kennedy.
+[01:52 - 01:54] Hi everyone. I am Mateo Belénez.
+[01:54 - 01:58] I'm a graduate student from biomedical engineering in Jataitec.
+[01:58 - 02:09] Currently my focus is to serve as the chair of the EEE Tripoli EEE Nanotechnology Council student capture.
+[02:09 - 02:17] My research on technical focus center is the serial hallucination on biomedical EI
+[02:17 - 02:22] and scampilline deployment for ECG signals.
+[02:22 - 02:32] So currently I work as a research volunteer at the staff groups on the multi-critical data global consortium.
+[02:32 - 02:37] And nice to meet you.
+[02:37 - 02:40] Hello everyone. My name is Kennedy Rodriguez.
+[02:40 - 02:45] I'm also studying at the HITH biomedical engineer undergraduate.
+[02:45 - 02:53] And my focus are electronic devices and ML engineering. Thank you.
+[02:53 - 02:59] Okay thank you very much. So just one thing that Mateo and Kennedy I read your paper.
+[02:59 - 03:07] The paper looks very good and now from my perspective at least it is kind of ready for submission to the transaction.
+[03:07 - 03:16] So I'm leaving it to you and decide with you and your supervisor when to submit. So it's okay from my side now.
+[03:16 - 03:17] Okay.
+[03:17 - 03:21] Special thanks Mr. Mohamed.
+[03:21 - 03:32] In his suspect we are currently resplaining and upriding the the redaction of the paper because our tutors,
+[03:32 - 03:43] especially our teachers have given us some technical technical recommendations to improving the manuscript.
+[03:43 - 03:55] So another aspect I have to we have I love to consider because we have a presentation.
+[03:55 - 04:08] We could create this paper in two versions because Kennedy has another proposal to do in the next steps on this investigation.
+[04:08 - 04:12] Please Kennedy could you remind me to share your screen.
+[04:12 - 04:15] Yeah sure.
+[04:15 - 04:19] Mr. Mohamed could you admit to share my screen please.
+[04:19 - 04:22] Yeah just give me one second.
+[04:22 - 04:30] Yeah it should be fine.
+[04:30 - 04:32] Can you see my screen right now?
+[04:32 - 04:33] Yeah.
+[04:33 - 04:34] Great.
+[04:34 - 04:35] Yes.
+[04:35 - 04:40] So we would like to introduce you to a band.
+[04:40 - 04:43] Okay.
+[04:43 - 04:51] We want to build some active electrodes, generating seven electrodes that we will supplies in general bars at Kip.
+[04:51 - 04:59] Then we would like to this is the pipeline for the communication from the skin to the AI.
+[04:59 - 05:09] So as you can see we have skin.
+[05:09 - 05:15] another transmitter, we want to use communication and SPN now that is really helpful and
+[05:17 - 05:25] it will provide you a more efficient signal. And to finally we have the analog symbol system
+[05:26 - 05:34] and that's all. Okay, I think we can discuss this more in the offline meeting between three of us,
+[05:34 - 05:40] me, Kennedy and Matto and then see how the things are going forward. So that's perfect.
+[05:40 - 05:47] So Kennedy if you stop sharing your screen that would be better. So okay, so the main purpose
+[05:47 - 05:57] of this meeting is people in Ecuador, they have very good knowledge in both AI and hardware
+[05:57 - 06:05] implementation of that. So the plan is writing a paper, five of us together and this paper is
+[06:05 - 06:15] going to be focused on using AI and edge devices for ice detection. So here's the plan I'm sharing
+[06:15 - 06:24] with everyone. So Fateme has measured more than 500 results, 400 measurements or 500 measurements
+[06:24 - 06:30] for ice condition on the sensors that she has developed. So the sensors are our own work,
+[06:30 - 06:39] my lab's work. So we developed the sensor, we made the readout structures, readout device,
+[06:39 - 06:46] Hayden is these days working on a low cost readout structure so we don't, we won't need vector
+[06:46 - 06:53] network analyzers anymore. So, but however, we will give you those results, we will give you the
+[06:53 - 07:00] result for ice, result for water, result for air, which means that there is nothing on the sensor.
+[07:00 - 07:08] Okay, the request that we are going to have from you is investigate at least three to six
+[07:09 - 07:18] different algorithms, AI machine algorithms that can implement or can be implemented and also can
+[07:18 - 07:29] detect the clearly ice, water and air based on the data that we are giving to you. Also try to add
+[07:29 - 07:38] some noise level to these data yourself and then see how much noise you can add based on those
+[07:38 - 07:45] algorithms and still algorithm can clearly detect it. I remember when I was in Keto,
+[07:45 - 07:51] Mato showed me a table, a nice table, correct detection, incorrect protections and stuff like
+[07:51 - 07:57] that using AI. Basically, we want to regenerate that for at least three or minimum three and
+[07:57 - 08:04] maximum that's a six different algorithms. And these algorithms only thing that you need to
+[08:04 - 08:12] just keep in mind in selecting different algorithms is easy to deployable. So they need to be only,
+[08:12 - 08:18] you need to just think in this way, you can get very complicated algorithm, no problem,
+[08:18 - 08:26] but then it is going to be very hard to deploy it on microcontroller. So we are looking for something
+[08:26 - 08:33] that can be easily deployed on edge devices and at the same time, it uses AI for enhancing the
+[08:34 - 08:37] detectability. Would that work for you?
+[08:41 - 08:46] So do you think that it is feasible in the next couple of weeks?
+[08:48 - 08:55] It could be reachable. Maybe in this case, we call an improved investigation about the algorithms.
+[08:56 - 09:06] And Guillaume Montescher is in a right plan because I need to have a checklist plan with Kennedy
+[09:06 - 09:15] because we currently divide our task. So it could be attached maybe in two or three weeks
+[09:16 - 09:24] dividing the tasks. That's all good. There is no rush. So what we are going to do as a task list,
+[09:24 - 09:31] if someone maybe Kennedy or Matto, you can start creating a task list and then every day or every
+[09:31 - 09:36] time that we are meeting, you can put a check mark or if it's still ongoing, you can put it ongoing.
+[09:37 - 09:45] But the next step is I'm going to ask Fatemeh to send you a lot of data. So Fatemeh, after the
+[09:45 - 09:52] meeting is finished, please make sure that you send at least 500 measured s-parameters,
+[09:53 - 10:00] scattering parameters for ice, water and air. The same thing that you said,
+[10:01 - 10:07] okay, for the frequency selective surfaces that we are developing for ice detection.
+[10:08 - 10:17] So when Matto and Kennedy receive that, I believe the first step is using Matlab or Python to just
+[10:17 - 10:22] analyze the data and then maybe applying different machine learning algorithms.
+[10:22 - 10:29] When you get acceptable results in Matlab, then it is the time for the hardware implementation.
+[10:29 - 10:35] When the hardware implementation is finished, you can take a video. We will attach that video to
+[10:35 - 10:42] that to the paper submission. If everything goes good, the plan is submitting this paper to high
+[10:42 - 10:51] trip and microwave theory and technology transaction. That is the highest, most prestigious
+[10:51 - 10:56] journal in I would say most of the engineering that is specifically in Microgrip Engineering.
+[10:57 - 11:06] So it is not an easy journal, but this is the plan. So then we will help each other writing the paper.
+[11:06 - 11:12] Our side Fatemeh will write the sensor part. Matto and Kennedy will write the hardware
+[11:12 - 11:19] implementation AI part. And so Aden will write the readout part and data processing part and
+[11:19 - 11:27] maybe communication. And then the entire paper will be ready for submission. And one beautiful
+[11:27 - 11:32] thing about this paper and I'm going and if it's published, I'm going to be very
+[11:32 - 11:39] feel proud of myself. In this paper, we will have three undergrad students working on it.
+[11:39 - 11:47] This is not my first time. I'm just going to show you one paper. And for Kennedy and Matto, if you
+[11:47 - 11:57] are, if you still want to get more information about our sensors and so Fatemeh, can you in your
+[11:57 - 12:05] email, send a link to all of our ice detection papers. So then they can also take a look into
+[12:05 - 12:15] those papers. And if they have any question, later they can come back to us. Okay. Okay. So I just
+[12:15 - 12:23] want to show you this and then maybe we can, and if you have any question, I will answer. If not,
+[12:23 - 12:31] then we can maybe conclude the talk. And just give me one second.
+[12:31 - 12:34] And
+[12:47 - 12:52] okay. So I'm going to share my screen for a second.
+[12:53 - 13:01] So this is my Google scholar. So most of the time, if I have, if I wrote a paper and if you want to
+[13:01 - 13:08] see my previous papers, you can come to this page and you can easily find it. Okay. But the one that
+[13:08 - 13:17] I want to highlight for this purpose is number three. We published this paper in 2017. And it got
+[13:17 - 13:26] 169 citation. That means that all around the world, people read this paper, they use this
+[13:26 - 13:33] paper and cite this paper. But one thing that I really want to talk about this paper is look at that.
+[13:33 - 13:44] One, two, three, p, undergrad students were in this paper. But the, so previously we did this,
+[13:44 - 13:54] but this time we will only have three undergrad students and the Fatemeh and myself. So this is
+[13:54 - 14:07] going to be more challenging and more prestigious. Okay. So what have you didn't see? Oh yeah,
+[14:07 - 14:12] I can establish. Okay. So do you have any questions for me?
+[14:16 - 14:24] Especially in this case, I have divided the question into parts versus I have prepared a
+[14:24 - 14:33] presentation about the job that we have implemented with Kennedy. If you want, I could share my screen
+[14:33 - 14:45] and present in another part. In this case, the actual, the currently manuscript is ready to send to
+[14:47 - 14:55] EEEE, EEEE, TETS Viocas, right? Yeah, it's a bioretical circuit analysis. Okay. After we send the
+[14:56 - 15:06] EEEE, TETS Viocas, we will improve and a new job, this investigation will be upgrade the manuscript to
+[15:07 - 15:20] focus to the new journal as you mentioned, right? With the new data. Okay. Because the data that we
+[15:20 - 15:29] used was for biomedical application. This one is for ice detection. Okay. Now it's clear. So in this part,
+[15:29 - 15:36] I want to share my screen. So it's not a problem. I could share the job. We are currently working.
+[15:37 - 15:39] So okay. Yeah, you can share.
+[15:40 - 16:00] Let me know if you can see my, okay. So the, I have prepared this, this, this, this, because it's the
+[16:00 - 16:10] current job that we are working with Kennedy and my team that is the time for ACGH AI that has
+[16:10 - 16:22] this metrics, the latency per 10 seconds is 15 milliseconds, have an accuracy of 90% and
+[16:22 - 16:32] MECRIF 1 square of 87.2%. So in this case, the clinical graph that we located is the cardiovascular
+[16:32 - 16:40] disease that remains the leading global cause of death. Here in Ecuador, it goes on roughly 20%
+[16:41 - 16:48] of mortality. The central is in monitoring matters of the leming settings. The key input got is the
+[16:48 - 16:53] transformers on large-lingual models come from well with a memory and energy requirements
+[16:53 - 17:00] for local microcontroller deployment. And the safety gap is the deterministic models first
+[17:00 - 17:07] across on your ambulatory artifacts. The safer output can be of station and human review. So
+[17:08 - 17:15] operating the stages is the an ECG classifier divided in a arrhythmia and pathologies
+[17:16 - 17:23] in, it could be useful in a super 10 dollars hardware only if it combines E-88 compression
+[17:23 - 17:37] and string is from budgeting. So the version has already achieved is this, almost 13 databases
+[17:37 - 17:47] have integrated under training of this model. The model has this amount of parameters,
+[17:47 - 18:01] 1.14 million of parameters. And it has an accuracy of 84.5 to 1%. It has tested in one of the
+[18:01 - 18:10] outers that is it and currently is not in this meeting. And in the external data set has
+[18:10 - 18:20] achieved a 90.3% of accuracy. In another part, one of the improvements that we have
+[18:20 - 18:32] this point on how we we we specialise this this manuscript is a principle we calibrate and sense
+[18:32 - 18:44] the the the using three sensors, ECG sensors, and we recalculate and produce the six the six
+[18:44 - 18:52] frontal derivation from a patient. So in this image we can see we have only three sensors
+[18:52 - 19:01] that have reducing the noisy levels and using the artificial intelligence in this case the data
+[19:02 - 19:08] four we classify nine types of arrhythmia plus psi plus five
+[19:10 - 19:20] plus five in a casket AI way. In another part we classify pathologies in this case we classify
+[19:20 - 19:29] five types of pathology plus two more in a casket way. So this is the currently data that
+[19:29 - 19:40] we have attached the external the the database the the data from test to to train the model was
+[19:40 - 19:49] this where from these data databases. The principle is the CPSC. The way that we
+[19:51 - 19:58] implement those database is because the gap of the alymics because a model need to be
+[19:58 - 20:06] in first with the different signals or different signals from different countries because the gap
+[20:06 - 20:17] is a model could predict and could not learn the signal and could learn how the signal works in that
+[20:17 - 20:23] country. So in this way we by this way we train the model using different assets for different
+[20:23 - 20:34] countries especially from China and Germany from US and others. In another part this is the functional
+[20:34 - 20:42] architecture from the ResNet and the model use squeeze anesthesia under a microcontroller
+[20:42 - 20:52] project and this is the way that we achieve using residual blocks to achieve the 1.4 million
+[20:52 - 21:00] parameters. In another part this is the surface office that may be attention. This is how the
+[21:00 - 21:09] the quarantine or casket AI works in this case the multicolor robot that guarantees if the model
+[21:09 - 21:15] not hallucinate or not predict as well the data the confidence level
+[21:15 - 21:23] will decrease and this autonomous zones or the quarantine zone will activate.
+[21:24 - 21:31] This confidence is when the confidence is lower to 80 percent the sigma attach this
+[21:32 - 21:40] attach this this extension and will activate the quarantine zone. So this is our matrix confusion
+[21:40 - 21:47] and the rock curves from it it is the rocket curves from they are from the the most predicted
+[21:47 - 21:55] levels from HR read me and this is from the night primary the night primary arrhythmia.
+[21:57 - 22:06] This is the the unresume of the metrics that we achieve with this edge deployment method.
+[22:06 - 22:17] In another part we increase the skill to achieve an explainable AI using the graph come to to see how
+[22:17 - 22:28] and in which ways the the model recognize and host activation of the of the perceptron. In this
+[22:28 - 22:41] case the windows classified at 70.741575 d 71 percent and this is the code the quarantine zone
+[22:41 - 22:49] works this is the image directly directly attaches to the manuscript and in another part this is the
+[22:50 - 23:00] the a resume of how the latency works and how the is the implement of of is 32 in this case we
+[23:00 - 23:15] have a map at the 94.75 d 1 percent of the one one don't sign 42.263. We don't acquire it but
+[23:15 - 23:25] in this case what is a widows windows is the samples that the model directly cut under the signal
+[23:25 - 23:33] because they cut a latency of 10 milliseconds and in this this middle middle this we don't
+[23:33 - 23:41] process the data the model this is the next steps and thanks this is the current legit that we are
+[23:42 - 23:54] working in another part this is the let me wait a minute is the currently manuscript
+[23:55 - 24:02] this is so things that you we missed yeah this is the this is the manuscript that he we have a
+[24:02 - 24:08] chart the name of the manuscript is love goes live lead acg acquisition on selective arreama
+[24:08 - 24:14] classification targeting the sp3d us3 class this is especially is specializated to
+[24:15 - 24:22] artificial artificial intelligence and edge devices this is a compressing multitask resnet
+[24:22 - 24:30] 1d use 2d with a squeeze anesthetician attention and od ood attention and neuro symbolic
+[24:30 - 24:37] is your liquid constraints this is the graphic that i show you the the method of the metal
+[24:37 - 24:44] legit how it works and so matter just can you go back to that figure so before we continue i just
+[24:44 - 24:51] want to mention that i also applied for a grant from my tax and we are waiting for the results if
+[24:51 - 24:58] the grant is given to us i will be able to bring both metal and kennedy for its period of three
+[24:58 - 25:03] months to come to my lab and then you know do some research in the lab in person so that's
+[25:03 - 25:12] another good thing about this collaboration so looking at this figure basically at the end
+[25:13 - 25:21] with the data that we are going to provide you this part that's a bit changed with the ice
+[25:22 - 25:31] okay so and maybe i then you can have a meeting you and fateme can have a meeting with them and
+[25:31 - 25:37] then instead of this figure because we are going to let's say use it for the wind turbine so you
+[25:37 - 25:45] can make a wind turbine like this and then the data is going to the instrumentation amplifiers
+[25:45 - 25:51] and then from instrumentation amplifiers it goes to the rest of the chain of the detection
+[25:51 - 25:57] so basically matter what we are going to give you we are going to give you the data so basically
+[25:57 - 26:05] you can ignore this part and then use the data that we give you and then start processing from here
+[26:05 - 26:16] up okay that's okay okay that's for sure um let me continue in this part this is the table one
+[26:16 - 26:22] is that a comparison of recent literature of the different ecg classification and invaded deployment
+[26:24 - 26:30] this this is students using our resume benchmark and users are the emerging learning transformers
+[26:30 - 26:37] temporary transformers and as you can see this model are big of massive and they are
+[26:37 - 26:46] currently available to the to an edge deployment and in many reasons have classes with new pathologies
+[26:46 - 26:52] and have a biggest parameter but in this case we have deployed the model to take the specific
+[26:53 - 27:01] this this specific arid mass and is that this specific pathologies with a light model
+[27:02 - 27:10] with cascade on a could be attached with a different ways because we could now is an
+[27:10 - 27:19] is p32 with another way we could implement in a app on an app or making in a pk on sending to
+[27:19 - 27:28] cell phones it could be another way to implement in a edge devices and is the is this is other
+[27:29 - 27:37] and figures that we have attached of the methodology that is the whole the whole the model has
+[27:37 - 27:44] has trained and this guide we sample windows of 10 seconds from each database because the
+[27:44 - 27:52] principal problem of this is was the the different databases have different amount of of time
+[27:52 - 27:59] a recording sorry to maybe I can interrupt you here so maybe the data that we have in frequency
+[27:59 - 28:07] that's as parameters it can be re plotted at different time frames like this okay and it
+[28:07 - 28:15] could be very similar to this figure okay and then again you use it for the purpose of processing
+[28:15 - 28:21] okay okay so we need to conclude I need to go to the next meeting okay
+[28:22 - 28:27] so it seems that now we all know what we are going to do the tasks has been divided
+[28:29 - 28:34] in the first step needs to send you all the data that we have gathered so basically the same thing
+[28:34 - 28:42] that you did with 14 000 data it or maybe 149 000 data that you showed this time we have more
+[28:42 - 28:50] limited data it's just 500 so you need to work with these 500 data and my suggestion is maybe you
+[28:50 - 28:58] can add noise to these data you know what I'm saying yeah documentation exactly and then see how
+[28:58 - 29:04] the things are working and then and I know so Fatemeh will send you some link to our papers
+[29:04 - 29:11] that has been published on microwave ice sensing so you can get a general idea how this system is
+[29:11 - 29:19] going to work and maybe from now on we will have two week or biweekly meetings and then and biweekly
+[29:19 - 29:23] meetings we can update each other and then write the paper and finalize it
+[29:28 - 29:33] uh is this system for uh get any I didn't get your question
+[29:35 - 29:39] uh any question is more related about how the electronic bar works
+[29:40 - 29:46] and we have like a boobing center or clean vector to coordinate the movement on the boobing
+[29:47 - 29:58] uh this is related to which uh the A training the A3 oh the AI training so basically what you
+[29:58 - 30:06] are going to do you plot the s parameter and then use image processing to get the curve or what
+[30:07 - 30:09] I didn't get your point
+[30:11 - 30:20] okay uh just for the like you said we want we have to find models I was wondering what we are
+[30:20 - 30:29] going to sensor about the boobing movement or the eye tracking that was my question related
+[30:29 - 30:31] but more for the electronic part
+[30:33 - 30:43] three the models that I mentioned it is mainly for AI so as an example in AI you can have different
+[30:43 - 30:52] methods you know um lots of machine learning methods so but out of those different machine
+[30:52 - 30:58] learning methods which one are you going to use so selection of that is up to you
+[31:00 - 31:08] okay what my my suggestion is select the ones that you can easily deploy it on the hardware
+[31:09 - 31:15] so as an example in MATLAB you can make a very complicated algorithm but implementation of that
+[31:15 - 31:22] on a microcontroller is almost impossible it needs lots of microcontrollers talking to each other
+[31:22 - 31:32] that soon so try not to use that use the one that is simple okay okay thank you okay awesome
+[31:32 - 31:37] thank you everyone thanks again for making for this meeting and uh looking forward to working
+[31:37 - 31:44] with you looking forward to publish this very nice paper thank you very much again and thank you
+[31:44 - 31:49] everyone to stay here in this meeting it's a pleasure to meet you and thank you very much
+[31:49 - 31:55] thank you all right thank you very much bye for now
+```
+
+</details>

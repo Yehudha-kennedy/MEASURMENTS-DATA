@@ -1,0 +1,107 @@
+\contentsline {section}{Executive Summary}{1}{Doc-Start}%
+\contentsline {paragraph}{Dataset.}{1}{Doc-Start}%
+\contentsline {paragraph}{Dual-route representation strategy.}{1}{Doc-Start}%
+\contentsline {paragraph}{Tiered Candidate Selection.}{1}{Doc-Start}%
+\contentsline {section}{\numberline {1}Problem Framing}{2}{section.1}%
+\contentsline {subsection}{\numberline {1.1}The $S_{11}$ Reflection Coefficient}{2}{subsection.1.1}%
+\contentsline {subsection}{\numberline {1.2}Physical Origin of Class Separability}{2}{subsection.1.2}%
+\contentsline {subsection}{\numberline {1.3}Classification Goal}{2}{subsection.1.3}%
+\contentsline {subsection}{\numberline {1.4}Edge Deployment Context}{3}{subsection.1.4}%
+\contentsline {subsection}{\numberline {1.5}Scope and Boundaries}{3}{subsection.1.5}%
+\contentsline {section}{\numberline {2}Dataset Abstraction}{4}{section.2}%
+\contentsline {subsection}{\numberline {2.1}File Format: Touchstone \texttt {.s1p}}{4}{subsection.2.1}%
+\contentsline {subsubsection}{\numberline {2.1.1}Observed Deviation from the Standard}{4}{subsubsection.2.1.1}%
+\contentsline {subsection}{\numberline {2.2}Column Interpretation}{4}{subsection.2.2}%
+\contentsline {subsection}{\numberline {2.3}Sample Trace Inspection}{5}{subsection.2.3}%
+\contentsline {subsection}{\numberline {2.4}Frequency Grid Validation}{5}{subsection.2.4}%
+\contentsline {subsection}{\numberline {2.5}Class Distribution}{5}{subsection.2.5}%
+\contentsline {subsection}{\numberline {2.6}Trace Numbering and Missing Acquisitions}{6}{subsection.2.6}%
+\contentsline {subsection}{\numberline {2.7}Folder-to-Label Mapping}{6}{subsection.2.7}%
+\contentsline {subsection}{\numberline {2.8}Deterministic Indexing Scheme}{6}{subsection.2.8}%
+\contentsline {subsection}{\numberline {2.9}Metadata Logging Requirements}{7}{subsection.2.9}%
+\contentsline {section}{\numberline {3}Representation Routes}{7}{section.3}%
+\contentsline {subsection}{\numberline {3.1}Route A: 1D Spectral Representations}{8}{subsection.3.1}%
+\contentsline {subsubsection}{\numberline {3.1.1}A1: Dual-Channel Cartesian Vector}{8}{subsubsection.3.1.1}%
+\contentsline {subsubsection}{\numberline {3.1.2}A2: Flattened Cartesian Vector}{8}{subsubsection.3.1.2}%
+\contentsline {subsubsection}{\numberline {3.1.3}A3: Derivative Augmented Cartesian Vector}{8}{subsubsection.3.1.3}%
+\contentsline {subsubsection}{\numberline {3.1.4}Route A Encoding Summary}{8}{subsubsection.3.1.4}%
+\contentsline {subsection}{\numberline {3.2}Route B: 2D Image-Like Representations}{9}{subsection.3.2}%
+\contentsline {subsubsection}{\numberline {3.2.1}B1: Grayscale Curve Images}{9}{subsubsection.3.2.1}%
+\contentsline {subsubsection}{\numberline {3.2.2}B2: Dual-Channel Rasterised Maps}{9}{subsubsection.3.2.2}%
+\contentsline {subsubsection}{\numberline {3.2.3}B3: Spectrogram-Like and Heatmap Constructions}{10}{subsubsection.3.2.3}%
+\contentsline {subsubsection}{\numberline {3.2.4}Rendering Artefact Warning}{10}{subsubsection.3.2.4}%
+\contentsline {subsection}{\numberline {3.3}Route A vs.\ Route B: Comparative Summary}{10}{subsection.3.3}%
+\contentsline {subsection}{\numberline {3.4}Representation Selection Strategy}{10}{subsection.3.4}%
+\contentsline {section}{\numberline {4}Preprocessing Pipeline}{12}{section.4}%
+\contentsline {subsection}{\numberline {4.1}Three-Stage Pipeline Overview}{12}{subsection.4.1}%
+\contentsline {subsection}{\numberline {4.2}Touchstone File Parsing}{12}{subsection.4.2}%
+\contentsline {paragraph}{Parsing assumptions.}{13}{subsection.4.2}%
+\contentsline {paragraph}{Column interpretation.}{13}{subsection.4.2}%
+\contentsline {subsection}{\numberline {4.3}Frequency-Grid Validation}{13}{subsection.4.3}%
+\contentsline {subsection}{\numberline {4.4}Missing-Value and Malformed-File Handling}{13}{subsection.4.4}%
+\contentsline {paragraph}{Missing and non-finite values.}{13}{subsection.4.4}%
+\contentsline {paragraph}{Malformed files.}{14}{subsection.4.4}%
+\contentsline {subsection}{\numberline {4.5}Outlier Inspection}{14}{subsection.4.5}%
+\contentsline {subsection}{\numberline {4.6}Class-Label Mapping}{14}{subsection.4.6}%
+\contentsline {paragraph}{Trace-numbering gaps.}{14}{subsection.4.6}%
+\contentsline {subsection}{\numberline {4.7}Deterministic Sample Indexing}{15}{subsection.4.7}%
+\contentsline {subsection}{\numberline {4.8}Stage~1 Summary}{15}{subsection.4.8}%
+\contentsline {section}{\numberline {5}Normalization}{15}{section.5}%
+\contentsline {subsection}{\numberline {5.1}Anti-Leakage Principle}{15}{subsection.5.1}%
+\contentsline {subsection}{\numberline {5.2}Per-Feature Z-Score Normalization}{16}{subsection.5.2}%
+\contentsline {paragraph}{When to prefer z-score.}{16}{equation.9}%
+\contentsline {paragraph}{Sensitivity to outliers.}{16}{equation.9}%
+\contentsline {subsection}{\numberline {5.3}Min-Max Scaling}{16}{subsection.5.3}%
+\contentsline {paragraph}{When to prefer min-max.}{16}{equation.10}%
+\contentsline {paragraph}{Out-of-range values at test time.}{16}{equation.10}%
+\contentsline {subsection}{\numberline {5.4}Robust Scaling}{16}{subsection.5.4}%
+\contentsline {subsection}{\numberline {5.5}Channel-Wise Normalization for Route~A}{17}{subsection.5.5}%
+\contentsline {subsection}{\numberline {5.6}Image Normalization for Route~B}{17}{subsection.5.6}%
+\contentsline {subsection}{\numberline {5.7}Comparison of Normalization Strategies}{17}{subsection.5.7}%
+\contentsline {subsection}{\numberline {5.8}Practical Recommendations}{18}{subsection.5.8}%
+\contentsline {section}{\numberline {6}Overfitting Control and Evaluation Integrity}{18}{section.6}%
+\contentsline {subsection}{\numberline {6.1}Context: Small-Sample Deep Learning}{18}{subsection.6.1}%
+\contentsline {subsection}{\numberline {6.2}Stratified Train / Validation / Test Split}{18}{subsection.6.2}%
+\contentsline {subsection}{\numberline {6.3}Repeated Stratified $k$-Fold Cross-Validation}{19}{subsection.6.3}%
+\contentsline {paragraph}{Critical implementation detail.}{19}{subsection.6.3}%
+\contentsline {subsection}{\numberline {6.4}Nested Cross-Validation for Hyper-Parameter Tuning}{19}{subsection.6.4}%
+\contentsline {subsection}{\numberline {6.5}Near-Duplicate and Temporal-Correlation Awareness}{19}{subsection.6.5}%
+\contentsline {paragraph}{Detection protocol.}{20}{subsection.6.5}%
+\contentsline {subsection}{\numberline {6.6}Capacity--Dataset Size Mismatch}{20}{subsection.6.6}%
+\contentsline {paragraph}{Recommendation.}{20}{table.caption.8}%
+\contentsline {subsection}{\numberline {6.7}Regularization Toolkit}{20}{subsection.6.7}%
+\contentsline {subsubsection}{\numberline {6.7.1}Early Stopping}{20}{subsubsection.6.7.1}%
+\contentsline {subsubsection}{\numberline {6.7.2}Weight Decay / L2 Regularization}{21}{subsubsection.6.7.2}%
+\contentsline {subsubsection}{\numberline {6.7.3}Dropout}{21}{subsubsection.6.7.3}%
+\contentsline {subsubsection}{\numberline {6.7.4}Label Smoothing}{21}{subsubsection.6.7.4}%
+\contentsline {subsubsection}{\numberline {6.7.5}Pruning}{21}{subsubsection.6.7.5}%
+\contentsline {subsection}{\numberline {6.8}Confidence Calibration as a Diagnostic}{21}{subsection.6.8}%
+\contentsline {subsection}{\numberline {6.9}Summary of Safeguards}{22}{subsection.6.9}%
+\contentsline {section}{\numberline {7}Data Augmentation}{22}{section.7}%
+\contentsline {subsection}{\numberline {7.1}Additive Gaussian Noise}{22}{subsection.7.1}%
+\contentsline {paragraph}{Physical justification.}{22}{subsection.7.1}%
+\contentsline {paragraph}{Implementation.}{22}{subsection.7.1}%
+\contentsline {paragraph}{Risk level: \textbf {Low}.}{23}{equation.14}%
+\contentsline {subsection}{\numberline {7.2}Frequency-Local Smooth Perturbation}{23}{subsection.7.2}%
+\contentsline {paragraph}{Physical justification.}{23}{subsection.7.2}%
+\contentsline {paragraph}{Implementation.}{23}{subsection.7.2}%
+\contentsline {paragraph}{Risk level: \textbf {Low--Medium}.}{23}{subsection.7.2}%
+\contentsline {subsection}{\numberline {7.3}Magnitude Scaling}{23}{subsection.7.3}%
+\contentsline {paragraph}{Physical justification.}{23}{subsection.7.3}%
+\contentsline {paragraph}{Implementation.}{23}{subsection.7.3}%
+\contentsline {paragraph}{Risk level: \textbf {Low}.}{23}{equation.15}%
+\contentsline {subsection}{\numberline {7.4}Phase Perturbation}{23}{subsection.7.4}%
+\contentsline {paragraph}{Physical justification.}{23}{subsection.7.4}%
+\contentsline {paragraph}{Implementation.}{23}{subsection.7.4}%
+\contentsline {paragraph}{Risk level: \textbf {Medium}.}{24}{equation.16}%
+\contentsline {subsection}{\numberline {7.5}Frequency-Axis Shift}{24}{subsection.7.5}%
+\contentsline {paragraph}{Physical justification.}{24}{subsection.7.5}%
+\contentsline {paragraph}{Implementation (conditional).}{24}{subsection.7.5}%
+\contentsline {paragraph}{Risk level: \textbf {Medium--High}.}{24}{equation.17}%
+\contentsline {subsection}{\numberline {7.6}Mixup Augmentation}{24}{subsection.7.6}%
+\contentsline {paragraph}{Risk assessment: \textbf {High}.}{24}{equation.18}%
+\contentsline {paragraph}{Recommendation.}{24}{equation.18}%
+\contentsline {subsection}{\numberline {7.7}Image-Domain Augmentations for Route~B}{24}{subsection.7.7}%
+\contentsline {subsection}{\numberline {7.8}Augmentation Summary Table}{25}{subsection.7.8}%
+\contentsline {subsection}{\numberline {7.9}Augmentation Budget and Ablation}{25}{subsection.7.9}%
+\contentsline {paragraph}{Ablation protocol.}{26}{subsection.7.9}%

@@ -1,0 +1,241 @@
+% sections/05_normalization.tex  –  Normalization (Stage 2)
+% \input{} into main.tex; do NOT wrap in \documentclass or \begin{document}
+
+\section{Normalization}
+\label{sec:norm}
+
+Normalization is \textbf{Stage~2} of the data-conditioning pipeline
+introduced in \Cref{sec:preproc}.  Its purpose is to rescale feature
+values so that learning algorithms converge faster and are less
+sensitive to the raw physical units of the input channels.  Every
+normalization method discussed here obeys a single inviolable rule:
+\emph{statistics are computed on the training partition only and applied
+identically to validation and test partitions.}
+
+%% ------------------------------------------------------------------
+\subsection{Anti-Leakage Principle}
+\label{sec:norm:leakage}
+
+\begin{tcolorbox}[
+  colback=red!5!white,
+  colframe=red!75!black,
+  title={\textbf{Warning — Data-Leakage Risk}},
+  fonttitle=\bfseries
+]
+Fitting normalization statistics (mean, standard deviation, minimum,
+maximum, median, or interquartile range) on the \emph{entire} dataset —
+including validation and test partitions — constitutes \textbf{data
+leakage}.  The resulting performance estimates are optimistically biased
+because the model indirectly observes distributional information from
+held-out samples during training.  All normalization parameters must be
+computed exclusively on the training fold and then frozen before
+transforming any held-out data.
+\end{tcolorbox}
+
+In a cross-validation setting (\Cref{sec:overfit}), this means
+normalization statistics are \emph{re-computed} for every fold: the
+inner training set defines the transform, and the inner validation set
+(and outer test set, in nested CV) receives the same frozen transform.
+
+%% ------------------------------------------------------------------
+\subsection{Per-Feature Z-Score Normalization}
+\label{sec:norm:zscore}
+
+Z-score (standard-score) normalization centres each feature at zero mean
+and unit variance:
+\begin{equation}
+  x'_j = \frac{x_j - \mu_j^{\text{train}}}
+               {\sigma_j^{\text{train}}},
+  \label{eq:zscore}
+\end{equation}
+where $j$ indexes the feature (i.e., the frequency bin or pixel
+position), and $\mu_j^{\text{train}}$, $\sigma_j^{\text{train}}$ are
+the mean and standard deviation computed over the training partition.
+
+\paragraph{When to prefer z-score.}
+Z-score normalization is appropriate when the feature distributions are
+approximately Gaussian or at least unimodal and symmetric.  It is the
+default choice for algorithms that assume or benefit from standardised
+inputs, including Logistic Regression~\cite{hosmer2013logistic},
+Linear SVM~\cite{vapnik1995svm,cortes1995svm}, and Multilayer
+Perceptrons~\cite{haykin2009nn,goodfellow2016deep}.
+
+\paragraph{Sensitivity to outliers.}
+Because $\mu$ and $\sigma$ are influenced by extreme values, z-score
+normalization can compress the bulk of the distribution when heavy-tailed
+outliers are present.  If the outlier inspection in \Cref{sec:preproc}
+reveals residual anomalies, robust scaling (\Cref{sec:norm:robust}) is
+preferred.
+
+%% ------------------------------------------------------------------
+\subsection{Min-Max Scaling}
+\label{sec:norm:minmax}
+
+Min-max scaling maps each feature linearly into the interval $[0,\,1]$:
+\begin{equation}
+  x'_j = \frac{x_j - x_{j,\min}^{\text{train}}}
+               {x_{j,\max}^{\text{train}} - x_{j,\min}^{\text{train}}}.
+  \label{eq:minmax}
+\end{equation}
+
+\paragraph{When to prefer min-max.}
+Min-max scaling is useful when a bounded output range is desirable, for
+example as input to layers with sigmoid or softmax activations, or when
+converting traces to greyscale pixel values in $[0,\,255]$ for
+Route~B image representations (\Cref{sec:repr}).  It preserves zero
+entries and the shape of the original distribution, but it is
+\emph{highly} sensitive to outliers: a single extreme value can compress
+all other values into a narrow sub-interval.
+
+\paragraph{Out-of-range values at test time.}
+Because the min and max are determined from training data, test-time
+values may fall outside $[0,\,1]$.  The recommended policy is to
+\emph{clip} to $[0,\,1]$ and log any clipped samples rather than
+silently extrapolating.
+
+%% ------------------------------------------------------------------
+\subsection{Robust Scaling}
+\label{sec:norm:robust}
+
+When outlier contamination is suspected — or confirmed by the $4\sigma$
+screening in \Cref{sec:preproc} — robust scaling replaces mean and
+standard deviation with the median ($\tilde{x}$) and interquartile range
+(IQR):
+\begin{equation}
+  x'_j = \frac{x_j - \tilde{x}_j^{\text{train}}}
+               {\text{IQR}_j^{\text{train}}},
+  \qquad
+  \text{IQR}_j = Q_{75,j} - Q_{25,j}.
+  \label{eq:robust}
+\end{equation}
+
+Robust scaling does not bound the output range, but it ensures that the
+central $50\,\%$ of the data occupies a unit-width interval regardless
+of tail behaviour.  It is compatible with all algorithms considered in
+this report and is recommended as a default for exploratory runs before
+the outlier landscape is fully characterised.
+
+%% ------------------------------------------------------------------
+\subsection{Channel-Wise Normalization for Route~A}
+\label{sec:norm:channelwise}
+
+Route~A (1D spectral) represents each sample as a dual-channel vector:
+one channel for $|S_{11}|$~(dB) and one for $\angle S_{11}$~(deg).
+The two channels have fundamentally different scales — magnitude values
+typically range from \SI{0}{\decibel} to \SI{-40}{\decibel}, while
+phase values span $\pm\SI{180}{\degree}$ — and must therefore be
+normalised \emph{independently}.
+
+Concretely, if a sample is represented as
+$\mathbf{x} = [\mathbf{m};\,\mathbf{p}] \in \mathbb{R}^{2 \times 4001}$,
+the normalization statistics $(\mu,\sigma)$ or $(x_{\min},x_{\max})$ are
+computed separately for the magnitude slice $\mathbf{m}$ and the phase
+slice $\mathbf{p}$ across the training partition.  This is the
+one-dimensional analogue of channel-wise image normalization and is
+standard practice in multi-variate time-series
+classification~\cite{goodfellow2016deep}.
+
+%% ------------------------------------------------------------------
+\subsection{Image Normalization for Route~B}
+\label{sec:norm:image}
+
+Route~B converts each $S_{11}$ trace into a 2D image-like
+representation (e.g., a magnitude--frequency heatmap or a
+recurrence-plot image).  Normalization follows the conventions
+established in the computer-vision literature:
+
+\begin{itemize}
+  \item \textbf{Single-channel images:} compute pixel-level mean
+        $\mu_{\text{px}}$ and standard deviation $\sigma_{\text{px}}$
+        across all training images, then apply
+        \Cref{eq:zscore} pixel-wise.
+  \item \textbf{Dual-channel images} (magnitude and phase as separate
+        channels): compute $(\mu,\sigma)$ per channel across the
+        training set, paralleling standard RGB-channel normalization.
+\end{itemize}
+
+Batch normalization~\cite{ioffe2015batchnorm} provides an additional,
+learnable normalization layer inside deep networks.  It normalises
+activations within each mini-batch during training and uses running
+estimates at inference time.  While batch normalization is architecture-
+internal rather than a preprocessing step, it interacts with the input
+normalization: applying both z-score input normalization and batch
+normalization is common and generally beneficial for training stability.
+
+%% ------------------------------------------------------------------
+\subsection{Comparison of Normalization Strategies}
+\label{sec:norm:comparison}
+
+\Cref{tab:norm_comparison} summarises the key properties of each
+normalization method.
+
+\begin{table}[ht]
+\centering
+\caption{Comparison of normalization strategies.}
+\label{tab:norm_comparison}
+\small
+\renewcommand{\arraystretch}{1.15}
+\begin{tabular}{p{2.4cm} p{2.8cm} p{2.0cm} p{2.0cm} p{2.3cm}}
+\toprule
+\textbf{Method} &
+\textbf{Assumptions} &
+\textbf{Outlier sensitivity} &
+\textbf{Output range} &
+\textbf{Route compat.} \\
+\midrule
+Z-score &
+  Approx.\ Gaussian features &
+  High &
+  Unbounded &
+  A, B \\
+Min-max &
+  Bounded, no extreme outliers &
+  Very high &
+  $[0,\,1]$ &
+  A, B \\
+Robust (median/IQR) &
+  Arbitrary; tolerates tails &
+  Low &
+  Unbounded &
+  A, B \\
+Batch norm\textsuperscript{$\dagger$} &
+  Internal to deep nets &
+  Moderate &
+  Learned &
+  A (1D CNN, ResNet-1D), B (2D CNN) \\
+\bottomrule
+\multicolumn{5}{l}{\footnotesize $\dagger$\;Batch normalization is an
+  architecture component, not a preprocessing step~\cite{ioffe2015batchnorm}.}
+\end{tabular}
+\end{table}
+
+%% ------------------------------------------------------------------
+\subsection{Practical Recommendations}
+\label{sec:norm:recommendations}
+
+\begin{enumerate}
+  \item \textbf{Default:} begin with per-feature z-score normalization
+        (\Cref{eq:zscore}) for all Route~A experiments and pixel-level
+        z-score for Route~B.  It is well-understood, widely supported by
+        scikit-learn~\cite{sklearn_docs} and TensorFlow, and compatible
+        with every algorithm in \Cref{sec:algorithms}.
+
+  \item \textbf{If outliers persist} after the screening in
+        \Cref{sec:preproc}, switch to robust scaling
+        (\Cref{eq:robust}).  Compare validation performance against
+        z-score to confirm the benefit.
+
+  \item \textbf{If bounded inputs are required} (e.g., for sigmoid
+        output layers or greyscale image encoding), use min-max scaling
+        (\Cref{eq:minmax}) with post-hoc clipping at test time.
+
+  \item \textbf{Always verify:} after normalization, inspect the
+        per-feature distributions (histograms or Q--Q plots) on a
+        held-out fold to confirm that no pathological compression or
+        inflation has occurred.
+
+  \item \textbf{Record the transform:} serialise the fitted scaler
+        object (e.g., via \texttt{joblib} or ONNX~\cite{onnx_runtime})
+        so that identical normalization can be applied at inference time
+        on the edge device.
+\end{enumerate}

@@ -1,0 +1,157 @@
+% sections/01_problem_framing.tex  —  Problem Framing
+% \input{} into main.tex; do NOT wrap in \begin{document}.
+
+\section{Problem Framing}
+\label{sec:problem}
+
+\subsection{The $S_{11}$ Reflection Coefficient}
+\label{sec:problem:s11}
+
+In microwave network analysis the scattering parameter $S_{11}$
+characterises the ratio of the complex voltage wave reflected from a
+one-port device to the complex voltage wave incident upon
+it~\cite{pozar2011microwave}:
+\begin{equation}
+    S_{11}(f) \;=\; \frac{V^{-}(f)}{V^{+}(f)},
+    \label{eq:s11_def}
+\end{equation}
+where $V^{+}$ is the incident travelling wave and $V^{-}$ is the
+reflected travelling wave at frequency~$f$.  Because $S_{11}$ is a
+complex quantity, it can be represented in either polar form (magnitude and
+phase) or Cartesian form (real and imaginary components). While human engineers
+typically prefer the polar form to visualise return loss in \si{\deci\bel},
+this methodology strictly adopts the \textbf{Cartesian representation} for machine
+learning:
+\begin{equation}
+    S_{11}(f) \;=\; \text{Re}[S_{11}(f)] + j \cdot \text{Im}[S_{11}(f)].
+    \label{eq:s11_cartesian}
+\end{equation}
+
+The Cartesian form is mathematically superior for training gradient-based learning
+algorithms because it entirely eliminates the ``phase wrapping'' problem—the
+artificial discontinuity that occurs when phase angles wrap from $\SI{+180}{\degree}$
+to $\SI{-180}{\degree}$. Both the real and imaginary components are continuous,
+well-behaved functions of frequency, natively providing a uniform numerical scale
+for optimisation without requiring heuristic unwrapping algorithms.
+
+\subsection{Physical Origin of Class Separability}
+\label{sec:problem:physics}
+
+The sensor under study is a single-port microwave structure whose
+electromagnetic near-field interacts with the material present on its
+surface.  When the surface condition changes—from a dry dielectric
+substrate to a thin water film or an ice layer—the effective complex
+permittivity $\varepsilon^{*} = \varepsilon' - j\varepsilon''$ of the
+medium shifts.  This perturbation modifies the resonant frequencies, the
+quality factors, and the coupling coefficients of the sensor's radiating
+or guided-wave structure, producing measurable changes in the
+$S_{11}(f)$ trace across the \SIrange{8}{12}{\giga\hertz} band.
+
+Specifically:
+\begin{itemize}
+    \item \textbf{Dry surface} (\texttt{dry}):  The sensor is loaded
+        only by the substrate and ambient air.  The $S_{11}$ trace
+        exhibits the sensor's baseline resonance profile.
+    \item \textbf{Wet surface} (\texttt{wet}):  A liquid water film
+        introduces a material with high real permittivity
+        ($\varepsilon'_{\text{water}} \approx 50$--$80$ at X-band
+        frequencies) and significant dielectric loss.  This shifts
+        resonances downward in frequency, broadens them, and deepens or
+        shallows dips depending on coupling geometry.
+    \item \textbf{Ice-covered surface} (\texttt{ice}):  Ice has a
+        substantially lower permittivity ($\varepsilon'_{\text{ice}}
+        \approx 3.2$) and much lower loss than liquid water.  The
+        resulting $S_{11}$ perturbation is smaller in magnitude than the
+        wet case but distinct from the dry baseline.
+\end{itemize}
+
+The classification task exploits these physically grounded spectral
+differences.  However, the degree of separability is an empirical
+question that depends on the sensor geometry, the thickness and
+uniformity of the surface layer, and the measurement noise floor—none
+of which are known \emph{a priori} from the data files alone.
+
+\subsection{Classification Goal}
+\label{sec:problem:goal}
+
+The formal objective is to learn a mapping
+\begin{equation}
+    h \;:\; \mathbf{x}(f) \;\longmapsto\; y \;\in\; \{\texttt{dry},\;
+        \texttt{wet},\;\texttt{ice}\},
+    \label{eq:classifier}
+\end{equation}
+where $\mathbf{x}(f)$ is the feature representation derived from a
+single $S_{11}$ frequency sweep and $y$ is the categorical surface-state
+label.  This is a \emph{closed-set, single-label, three-class}
+classification problem.  Each trace is assumed to originate from exactly
+one surface condition, and no ``unknown'' or out-of-distribution class is
+modelled at this stage.
+
+The mapping~$h$ must generalise from the \num{1603} available labelled
+traces to previously unseen measurements acquired under nominally
+identical conditions.  The small sample size is a dominant methodological
+constraint: it limits the complexity of models that can be reliably
+validated and increases the risk of overfitting, particularly for
+high-dimensional deep architectures.
+
+\subsection{Edge Deployment Context}
+\label{sec:problem:edge}
+
+The trained classifier is intended for deployment on
+resource-constrained edge devices positioned at or near the sensor
+installation site.  While the specific target hardware has not been
+finalised, typical edge platforms impose the following constraints:
+
+\begin{itemize}
+    \item \textbf{Memory budget.}  Model weights and inference buffers
+        must fit within tens of kilobytes to a few megabytes of RAM,
+        depending on the platform.
+    \item \textbf{Compute budget.}  Inference must complete within
+        milliseconds to low hundreds of milliseconds.  Floating-point
+        units may be absent or limited to single precision; integer-only
+        or fixed-point arithmetic may be required.
+    \item \textbf{Power budget.}  Continuous or near-continuous inference
+        must be sustainable within the power envelope of the deployed
+        system.
+    \item \textbf{Software ecosystem.}  Runtime environments are
+        typically limited to lightweight inference engines such as
+        TensorFlow Lite~\cite{tensorflow_lite} or ONNX
+        Runtime~\cite{onnx_runtime}, rather than full training
+        frameworks.
+\end{itemize}
+
+These constraints mean that a model achieving the highest validation
+accuracy in a desktop experiment is not automatically the best candidate
+for deployment.  Model size, quantisability, and inference throughput are
+co-equal selection criteria alongside predictive performance.  The
+methodology in this report is designed to produce comparable metrics
+across all three dimensions.
+
+\subsection{Scope and Boundaries}
+\label{sec:problem:scope}
+
+To maintain focus and methodological rigour, this report adheres to the
+following explicit scope boundaries:
+
+\begin{enumerate}
+    \item \textbf{Single-port only.}  The analysis is restricted to
+        $S_{11}$ measurements from a one-port network.  Multi-port
+        extensions involving $S_{21}$, $S_{12}$, or $S_{22}$ are out of
+        scope.
+    \item \textbf{No time-series or drift modelling.}  Each trace is
+        treated as an independent, identically distributed sample.
+        Temporal ordering of acquisitions, sensor drift, and sequential
+        decision-making are not considered.
+    \item \textbf{No experimental results.}  This document defines the
+        methodological framework—representations, preprocessing
+        pipelines, candidate algorithms, and evaluation protocols.
+        Trained model performance numbers are deferred entirely to the
+        companion experiment report.
+    \item \textbf{No manuscript-ready claims.}  Because no experiments
+        have been executed, no claims of superiority, state-of-the-art
+        performance, or benchmark comparisons are made.
+    \item \textbf{Closed-set assumption.}  The classifier is designed for
+        the three known classes only.  Detection of novel or anomalous
+        surface states (out-of-distribution detection) is noted as a
+        future direction but is not addressed here.
+\end{enumerate}
