@@ -1,25 +1,21 @@
-# Environment variables (never commit secrets)
-.env
-.env.*
-!.env.example
-
-# Python
+venv/
 __pycache__/
+.pytest_cache/
 *.pyc
 *.pyo
-.ipynb_checkpoints/
-venv/
-.venv/
+*.pyd
+.Python
+env/
+.env
 
-# OS
-.DS_Store
-Thumbs.db
+# Data
+data_exp (1)/
+data/
+outputs/
+models/
 
-# IDE
+# VS Code
 .vscode/
-.idea/
 
-# Large model / experiment artifacts (uncomment if you don't want to track them in git)
-# mdls/*.pt
-# mdls/*.pkl
-# figures/*.png
+# Jupyter
+.ipynb_checkpoints/

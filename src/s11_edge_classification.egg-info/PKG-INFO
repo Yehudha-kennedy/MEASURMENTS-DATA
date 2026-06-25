@@ -1,0 +1,17 @@
+Metadata-Version: 2.4
+Name: s11-edge-classification
+Version: 0.1.0
+Summary: Edge-oriented classification of single-port S11 measurements
+Author: Kennedy Rodriguez
+Author-email: Mateo Belenez <mateo@yachaytech.edu.ec>
+Requires-Python: >=3.10
+Description-Content-Type: text/markdown
+Requires-Dist: numpy>=1.24.0
+Requires-Dist: scipy>=1.10.0
+Requires-Dist: pandas>=2.0.0
+Requires-Dist: scikit-learn>=1.2.0
+Requires-Dist: xgboost>=1.7.0
+Requires-Dist: torch>=2.0.0
+Requires-Dist: paramiko>=3.0.0
+Requires-Dist: matplotlib>=3.7.0
+Requires-Dist: seaborn>=0.12.0
