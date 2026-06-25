@@ -3,8 +3,8 @@ name = "s11-edge-classification"
 version = "0.1.0"
 description = "Edge-oriented classification of single-port S11 measurements"
 authors = [
-    {name = "Mateo Belenez", email = "mateo@yachaytech.edu.ec"},
-    {name = "Kennedy Rodriguez"}
+    {name = "Mateo Gavilanes", email = "mateisaacgavilanes@gmail.com"},
+    {name = "Yehudhah Kennedy Rodriguez Moran"}
 ]
 readme = "README.md"
 requires-python = ">=3.10"

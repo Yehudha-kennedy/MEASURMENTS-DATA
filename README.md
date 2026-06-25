@@ -48,3 +48,7 @@ The initial baseline evaluation using **Route A (Flattened Cartesian, 1D Spectra
 
 ## HPC Integration
 The project natively supports execution on CEDIA's SLURM cluster. See `scripts/cedia` for the deployment manifests and sync tools.
+
+## Contributors
+- **Mateo Gavilanes** (mateisaacgavilanes@gmail.com)
+- **Yehudhah Kennedy Rodriguez Moran**
