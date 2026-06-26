@@ -18,19 +18,31 @@ This repository follows the structured methodology from the internal technical r
 
 ## Experimental Results
 
-The initial baseline evaluation using **Route A (Flattened Cartesian, 1D Spectral)** demonstrates that the physical states are perfectly separable:
+The initial baseline evaluations demonstrate that the physical states in the internal dataset are perfectly separable:
 
 ### Level 0: Unsupervised Probe
 * **Algorithm:** K-Means
 * **Train V-Measure:** `1.0000`
 * **Validation V-Measure:** `1.0000`
-* **Conclusion:** The intrinsic dielectric properties of the three physical states form perfectly distinct mathematical clusters without requiring supervised labels.
 
-### Level 1: Linear Baselines
-* **Algorithms:** Logistic Regression & Linear SVM
-* **Train Macro F1:** `1.0000`
+### Level 1 & 2: Classical Machine Learning
+* **Algorithms:** Logistic Regression, Linear SVM, RBF SVM, Random Forest, XGBoost
+* **Validation Accuracy:** `1.0000` (100%)
+* **Validation ROC AUC:** `1.0000`
 * **Validation Macro F1:** `1.0000`
-* **Conclusion:** The classes are perfectly linearly separable. Given the strict deployment constraints (microcontroller edge hardware), these low-capacity models (~12,000 parameters) are ideal candidates as they easily exceed the 0.85 Macro F1 threshold while requiring a negligible computational footprint.
+* **Conclusion:** The dielectric properties of the three physical states form perfectly distinct clusters. The classes are completely linearly separable internally. Given the strict deployment constraints (microcontroller edge hardware), low-capacity models are highly suitable.
+
+### Level 3: Deep Spectral Architectures
+To evaluate representation capacity limits, the pipeline implements:
+* **MLP (Multi-Layer Perceptron):** Standard fully connected baseline.
+* **ResNet-1D:** Deep residual network utilizing 1D convolutions across the frequency spectrum.
+* **KAN (Kolmogorov–Arnold Networks):** Replaces static activation functions with learnable B-spline basis functions across the edges.
+
+## Evaluation Rigor
+The project employs a robust validation framework (`CVOrchestrator`):
+- **Repeated Stratified Group K-Fold:** Guarantees perfect class balance distribution across all folds and epochs, while grouping near-duplicate measurements (Pearson r > 0.999) to strictly prevent data leakage.
+- **Metrics Tracked:** Multi-class ROC AUC (OVR), Accuracy, Macro F1, Per-Class F1, and aggregated Confusion Matrices.
+- **Normalization Security:** Z-Score, Min-Max, and Robust Scalers are fitted **exclusively** on the training fold during cross-validation.
 
 ## Directory Structure
 ```text
