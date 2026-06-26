@@ -168,7 +168,7 @@ class CVOrchestrator:
                 val_acc = accuracy_score(y_val, val_pred)
 
                 # Per-class F1: returns array [f1_class0, f1_class1, f1_class2]
-                per_class = f1_score(y_val, val_pred, average=None)
+                per_class = f1_score(y_val, val_pred, average=None, labels=list(range(n_classes)))
                 all_per_class_f1.append(per_class)
 
                 # ROC AUC (multi-class, OVR)
