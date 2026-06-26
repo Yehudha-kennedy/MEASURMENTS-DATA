@@ -1,7 +1,7 @@
 [project]
 name = "s11-edge-classification"
 version = "0.1.0"
-description = "Edge-oriented classification of single-port S11 measurements"
+description = "Optimized ML pipeline for signal analysis. We utilize Cartesian (Real/Imaginary) S11 data to eliminate phase-wrapping artifacts. Our tiered strategy ensures an ideal balance between classification accuracy and edge-device constraints: Linear SVM/Logistic Regression, Gradient Boosted Trees, and 1D CNN."
 authors = [
     {name = "Mateo Gavilanes", email = "mateisaacgavilanes@gmail.com"},
     {name = "Yehudhah Kennedy Rodriguez Moran"}
