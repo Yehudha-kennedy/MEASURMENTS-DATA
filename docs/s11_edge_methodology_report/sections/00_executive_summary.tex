@@ -19,22 +19,28 @@ The available corpus comprises \num{1603} traces distributed across three
 class states: \texttt{dry} (\num{601} traces), \texttt{wet} (\num{501} traces),
 and \texttt{ice} (\num{501} traces). Each trace records \num{4001} uniformly spaced
 frequency points spanning approximately \SIrange{8.0}{12.0}{\giga\hertz}.
-Crucially, the dataset uses a \textbf{Cartesian representation} mapping each
-point to its \textbf{Real} and \textbf{Imaginary} components
-($\text{Re}[S_{11}]$, $\text{Im}[S_{11}]$). This choice explicitly avoids the
-``phase wrapping'' discontinuities inherent to polar representations
-(Magnitude/Phase), significantly improving numerical stability for
-gradient-based learning.
+The dataset is acquired in native polar format ($|S_{11}|$ in~dB,
+$\angle S_{11}$ in degrees).  To preserve the high dynamic range of the
+magnitude---critical for the deep \SI{-62}{\decibel} unloaded
+resonance---while simultaneously avoiding phase-wrapping phenomena, the
+pipeline constructs a \textbf{3-channel tensor representation:}
+$[\,|S_{11}|\text{ (dB)},\;\text{Re}[S_{11}],\;\text{Im}[S_{11}]\,]$.
+The dB channel retains the full \SI{45}{\decibel} dynamic range as a
+high-contrast feature, while the Cartesian channels provide
+mathematically continuous phase information free of
+$\pm\SI{180}{\degree}$ discontinuities.
 
 \paragraph{Dual-route representation strategy.}
 Two complementary data representations are proposed and systematically
 compared throughout this report:
 \begin{description}
-    \item[Route~A — 1D Spectral:]  The Cartesian frequency-domain vectors are
-        retained as one-dimensional feature sequences. The primary encoding is a
-        dual-channel $\mathbb{R}^{4001 \times 2}$ vector containing the Real and
-        Imaginary components. This route preserves full numerical fidelity and is
-        compatible with both classical tabular models and 1D neural architectures.
+    \item[Route~A --- 1D Spectral:]  The three-channel frequency-domain vectors
+        are retained as one-dimensional feature sequences.  The primary encoding
+        is a tensor $\mathbf{x} \in \mathbb{R}^{4001 \times 3}$ containing the
+        dB magnitude, Real, and Imaginary components.  Baseline ablations may
+        evaluate $C=1$ (dB only) or $C=2$ (Re, Im only).  This route preserves
+        full numerical fidelity and is compatible with both classical tabular
+        models (via flattening) and 1D neural architectures.
     \item[Route~B — 2D Image-Like:]  The spectral curves are rasterised
         into fixed-resolution images, enabling the use of established
         convolutional architectures designed for image classification.

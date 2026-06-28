@@ -20,55 +20,98 @@ families, designated \emph{Route~A} (1D spectral) and \emph{Route~B}
 Route~A treats each $S_{11}$ frequency sweep as a one-dimensional
 feature vector whose elements correspond to uniformly spaced frequency
 bins.  The spectral ordering is preserved, and no spatial rasterisation
-is performed.  Unlike traditional polar representations (Magnitude/Phase)
-which suffer from artificial discontinuities due to phase wrapping, this
-methodology strictly employs the \textbf{Cartesian representation} (Real
-and Imaginary components).
+is performed.
+
+The raw data is acquired in native polar format ($|S_{11}|$ in~dB,
+$\angle S_{11}$ in degrees).  A purely Cartesian representation
+(Real/Imaginary only) would compress the deep \SI{-62}{\decibel}
+unloaded resonance feature into a linear amplitude of
+$\sim 0.0007$, rendering it indistinguishable from noise for
+gradient-based models.  Conversely, retaining the dB magnitude alone
+would sacrifice the mathematically continuous phase information needed
+by convolutional kernels.  Therefore, Route~A utilises a
+\textbf{3-channel hybrid approach}:
 
 % ---------------------------------------------------------------------
-\subsubsection{A1: Dual-Channel Cartesian Vector}
-\label{sec:repr:routeA:dual}
+\subsubsection{A1: Three-Channel Hybrid Tensor}
+\label{sec:repr:routeA:hybrid}
 
-The canonical 1D encoding preserves the complex nature of $S_{11}$ by
-treating the Real and Imaginary components as two parallel channels:
+The primary 1D encoding constructs a three-channel tensor from the
+native dB/Phase data:
 \begin{equation}
-    \mathbf{x}_{\text{dual}} =
+    \mathbf{x}_{\text{3ch}} =
     \begin{bmatrix}
-        \text{Re}[S_{11}(f_1)], \ldots, \text{Re}[S_{11}(f_{4001})] \\
-        \text{Im}[S_{11}(f_1)], \ldots, \text{Im}[S_{11}(f_{4001})]
+        |S_{11}(f_1)|_{\text{dB}}, & \ldots, & |S_{11}(f_{4001})|_{\text{dB}} \\
+        \text{Re}[S_{11}(f_1)],    & \ldots, & \text{Re}[S_{11}(f_{4001})] \\
+        \text{Im}[S_{11}(f_1)],    & \ldots, & \text{Im}[S_{11}(f_{4001})]
     \end{bmatrix}
-    \;\in\;\mathbb{R}^{2 \times 4001}.
-    \label{eq:dual_channel}
+    \;\in\;\mathbb{R}^{3 \times 4001},
+    \label{eq:three_channel}
 \end{equation}
+where the Cartesian components are derived from the native polar values:
+\begin{align}
+    \text{Re}[S_{11}(f_i)] &= 10^{\,|S_{11}(f_i)|_{\text{dB}}\,/\,20}
+        \;\cos\!\bigl(\angle S_{11}(f_i) \cdot \pi/180\bigr),
+        \label{eq:polar_to_re} \\
+    \text{Im}[S_{11}(f_i)] &= 10^{\,|S_{11}(f_i)|_{\text{dB}}\,/\,20}
+        \;\sin\!\bigl(\angle S_{11}(f_i) \cdot \pi/180\bigr).
+        \label{eq:polar_to_im}
+\end{align}
 
-This $2 \times 4001$ tensor is the natural input format for one-dimensional
-convolutional architectures (such as 1D CNN and ResNet-1D). The network
-receives the data analogously to a stereo audio signal. Because convolution
-is a linear operator, sliding a filter across the dual-channel input allows
-the network to naturally learn linear combinations of the Real and Imaginary
-components—effectively performing operations in the complex plane natively.
+This design is engineered to maximise the information available to
+learning algorithms:
+\begin{itemize}
+    \item \textbf{Channel~1 (dB)} preserves the full \SI{45}{\decibel}
+        dynamic range needed to detect the unloaded patch resonance,
+        which appears as a massive, high-contrast dip.  In purely linear
+        Cartesian coordinates, this \SI{-62}{\decibel} feature would
+        collapse to an amplitude of $\sim 0.0007$, making it
+        indistinguishable from numerical noise.
+    \item \textbf{Channels~2 and~3 (Re, Im)} provide the mathematical
+        continuity needed for 1D~CNN kernels without
+        $\pm\SI{360}{\degree}$ discontinuities.  Phase wrapping in the
+        native polar format creates artificial edges that would trigger
+        false feature detections in convolutional layers.
+\end{itemize}
+
+This $3 \times 4001$ tensor is the natural input format for
+one-dimensional convolutional architectures (1D~CNN, ResNet-1D).
+Because convolution is a linear operator, sliding a filter across the
+three-channel input allows the network to simultaneously exploit
+high-contrast magnitude features and smooth phase-derived signals.
 
 % ---------------------------------------------------------------------
-\subsubsection{A2: Flattened Cartesian Vector}
+\subsubsection{A2: Flattened Three-Channel Vector}
 \label{sec:repr:routeA:flat}
 
 For classical machine learning algorithms (e.g., Logistic Regression,
 Random Forest, Gradient Boosted Trees) that expect a one-dimensional
-feature vector, the dual-channel matrix is flattened:
+feature vector, the three-channel tensor is flattened:
 \begin{equation}
     \mathbf{x}_{\text{flat}} =
-    \bigl[\,\text{Re}[S_{11}(f_1)], \ldots, \text{Re}[S_{11}(f_{4001})],\;
-    \text{Im}[S_{11}(f_1)], \ldots, \text{Im}[S_{11}(f_{4001})]\,\bigr]^{\!\top}
-    \;\in\;\mathbb{R}^{8002}.
+    \bigl[\,|S_{11}(f_1)|_{\text{dB}}, \ldots, |S_{11}(f_{4001})|_{\text{dB}},\;
+    \text{Re}(f_1), \ldots, \text{Re}(f_{4001}),\;
+    \text{Im}(f_1), \ldots, \text{Im}(f_{4001})\,\bigr]^{\!\top}
+    \;\in\;\mathbb{R}^{12003}.
     \label{eq:flat_vector}
 \end{equation}
 
-This encoding provides exactly the same information as A1, but the spatial
-co-location of the Real and Imaginary components at the same frequency
-is lost to the algorithm (except for tree-based models which can route
-based on independent features). The high dimensionality ($d = 8002$) relative
-to the sample size ($N = 1603$) necessitates strong regularisation to
-prevent overfitting in linear models.
+This encoding provides exactly the same information as~A1, but the
+spatial co-location of the three channels at the same frequency is
+lost to the algorithm (except for tree-based models which can route
+based on independent features).  The high dimensionality ($d = 12003$)
+relative to the sample size ($N = 1603$) necessitates strong
+regularisation to prevent overfitting in linear models.
+
+\paragraph{Ablation variants.}
+To quantify the contribution of each channel, baseline experiments
+should include:
+\begin{itemize}
+    \item $C = 1$: magnitude only ($|S_{11}|$ in dB, $d = 4001$).
+    \item $C = 2$: Cartesian only (Re, Im; $d = 8002$).
+    \item $C = 3$: full hybrid (dB, Re, Im; $d = 12003$ flat or
+        $3 \times 4001$ tensor).
+\end{itemize}
 
 % ---------------------------------------------------------------------
 \subsubsection{A3: Derivative Augmented Cartesian Vector}
@@ -92,12 +135,12 @@ calibration drift), they amplify high-frequency instrumental noise.
 \subsubsection{Route A Encoding Summary}
 \label{sec:repr:routeA:summary}
 
-\Cref{tab:routeA_summary} compares the three 1D Cartesian encoding variants.
+\Cref{tab:routeA_summary} compares the Route~A encoding variants.
 
 \begin{table}[htbp]
     \centering
     \caption{%
-        Comparison of Route~A (1D spectral) Cartesian encoding variants.%
+        Comparison of Route~A (1D spectral) encoding variants.%
     }
     \label{tab:routeA_summary}
     \small
@@ -106,12 +149,12 @@ calibration drift), they amplify high-frequency instrumental noise.
         \textbf{ID} & \textbf{Encoding} &
         \textbf{Dim.} & \textbf{Model Compatibility} \\
         \midrule
-        A1 & Dual-Channel Cartesian &
-            $2 \times 4001$ & 1D CNN, ResNet-1D \\
-        A2 & Flattened Cartesian &
-            $8002$ & Logistic Regression, SVM, GBT, RF, MLP \\
+        A1 & Three-Channel Hybrid (dB, Re, Im) &
+            $3 \times 4001$ & 1D CNN, ResNet-1D \\
+        A2 & Flattened Three-Channel &
+            $12003$ & Logistic Regression, SVM, GBT, RF, MLP \\
         A3 & Derivative Augmented &
-            $16004$ & All (with higher overfitting risk) \\
+            $18004$ & All (with higher overfitting risk) \\
         \bottomrule
     \end{tabular}
 \end{table}
@@ -295,8 +338,8 @@ a principled selection strategy:
 
 \begin{enumerate}
     \item \textbf{Start with Route~A.}  Establish baseline performance
-        using the Flattened Cartesian encoding~(A2) with classical models,
-        and Dual-Channel Cartesian encoding~(A1) with 1D CNNs.
+        using the Flattened Three-Channel encoding~(A2) with classical models,
+        and Three-Channel Hybrid encoding~(A1) with 1D CNNs.
         This provides a low-complexity reference against which all
         subsequent representations and algorithms are compared.
     \item \textbf{Incrementally add information.}  Evaluate A3

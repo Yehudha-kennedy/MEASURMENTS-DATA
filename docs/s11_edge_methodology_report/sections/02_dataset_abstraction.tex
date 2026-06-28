@@ -38,8 +38,10 @@ point with three columns: frequency, and two format-dependent values
 The \num{1603} files in this dataset \emph{lack} the standard
 \texttt{\#\,\ldots} option header line.  Each file begins directly with
 numeric data in a three-column, tab-separated layout with no comment
-lines and no header row.  While the data content is consistent with the
-Touchstone RI (Real-Imaginary) format, the absence of the option line means that:
+lines and no header row.  Empirical inspection of the raw values
+confirms that the data is stored in \textbf{DB format}
+(magnitude in decibels, phase in degrees), not Real-Imaginary.
+The absence of the option line means that:
 
 \begin{enumerate}
     \item The frequency unit, data format, and reference impedance must
@@ -50,9 +52,12 @@ Touchstone RI (Real-Imaginary) format, the absence of the option line means that
 \end{enumerate}
 
 \noindent
-A robust ingestion pipeline should therefore prepend a synthetic option
-line—e.g.\ \texttt{\# HZ S RI R 50}—before passing files to any
-standards-compliant reader.
+A robust ingestion pipeline should therefore prepend the correct
+synthetic option line: \texttt{\# HZ S DB R 50}.  The empirical data
+confirms the VNA exported the S-parameters in dB/Phase format, not
+Real/Imaginary.  Injecting an \texttt{RI} format code would corrupt
+the magnitude interpretation, causing parsers to treat decibel values
+as linear real components.
 
 % ─────────────────────────────────────────────────────────────────────
 \subsection{Column Interpretation}
@@ -66,8 +71,8 @@ Each data row contains three tab-separated fields:
     \textbf{Column} & \textbf{Quantity} & \textbf{Unit} \\
     \midrule
     1 & Frequency              & \si{\hertz} \\
-    2 & $\text{Re}[S_{11}]$ (Real part) & linear / unitless \\
-    3 & $\text{Im}[S_{11}]$ (Imag part) & linear / unitless \\
+    2 & $|S_{11}|$ (Magnitude) & \si{\decibel} \\
+    3 & $\angle S_{11}$ (Phase) & degrees \\
     \bottomrule
 \end{tabular}
 \end{center}
@@ -77,41 +82,50 @@ All three quantities are stored as decimal floating-point numbers.
 Frequency values include sub-hertz fractional digits (e.g.\
 \texttt{8000999750.000}), reflecting the instrument's internal frequency
 synthesis resolution.
+Magnitude values are negative (e.g.\ \SI{-23.541}{\decibel}),
+consistent with a passive reflective structure where $|S_{11}| < 1$
+in linear scale.  Phase values span the full
+$\pm\SI{180}{\degree}$ range.
 
 % ─────────────────────────────────────────────────────────────────────
 \subsection{Sample Trace Inspection}
 \label{sec:dataset:sample}
 
-\Cref{tab:sample_trace} reproduces the first five and last three rows of
+\Cref{tab:sample_trace} reproduces the first five rows of
 the file \texttt{Trc0.s1p} from the \texttt{dry sensor} folder.  This
 trace is representative of the general file structure across all
-\num{1603} samples.
+\num{1603} samples.  The table shows both the native dB/Phase values as
+stored in the file and the derived three-channel representation used by
+the learning pipeline (see \Cref{sec:preproc} for the conversion formulae).
 
 \begin{table}[htbp]
     \centering
     \caption{%
-        First five and last three rows of \texttt{Trc0.s1p}
-        (\texttt{dry} class) assuming RI format. Frequency is in~\si{\hertz}, 
-        followed by Real and Imaginary linear components.%
+        First five rows of \texttt{Trc0.s1p} (\texttt{dry} class).
+        Columns~2--3 are the native dB/Phase values read directly from
+        the file; columns~4--6 show the three-channel tensor constructed
+        by the preprocessing pipeline.%
     }
     \label{tab:sample_trace}
     \small
-    \begin{tabular}{rrrr}
+    \begin{tabular}{r r rr rrr}
         \toprule
+        & & \multicolumn{2}{c}{\textbf{Native format}} &
+          \multicolumn{3}{c}{\textbf{3-channel representation}} \\
+        \cmidrule(lr){3-4} \cmidrule(lr){5-7}
         \textbf{Row} &
-        \textbf{Frequency (\si{\hertz})} &
-        \textbf{Real ($\text{Re}[S_{11}]$)} &
-        \textbf{Imaginary ($\text{Im}[S_{11}]$)} \\
+        \textbf{Freq.\ (\si{\giga\hertz})} &
+        \textbf{$|S_{11}|$ (\si{\decibel})} &
+        \textbf{$\angle S_{11}$ ($^{\circ}$)} &
+        \textbf{Ch\,1: dB} &
+        \textbf{Ch\,2: Re} &
+        \textbf{Ch\,3: Im} \\
         \midrule
-        1    & 8\,000\,000\,000.000 & $0.065$ & $-0.013$ \\
-        2    & 8\,000\,999\,750.000 & $0.066$ & $-0.012$ \\
-        3    & 8\,001\,999\,500.000 & $0.063$ & $-0.010$ \\
-        4    & 8\,002\,999\,250.000 & $0.065$ & $-0.006$ \\
-        5    & 8\,003\,999\,000.000 & $0.062$ & $-0.006$ \\
-        \midrule
-        3999 & 11\,997\,000\,750.000 & $0.098$ & $-0.007$ \\
-        4000 & 11\,998\,000\,500.000 & $0.100$ & $-0.003$ \\
-        4001 & 11\,999\,000\,250.000 & $0.099$ & $-0.011$ \\
+        1 & 8.000 & $-23.541$ & $-167.978$ & $-23.541$ & $-0.065$ & $-0.014$ \\
+        2 & 8.001 & $-23.457$ & $-168.916$ & $-23.457$ & $-0.066$ & $-0.013$ \\
+        3 & 8.002 & $-23.721$ & $-170.477$ & $-23.721$ & $-0.064$ & $-0.011$ \\
+        4 & 8.003 & $-23.531$ & $-174.411$ & $-23.531$ & $-0.066$ & $-0.006$ \\
+        5 & 8.004 & $-23.811$ & $-174.414$ & $-23.811$ & $-0.064$ & $-0.006$ \\
         \bottomrule
     \end{tabular}
 \end{table}
@@ -127,10 +141,19 @@ Several observations follow from \Cref{tab:sample_trace}:
         consistent with a VNA synthesiser dividing a
         \SI{3.999}{\giga\hertz} span into exactly \num{4000} equal
         intervals.
-    \item Real and Imaginary components span $[-1, 1]$ bounds, typical
-        of a passive reflective structure.
-    \item Because the representation is Cartesian, the curves are mathematically continuous;
-        there are no ``phase wrap'' discontinuities requiring heuristic unwrapping logic.
+    \item Magnitude values are approximately \SI{-23.5}{\decibel},
+        consistent with a heavily reflective (poorly matched) passive
+        structure at these frequencies.
+    \item Phase values near \SI{-168}{\degree} at \SI{8}{\giga\hertz}
+        cross through $\pm\SI{180}{\degree}$ within the first few points
+        (note the sign change between rows~7 and~8 in the full file).
+        This phase-wrapping discontinuity in the native format is
+        precisely what motivates the conversion to Cartesian
+        ($\text{Re}$, $\text{Im}$) channels, which are mathematically
+        continuous.
+    \item The derived Re and Im values (channels~2 and~3) are small
+        negative numbers near zero, consistent with $|S_{11}| \ll 1$ in
+        linear scale ($10^{-23.5/20} \approx 0.067$).
 \end{itemize}
 
 % ─────────────────────────────────────────────────────────────────────
@@ -190,9 +213,9 @@ applied machine learning.  The \texttt{dry} class has \num{100}
 additional traces relative to \texttt{wet} and \texttt{ice}, which are
 equal in size.  At this level of imbalance, standard stratified splitting
 and stratified cross-validation are typically sufficient to prevent
-biased evaluation.  Aggressive oversampling or synthetic minority
-generation (e.g.\ SMOTE) is unlikely to be necessary but remains
-available as a contingency.
+biased evaluation.  Synthetic minority oversampling (e.g.\ SMOTE) is
+\textbf{explicitly prohibited} for this dataset; see
+\Cref{sec:augment:smote_prohibition} for the physical justification.
 
 % ─────────────────────────────────────────────────────────────────────
 \subsection{Trace Numbering and Missing Acquisitions}

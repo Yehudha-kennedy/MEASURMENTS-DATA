@@ -124,6 +124,17 @@ A sharp cliff in the degradation curve indicates that the model's
 decision boundary is fragile and positioned close to the data
 manifold.  A gradual slope indicates robust margin.
 
+\paragraph{Interpretation note.}
+The lowest SNR levels ($10$--$15$~dB) represent \emph{extreme stress
+conditions} that exceed the noise levels expected in typical VNA
+measurements; they are included to identify the model's breaking point,
+not to simulate realistic operating scenarios.  In practice, a
+well-calibrated VNA in the \SIrange{8}{12}{\giga\hertz} band achieves
+$\text{SNR} \geq 40$~dB under normal laboratory conditions.  The value
+at which each model's macro~F1 drops below a threshold (e.g., $0.90$)
+provides a quantitative ``robustness margin'' for cross-model
+comparison.
+
 For the 2D route (Route~B), an analogous test will apply pixel-level
 Gaussian noise to the rasterised images and measure classification
 stability.
@@ -264,10 +275,10 @@ Each supervised model will be trained and evaluated on the following
 1D encodings:
 %
 \begin{enumerate}
+  \item Three-channel hybrid (dB, Re, Im; $L = 4001 \times C = 3$)
+        \textbf{[primary]}.
   \item Magnitude only ($|S_{11}|$ in dB, $d = 4001$).
-  \item Phase only ($\angle S_{11}$ in degrees, $d = 4001$).
-  \item Magnitude + phase (dual-channel, $d = 8002$ or
-        $L = 4001 \times C = 2$).
+  \item Cartesian only (Re, Im; $L = 4001 \times C = 2$).
   \item Magnitude + unwrapped phase (dual-channel).
   \item Magnitude + first derivative of magnitude
         ($d = 4001 + 4000 = 7{,}001$).

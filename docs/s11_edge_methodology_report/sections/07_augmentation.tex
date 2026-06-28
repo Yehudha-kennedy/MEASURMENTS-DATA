@@ -218,6 +218,42 @@ via careful ablation against a non-Mixup baseline, and the
 interpretability implications must be documented.
 
 %% ------------------------------------------------------------------
+\subsection{SMOTE Prohibition}
+\label{sec:augment:smote_prohibition}
+
+\begin{tcolorbox}[
+  colback=red!5!white,
+  colframe=red!75!black,
+  title={\textbf{SMOTE Is Prohibited for This Dataset}},
+  fonttitle=\bfseries
+]
+SMOTE (Synthetic Minority Over-sampling Technique) and its variants
+(ADASYN, Borderline-SMOTE) are \textbf{not permitted} in this pipeline.
+The physical justification is threefold:
+\begin{enumerate}
+  \item \textbf{Non-physical interpolation.}  SMOTE creates synthetic
+        samples by linear interpolation between existing minority-class
+        neighbours.  An interpolation between a \texttt{dry} trace and
+        an \texttt{ice} trace produces a spectrum that corresponds to no
+        real dielectric state.  The three sensor surface states
+        (dry, wet, ice) are \emph{discrete physical conditions}, not
+        points on a continuous manifold.
+  \item \textbf{Unnecessary given mild imbalance.}  The class ratio
+        ($1.20:1:1$) is well within the range addressable by
+        class-weighted loss functions and stratified cross-validation,
+        without resorting to synthetic sample generation.
+  \item \textbf{Risk of training on artefacts.}  Synthetic spectra that
+        violate Maxwell's equations may teach the model decision
+        boundaries that generalise poorly to real-world measurements.
+\end{enumerate}
+\end{tcolorbox}
+
+This prohibition is consistent with the Mixup restriction above and
+applies to all pipeline stages.  For class-balance adjustment, use
+\texttt{class\_weight='balanced'} in the loss function or stratified
+sampling strategies instead.
+
+%% ------------------------------------------------------------------
 \subsection{Image-Domain Augmentations for Route~B}
 \label{sec:augment:image}
 

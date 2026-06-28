@@ -180,6 +180,35 @@ timestamp.  The total number of rejected files is reported before
 proceeding.
 
 %% ------------------------------------------------------------------
+\subsection{Coordinate Transformation (3-Channel)}
+\label{sec:preproc:transform}
+
+After parsing the native dB/Phase data and verifying structural
+integrity, the pipeline expands the two-column feature space into
+three channels that form the primary Route~A representation
+(see~\Cref{sec:repr:routeA:hybrid}):
+
+\begin{description}
+  \item[Channel~1:] $|S_{11}|_{\text{dB}}$ — passed directly from
+        column~2 of the raw file.  Retains the full dynamic range of
+        the magnitude (critical for the deep $\SI{-62}{\decibel}$
+        resonance).
+  \item[Channel~2:]
+        $\text{Re} = 10^{\,|S_{11}|_{\text{dB}}\,/\,20} \cdot
+        \cos\!\bigl(\angle S_{11}\cdot\pi/180\bigr)$.
+  \item[Channel~3:]
+        $\text{Im} = 10^{\,|S_{11}|_{\text{dB}}\,/\,20} \cdot
+        \sin\!\bigl(\angle S_{11}\cdot\pi/180\bigr)$.
+\end{description}
+
+\noindent
+This transformation is a deterministic, lossless, invertible mapping
+that introduces no free parameters and therefore has no data-leakage
+risk.  It is applied identically to all partitions (train, validation,
+test).  After this step, each trace is stored as a matrix
+$\mathbf{X} \in \mathbb{R}^{4001 \times 3}$.
+
+%% ------------------------------------------------------------------
 \subsection{Outlier Inspection}
 \label{sec:preproc:outliers}
 
@@ -211,6 +240,22 @@ The same procedure is repeated for the phase channel.  Automatic
 removal without human review is deliberately avoided because a trace
 that appears statistically anomalous may represent a genuine edge case
 that the classifier should learn.
+
+\begin{tcolorbox}[
+  colback=red!5!white,
+  colframe=red!75!black,
+  title={\textbf{Anti-Leakage Requirement}},
+  fonttitle=\bfseries
+]
+When the outlier screening is used to set automatic rejection
+thresholds (rather than visual inspection), the statistics
+$(\mu_{c,i},\,\sigma_{c,i})$ \textbf{must be fitted exclusively on
+the training fold}.  Validation and test folds are evaluated against
+these frozen thresholds.  Computing $(\mu,\sigma)$ on the full
+\num{1603}-sample dataset prior to splitting constitutes data leakage
+and would produce optimistically biased performance estimates (see
+also~\Cref{sec:norm:leakage}).
+\end{tcolorbox}
 
 %% ------------------------------------------------------------------
 \subsection{Class-Label Mapping}
@@ -265,6 +310,42 @@ A mapping file \texttt{sample\_index.csv} is written with columns
 \texttt{original\_filepath}.  This file is version-controlled alongside
 the code and referenced in all subsequent logs to ensure that any
 experimental result can be traced back to the exact input files.
+
+%% ------------------------------------------------------------------
+\subsection{K-Means Separability Gate}
+\label{sec:preproc:kmeans_gate}
+
+Before committing to supervised training, the pipeline applies a
+\emph{K-Means separability gate} that verifies whether the
+three-channel feature representation produces naturally separable
+clusters aligned with the three physical states.  This probe is
+analogous to the Level~0 evaluation described in
+\Cref{sec:algorithms}, but positioned earlier in the pipeline as a
+quality checkpoint.
+
+\paragraph{Procedure.}
+\begin{enumerate}
+  \item Run K-Means with $k = 3$ on the three-channel feature vectors,
+        using $\geq 50$ random initialisations.
+  \item Compute the Adjusted Rand Index (ARI) between the discovered
+        clusters and the known class labels.
+  \item If $\text{ARI} < 0.5$, the representation is flagged for
+        revision before proceeding to supervised model training.
+\end{enumerate}
+
+\begin{tcolorbox}[
+  colback=red!5!white,
+  colframe=red!75!black,
+  title={\textbf{Anti-Leakage Requirement}},
+  fonttitle=\bfseries
+]
+The K-Means clustering model \textbf{must be fitted only on the
+training split}.  Applying K-Means to the entire \num{1603}-sample
+dataset prior to splitting constitutes \emph{representation leakage}:
+the cluster centroids encode distributional information from
+validation and test samples, making the separability assessment
+unreliable as a predictor of generalisation performance.
+\end{tcolorbox}
 
 %% ------------------------------------------------------------------
 \subsection{Stage~1 Summary}

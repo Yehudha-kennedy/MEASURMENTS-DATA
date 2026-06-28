@@ -20,19 +20,17 @@ reflected travelling wave at frequency~$f$.  Because $S_{11}$ is a
 complex quantity, it can be represented in either polar form (magnitude and
 phase) or Cartesian form (real and imaginary components). While human engineers
 typically prefer the polar form to visualise return loss in \si{\deci\bel},
-this methodology strictly adopts the \textbf{Cartesian representation} for machine
-learning:
-\begin{equation}
-    S_{11}(f) \;=\; \text{Re}[S_{11}(f)] + j \cdot \text{Im}[S_{11}(f)].
-    \label{eq:s11_cartesian}
-\end{equation}
-
-The Cartesian form is mathematically superior for training gradient-based learning
-algorithms because it entirely eliminates the ``phase wrapping'' problem—the
-artificial discontinuity that occurs when phase angles wrap from $\SI{+180}{\degree}$
-to $\SI{-180}{\degree}$. Both the real and imaginary components are continuous,
-well-behaved functions of frequency, natively providing a uniform numerical scale
-for optimisation without requiring heuristic unwrapping algorithms.
+the raw data files in this project store $S_{11}$ in precisely this
+polar format ($|S_{11}|$ in~dB, $\angle S_{11}$ in degrees).  To
+construct a representation that is suitable for gradient-based learning,
+the pipeline converts each trace into a \textbf{three-channel hybrid
+tensor} $[\,|S_{11}|_{\text{dB}},\;\text{Re}[S_{11}],\;
+\text{Im}[S_{11}]\,]$, where the Cartesian components are derived from
+the native polar values.  This approach preserves the high dynamic range
+of the dB magnitude while providing mathematically continuous channels
+that avoid the ``phase wrapping'' problem---the artificial discontinuity
+that occurs when phase angles wrap from $\SI{+180}{\degree}$ to
+$\SI{-180}{\degree}$.
 
 \subsection{Physical Origin of Class Separability}
 \label{sec:problem:physics}

@@ -189,9 +189,9 @@ class~$k$.  The decision boundaries are hyperplanes in the
 $d$-dimensional feature space.
 
 \paragraph{Expected input shape.}
-A flattened one-dimensional feature vector of length $d$.  When
-using magnitude-only encoding, $d = 4001$; with magnitude-plus-phase
-dual-channel encoding, $d = 8002$.
+A flattened one-dimensional feature vector of length $d$.  With the
+three-channel hybrid encoding (dB, Re, Im), $d = 12003$; ablation
+variants use $d = 4001$ (dB only) or $d = 8002$ (Re, Im only).
 
 \paragraph{Compatible route.}
 Route~A exclusively.  The model has no mechanism to exploit
@@ -545,10 +545,12 @@ learnable parameters.  Deeper architectures stack additional
 hidden layers.
 
 \paragraph{Expected input shape.}
-Flattened 1D vector of length $d$ for Route~A inputs.  Route~B inputs
-(2D images) can also be flattened, although this discards spatial
-structure.  Thus, the MLP is compatible with both routes in principle
-but benefits from neither's structure.
+Flattened 1D vector of length $d = 12003$ (three-channel hybrid encoding,
+\Cref{sec:repr:routeA:flat}) for Route~A inputs.  Ablation variants with
+$d = 4001$ (dB only) or $d = 8002$ (Re, Im only) should be compared.
+Route~B inputs (2D images) can also be flattened, although this discards
+spatial structure.  Thus, the MLP is compatible with both routes in
+principle but benefits from neither's structure.
 
 \paragraph{Compatible route.}
 Route~A (primary) or Route~B (via flattening).
@@ -619,12 +621,14 @@ convolutional layers with pooling operations builds a hierarchy of
 increasingly abstract spectral features.
 
 \paragraph{Expected input shape.}
-A 1D sequence of length $L = 4001$ with $C$ channels, where $C = 1$
-for magnitude-only or $C = 2$ for magnitude-plus-phase encoding.
+A 1D sequence of length $L = 4001$ with $C = 3$ channels (dB, Re, Im;
+\Cref{sec:repr:routeA:hybrid}).  Ablation variants with $C = 1$ (dB
+only) or $C = 2$ (Re, Im only) should be included in the experimental
+matrix.
 
 \paragraph{Compatible route.}
 Route~A (primary).  Multi-channel 1D input naturally accommodates
-the dual-channel representations discussed in \Cref{sec:repr}.
+the three-channel representation discussed in \Cref{sec:repr}.
 
 \paragraph{Required preprocessing.}
 Shared pipeline from \Cref{sec:preproc}.
@@ -660,6 +664,26 @@ precisely the features that distinguish \texttt{dry}, \texttt{wet},
 and \texttt{ice} states in $S_{11}$ spectra.  The inductive bias
 encodes the physically motivated assumption that adjacent frequency
 bins carry correlated information.
+
+\paragraph{Three-channel justification for CNN.}
+The three-channel hybrid input ($C = 3$) is particularly well-suited
+for 1D CNNs.  Channel~1 (dB) exposes the deep resonance dip
+at~$\sim\SI{-62}{\decibel}$ as a high-contrast feature that standard
+filters can detect without needing to learn a logarithmic transform.
+Channels~2 and~3 (Re, Im) provide smooth, continuous signals that avoid
+false edge detections caused by phase wrapping.  Together, the three
+channels give the convolutional layers complementary views of the
+same spectrum.
+
+\paragraph{Depthwise and grouped convolutions (recommended ablation).}
+Because the three channels have fundamentally different scales and
+physical semantics (dB vs.\ dimensionless linear), an architecture
+variant using \emph{depthwise separable} or \emph{grouped}
+convolutions ($\text{groups} = C$) may outperform standard
+convolutions that mix channels from the first layer.  This variant
+processes each channel independently in the early layers and fuses
+them via a pointwise ($1 \times 1$) convolution afterward.  This
+should be evaluated as an ablation, not mandated as default.
 
 \paragraph{Interpretability.}
 \textbf{Medium.}  First-layer convolutional filters can be visualised
@@ -702,7 +726,8 @@ flow through very deep networks, allowing the model to learn
 hierarchical spectral features across multiple scales.
 
 \paragraph{Expected input shape.}
-1D sequence, identical to the 1D CNN.
+1D sequence of length $L = 4001$ with $C = 3$ channels, identical to the
+1D CNN.  Depthwise/grouped convolution ablations apply equally.
 
 \paragraph{Compatible route.}
 Route~A.
@@ -779,7 +804,8 @@ and addition.  In practice, the learnable edge functions are
 parameterised as B-spline curves with adjustable control points.
 
 \paragraph{Expected input shape.}
-Flattened 1D feature vector, Route~A.
+Flattened 1D feature vector ($d = 12003$ for three-channel hybrid;
+ablation variants with $d = 4001$ or $d = 8002$), Route~A.
 
 \paragraph{Compatible route.}
 Route~A.  Convolutional variants of KAN (KAN-Conv) have been proposed

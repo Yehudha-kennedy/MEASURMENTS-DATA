@@ -119,20 +119,21 @@ the outlier landscape is fully characterised.
 \subsection{Channel-Wise Normalization for Route~A}
 \label{sec:norm:channelwise}
 
-Route~A (1D spectral) represents each sample as a dual-channel vector:
-one channel for $|S_{11}|$~(dB) and one for $\angle S_{11}$~(deg).
-The two channels have fundamentally different scales — magnitude values
-typically range from \SI{0}{\decibel} to \SI{-40}{\decibel}, while
-phase values span $\pm\SI{180}{\degree}$ — and must therefore be
-normalised \emph{independently}.
+Route~A (1D spectral) represents each sample as a three-channel tensor:
+one channel for $|S_{11}|$~(dB), one for $\text{Re}[S_{11}]$, and one
+for $\text{Im}[S_{11}]$ (see~\Cref{sec:repr:routeA:hybrid}).
+The three channels have fundamentally different scales --- magnitude
+values typically range from \SI{0}{\decibel} to \SI{-62}{\decibel},
+while the Cartesian components span approximately $[-1,\,1]$ --- and
+must therefore be normalised \emph{independently}.
 
 Concretely, if a sample is represented as
-$\mathbf{x} = [\mathbf{m};\,\mathbf{p}] \in \mathbb{R}^{2 \times 4001}$,
+$\mathbf{x} = [\mathbf{d};\,\mathbf{r};\,\mathbf{i}] \in \mathbb{R}^{3 \times 4001}$,
 the normalization statistics $(\mu,\sigma)$ or $(x_{\min},x_{\max})$ are
-computed separately for the magnitude slice $\mathbf{m}$ and the phase
-slice $\mathbf{p}$ across the training partition.  This is the
-one-dimensional analogue of channel-wise image normalization and is
-standard practice in multi-variate time-series
+computed separately for the dB slice $\mathbf{d}$, the Re slice
+$\mathbf{r}$, and the Im slice $\mathbf{i}$ across the training
+partition.  This is the one-dimensional analogue of channel-wise image
+normalization and is standard practice in multi-variate time-series
 classification~\cite{goodfellow2016deep}.
 
 %% ------------------------------------------------------------------

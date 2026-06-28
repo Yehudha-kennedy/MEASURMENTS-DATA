@@ -85,10 +85,22 @@ all folds are reported.  A high standard deviation signals that the
 model's performance is sensitive to the particular train/test partition,
 which is itself a diagnostic of overfitting or insufficient data.
 
+\paragraph{Recommended implementation: \texttt{StratifiedGroupKFold}.}
+When near-duplicate or batch-correlated traces are identified
+(\Cref{sec:overfit:duplicates}), both class stratification and group
+awareness must hold \emph{simultaneously}.  Using
+\texttt{StratifiedKFold} alone risks splitting near-duplicate groups
+across folds; using \texttt{GroupKFold} alone may produce class-
+imbalanced folds.  The unified solution is
+\texttt{StratifiedGroupKFold} (scikit-learn $\geq$\,0.24), which
+enforces both constraints in a single splitter object.  When no
+near-duplicate groups are detected, standard \texttt{StratifiedKFold}
+is sufficient.
+
 \paragraph{Critical implementation detail.}
-All preprocessing that involves fitting to data — normalization
+All preprocessing that involves fitting to data --- normalization
 statistics (\Cref{sec:norm}), feature-extraction parameters, and
-dimensionality-reduction transforms — must be fit \emph{exclusively} on
+dimensionality-reduction transforms --- must be fit \emph{exclusively} on
 the training fold of each CV iteration and re-fit from scratch when the
 fold changes.  Fitting once on the full dataset and then splitting
 constitutes data leakage and invalidates the CV estimate.
